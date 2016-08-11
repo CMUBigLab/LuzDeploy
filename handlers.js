@@ -70,7 +70,6 @@ module.exports.dispatchMessage = (payload, reply) => {
 }
 
 module.exports.dispatchPostback = (payload, reply) => {
-  console.log(JSON.stringify(payload))
   const strs = Object.keys(postbackHandlers)
   let result = null
   for (let i = 0; i < strs.length; i++) {
@@ -79,7 +78,7 @@ module.exports.dispatchPostback = (payload, reply) => {
       break
     }
   }
-  if (!result) throw new Error(`invalid postback: ${payload.postback}`)
+  if (!result) throw new Error(`invalid postback: ${payload.postback.payload}`)
   const found = postbackHandlers[result]
   if (found.volRequired) {
     Volunteer.where({fbid: payload.sender.id}).fetch()
@@ -127,7 +126,7 @@ function joinDeployment(payload, reply) {
     if (vol && vol.related('deployment')) {
       reply({text: `You are already in a deployment (${vol.related('deployment').get('name')}). You must leave that first.`})
     } else {
-      const deployId = parseInt(payload.postback.substr('JOIN_DEPLOYMENT_'.length), 10)
+      const deployId = parseInt(payload.postback.payload.substr('JOIN_DEPLOYMENT_'.length), 10)
       Deployment.where({id: deployId}).fetch().then((deployment) => {
         if (!deployment) throw new Error(`invalid deployment id: ${deployId}`)
         let method = {method: 'insert'}
