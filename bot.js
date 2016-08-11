@@ -30,7 +30,13 @@ if (cli.interactive) {
       handlers.dispatchMessage(payload, reply)  
     })
   })
-  bot.on('postback', handlers.dispatchPostback)
+  bot.on('postback',  (payload, reply) => {
+    bot.getProfile(payload.sender.id, (err, profile) => {
+      if (err) throw err
+      payload.sender.profile = profile
+      handlers.dispatchPostback(payload, reply)  
+    })
+  })
 
   module.exports.sendMessage = bot.sendMessage.bind(bot)
   bot.startListening = function() {
