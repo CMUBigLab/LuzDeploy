@@ -73,7 +73,7 @@ module.exports.dispatchPostback = (payload, reply) => {
   const strs = Object.keys(postbackHandlers)
   let result = null
   for (let i = 0; i < strs.length; i++) {
-    if (payload.postback.startsWith(strs[i])) {
+    if (payload.postback.payload.startsWith(strs[i])) {
       result = strs[i]
       break
     }

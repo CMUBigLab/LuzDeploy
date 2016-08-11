@@ -61,7 +61,7 @@ You can switch volunteer ids with the command '/vol <id>'.`)
               last_name: "Smith"
             }
           },
-          postback: this.buttons[buttonIndex].payload
+          postback: {payload: this.buttons[buttonIndex].payload}
         }
           handlers.dispatchPostback(payload, reply)
         }
