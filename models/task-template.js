@@ -1,6 +1,5 @@
 const bookshelf = require('../bookshelf')
 const dust = require('dustjs-linkedin')
-const Promise = require("bluebird")
 
 require('./deployment')
 require('./base-model')
@@ -11,7 +10,7 @@ const TaskTemplate = bookshelf.model('BaseModel').extend({
     return this.belongsTo('Deployment')
   },
   renderInstructions: function(context) {
-  	return new Promise.map(this.get('instructions'), (i) => {
+  	const promises = this.get('instructions').map((i) => {
         return new Promise((resolve, reject) => {
         	dust.renderSource(JSON.stringify(i.message), context, (err, out) => {
         		if (err) return reject(err)
@@ -19,7 +18,8 @@ const TaskTemplate = bookshelf.model('BaseModel').extend({
           		return resolve(i)
         	})
         })
-      })
+    })
+  	return Promise.all(promises)
   },
 })
 
