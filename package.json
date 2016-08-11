@@ -23,6 +23,7 @@
     "messenger-bot": "^2.3.0",
     "pg": "^6.0.1",
     "request": "^2.74.0",
+    "request-promise": "^4.1.1",
     "sqlite3": "^3.1.4",
     "underscore.string": "^3.3.4"
   }
