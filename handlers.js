@@ -51,6 +51,10 @@ module.exports.dispatchMessage = (payload, reply) => {
       return
     }
     payload.sender.volunteer = vol
+    if (!payload.message.text) {
+      reply({text: "Sorry, I only handle text messages right now."})
+      return
+    }
     const values = payload.message.text.toLowerCase().split(' ')
     let command = values[0]
     if (command in aliases)
