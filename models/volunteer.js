@@ -8,11 +8,6 @@ require('./base-model')
 const Volunteer = bookshelf.model('BaseModel').extend({
 	tableName: 'volunteers',
 	idAttribute: 'fbid',
-	// fbid
-	// name
-	// weight
-	// currentTask
-	// deployment
 	currentTask: function() {
 		return this.belongsTo('Task', 'current_task')
 	},
@@ -51,7 +46,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 	},
 	virtuals: {
 		name: function() {
-			return `this.get('firstName') this.get('lastName')`
+			return `${this.get('firstName')} ${this.get('lastName')}`
 		}
 	}
 })

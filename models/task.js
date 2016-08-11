@@ -1,4 +1,4 @@
-const request = require('request')
+const request = require('request-promise')
 const _ = require('lodash')
 
 const bookshelf = require('../bookshelf')
@@ -25,11 +25,19 @@ const Task = bookshelf.model('BaseModel').extend({
       return this.save({startTime: new Date()})
   },
   finish: function() {
-      return this.save({completed: true, doneTime: new Date()}, {patch: true})
+      return this.save({completed: true, completedTime: new Date()}, {patch: true})
+      .then(() => {
+        this.assignedVolunteer().sendMessage({text: `Thanks! You ended at ${this.get('completedTime')}.`})
+      })
       .then(() => {
         const webhook = this.get('completedWebhook')
         if (webhook) {
-          request.post({url: webhook, data: this.serialize({shallow: true})})
+          return request.post({url: webhook, data: this.serialize({shallow: true})})
+          .then((parsedBody) => {
+            return Promise.resolve(this.set('score', parsedBody.score))
+          }).catch((err) => {
+            console.error(err)
+          })
         }
       })
   },

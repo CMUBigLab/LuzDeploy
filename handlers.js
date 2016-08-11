@@ -241,21 +241,28 @@ function doneMessage(payload, reply) {
       else
           return v.save({weight: newWeight, currentTask: null}, {patch: true})
     })
-    updates.push(deployment.save({bestweight: bestWeight, avgweight: avgWeight}, {patch: true}))
+    updates.push(deployment.save({bestWeight: bestWeight, avgWeight: avgWeight}, {patch: true}))
     updates.push(task.finish())
     return Promise.all(updates)
-    .then(deployment.checkThresholds)
-    .then(deployment.getTaskPool).then((pool) => {
-      reply({text: `Thanks! You ended at ${task.get('doneTime')}.`})
+    .then(deployment.isComplete.bind(deployment))
+    .then((complete) => {
+      if (complete) {
+        deployment.finish()
+      } else {
+        deployment.checkThresholds()
+      }
+    })
+    .then(deployment.getTaskPool.bind(deployment))
+    .then((pool) => {
       if (pool.length > 0) {
-        if (deployment.isCasual) {
+        if (!deployment.isCasual) {
           vol.assignTask(pool.pop())
         } else {
           reply({text: "You don't have any more tasks, but there are still some left for others."});
         }
       } else {
-        deployment.finish()
+        reply({text: "No more tasks available right now."})
       }
-  })
+    })
   })
 }
