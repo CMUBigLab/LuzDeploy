@@ -4,6 +4,7 @@ const _ = require('lodash')
 const bookshelf = require('../bookshelf')
 require('./deployment')
 require('./volunteer')
+require('./task-template')
 require('./base-model')
 
 const Task = bookshelf.model('BaseModel').extend({
@@ -17,6 +18,9 @@ const Task = bookshelf.model('BaseModel').extend({
   dependencies: function() {
     return this.belongsToMany('Task', 'dependencies', 'parent', 'child')
   },
+  template: function() {
+    return this.belongsTo('TaskTemplate', 'template_type')
+  },
   start: function() {
       return this.save({startTime: new Date()})
   },
@@ -28,6 +32,11 @@ const Task = bookshelf.model('BaseModel').extend({
           request.post({url: webhook, data: this.serialize({shallow: true})})
         }
       })
+  },
+  renderInstructions: function() {
+    return this.load(['template']).then((task) => {
+      return task.related('template').renderInstructions(this.get('instructionParams'))
+    })
   },
   virtuals: {
     hasOutstandingDependancies: function() {

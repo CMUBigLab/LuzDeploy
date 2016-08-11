@@ -4,6 +4,10 @@ const http = require('http')
 const cli = require('./cli')
 const handlers = require('./handlers')
 
+process.on('unhandledRejection', function(error, promise) {
+  console.error("UNHANDLED REJECTION", error.stack)
+})
+
 let bot = null
 if (cli.interactive) {
   bot = require('./interactive').instance

@@ -1,4 +1,10 @@
 [
+  {
+    "wait": 0,
+    "message": {
+      "text": "TESTING PARAMS {color}"
+    }
+  },
 	{
 		"wait": 2,
 		"message": {
@@ -21,11 +27,11 @@
         			"elements": [{
           				"title": "Map",
           				"subtitle": "Here you can see your deployment map.",
-          				"item_url":  "http://i.onionstatic.com/avclub/5115/11/16x9/960.jpg",
-         				"image_url":  "http://i.onionstatic.com/avclub/5115/11/16x9/960.jpg",
+          				"item_url":  "{image_url}",
+         				"image_url":  "{image_url}",
           				"buttons": [{
             				"type": "web_url",
-            				"url": "http://i.onionstatic.com/avclub/5115/11/16x9/960.jpg",
+            				"url": "{image_url}",
             				"title": "Open Web URL"
           				}]
         			}]
