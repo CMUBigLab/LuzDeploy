@@ -70,6 +70,7 @@ module.exports.dispatchMessage = (payload, reply) => {
 }
 
 module.exports.dispatchPostback = (payload, reply) => {
+  console.log(JSON.stringify(payload))
   const strs = Object.keys(postbackHandlers)
   let result = null
   for (let i = 0; i < strs.length; i++) {
