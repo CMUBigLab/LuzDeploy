@@ -21,7 +21,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
   		])
   		.then(() => {
   			this.sendMessage({text: `Your task should take ${task.estimatedTimeMin} minutes.`})
-        	task.renderInstructions({fbid: this.fbid}).then(instructions => {
+        	task.renderInstructions({fbid: this.id}).then(instructions => {
         		let currWait = 0
 	       		const msgFn = this.sendMessage.bind(this)
         		instructions.forEach((i) => {
