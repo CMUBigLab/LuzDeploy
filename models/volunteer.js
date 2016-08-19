@@ -44,6 +44,17 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 	sendMessage: function(message) {
 		bot.sendMessage(this.get('fbid'), message)
 	},
+	canDoTask: function(task) {
+		const requiredPhone = task.get('reuquiredPhoneType')
+		const volPhoneType = this.get('phoneType')
+		if (!volPhoneType) {
+			return false
+		}
+		if (requiredPhone && requiredPhone != this.get('phoneType')) {
+			return false
+		}
+		return true
+	},
 	virtuals: {
 		name: function() {
 			return `${this.get('firstName')} ${this.get('lastName')}`

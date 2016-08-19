@@ -43,7 +43,9 @@ const Task = bookshelf.model('BaseModel').extend({
   },
   renderInstructions: function() {
     return this.load(['template']).then((task) => {
-      return task.related('template').renderInstructions(this.get('instructionParams'))
+      const params = this.get('instructionParams')
+      params["fbid"] = this.get('assignedVolunteer').get('fbid')
+      return task.related('template').renderInstructions(this.get())
     })
   },
   virtuals: {

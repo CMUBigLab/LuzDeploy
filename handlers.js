@@ -27,10 +27,14 @@ const messageHandlers = {
 }
 
 const postbackHandlers = {
-  'JOIN_DEPLOYMENT': {
+  'join_deployment': {
     handler: joinDeployment,
     volRequired: false,
   },
+  'ios_check': {
+    handler: iosCheck,
+    volRequired: true,
+  }
 }
 
 const aliases = {
@@ -74,37 +78,53 @@ module.exports.dispatchMessage = (payload, reply) => {
 }
 
 module.exports.dispatchPostback = (payload, reply) => {
-  const strs = Object.keys(postbackHandlers)
-  let result = null
-  for (let i = 0; i < strs.length; i++) {
-    if (payload.postback.payload.startsWith(strs[i])) {
-      result = strs[i]
-      break
-    }
-  }
-  if (!result) throw new Error(`invalid postback: ${payload.postback.payload}`)
-  const found = postbackHandlers[result]
-  if (found.volRequired) {
-    Volunteer.where({fbid: payload.sender.id}).fetch()
-    .then(() => {
-      payload.sender.volunteer = vol
+  const postback = JSON.parse(payload.postback.payload)
+  if (postback.type in postbackHandlers) {
+    const found = postbackHandlers[result]
+    payload.postback.payload = postback
+    if (found.volRequired) {
+      Volunteer.where({fbid: payload.sender.id}).fetch()
+      .then(() => {
+        payload.sender.volunteer = vol
+        found.handler(payload, reply)
+      })
+    } else {
       found.handler(payload, reply)
-    })
+    }
   } else {
-    found.handler(payload, reply)
+    throw new Error(`invalid postback: ${payload.postback.payload}`)
   }
 }
 
-function greetingMessage(message, reply) {
+function greetingMessage(payload, reply) {
   reply({text: "Hi!"})
 }
 
-function helpMessage(payload  , reply) {
+function helpMessage(payload, reply) {
   const vol = payload.sender.volunteer
   vol.related('deployment').fetch().then(d => d.sendMentor(vol))
 }
- 
-function onBoardVolunteer(payload, reply) {
+
+// function onboardVolunteer(payload, reply) {
+//   const response = {
+//     "attachment": {
+//       "type":"template",
+//         "payload": {
+//           "template_type": "button",
+//               "text": `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. Which deployment would you like to join?`,
+//               "buttons": [
+//                 { type: "web_url", title: d.get('name'), 
+//                 payload: JSON.stringify({
+//                   type: "join_deployment",
+//                   args: d.get('id'),
+//                 })
+//               }))
+//             }
+//           }
+//       }
+// }
+
+function sendDeploymentMessage(payload, reply) {
   Deployment.fetchAll().then(function(deployments) {
     if (deployments.count() == 0) {
       reply({text: `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. 
@@ -116,7 +136,14 @@ function onBoardVolunteer(payload, reply) {
             "payload":{
               "template_type": "button",
               "text": `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. Which deployment would you like to join?`,
-              "buttons": deployments.map((d) => ({type:"postback", title: d.get('name'), payload: `JOIN_DEPLOYMENT_${d.get('id')}`}))
+              "buttons": deployments.map((d) => ({
+                type:"postback", 
+                title: d.get('name'), 
+                payload: JSON.stringify({
+                  type: "join_deployment",
+                  args: d.get('id'),
+                })
+              }))
             }
           }
       }
@@ -125,12 +152,26 @@ function onBoardVolunteer(payload, reply) {
   })
 }
 
+function iosCheck(payload, reply) {
+  const vol = payload.sender.volunteer
+  const response = payload.postback.payload.value
+  if (response == "yes") {
+      vol.save({phoneType: "ios"}, {patch: true})
+      .then(() => {
+        reply({text: "Great, thanks!"})
+      })
+      .then(() => sendDeploymentMessage(payload, reply))
+  } else {
+    reply({text: "Thanks for your interest, but we can't support your phone at this time!"})
+  }
+}
+
 function joinDeployment(payload, reply) {
   Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']}).then((vol) => {
     if (vol && vol.related('deployment')) {
       reply({text: `You are already in a deployment (${vol.related('deployment').get('name')}). You must leave that first.`})
     } else {
-      const deployId = parseInt(payload.postback.payload.substr('JOIN_DEPLOYMENT_'.length), 10)
+      const deployId = payload.postback.payload.value
       Deployment.where({id: deployId}).fetch().then((deployment) => {
         if (!deployment) throw new Error(`invalid deployment id: ${deployId}`)
         let method = {method: 'insert'}

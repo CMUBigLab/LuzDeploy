@@ -27,7 +27,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 			this.related('volunteers')
 				.filter((v) => !v.currentTask)
 				.forEach((v) => {
-    				if (pool.length > 0) {
+    				if (pool.length > 0 && v.canDoTask(pool[0])) {
      					v.assignTask(pool.pop())
     			}
 			})

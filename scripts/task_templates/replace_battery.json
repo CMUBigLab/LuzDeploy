@@ -1,0 +1,53 @@
+{
+	"type": "replace_battery",
+	"estimated_time": "20 min",
+	"completed_webhook": null,
+	"instructions": [
+		{
+			"wait": 0,
+			"message": {
+				"text": "One of our beacons needs to have its battery replaced. Please pickup a replacement battery from NSH 4522."
+			}
+		},
+		{
+			"wait": 1,
+			"message": {
+        		"attachment": {
+            		"type": "template",
+            		"payload": {
+              			"template_type": "button",
+              			"text": "Once you have a battery, head to the beacon location marked in orange on this map.\nThen, open the beacon and replace the battery.",
+              			"buttons": [{
+               				"type":"web_url", 
+                			"title": "Open Map", 
+                			"url": "http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon={beacon}"
+              			}]
+            		}
+          		}
+      		}
+		},
+		{
+			"wait": 1,
+			"message": {
+    			"attachment": {
+      				"type": "template",
+      				"payload": {
+        				"template_type": "generic",
+        				"elements": [{
+          					"title": "Replacing the battery",
+          					"subtitle": "To open a beacon, pop off the back cover with your nail, remove the old battery, and put the new one in its place. The positive side of the battery goes towards the clip.",
+         					  "image_url":  "http://infinite-hamlet-59231.herokuapp.com/images/nail.jpg"
+        				},
+                {
+        					"image_url": "http://infinite-hamlet-59231.herokuapp.com/images/batteries.jpg"
+        				}]
+      				}
+    			}
+    		}
+		},
+		{
+			"wait": 1,
+			"message": {"text": "Once the battery is replaced, put the beacon back together, place it on the wall, and return the depleted battery to the same location you picked up the new battery."}
+		}
+	]
+}
