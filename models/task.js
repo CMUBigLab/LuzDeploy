@@ -41,11 +41,11 @@ const Task = bookshelf.model('BaseModel').extend({
         }
       })
   },
-  renderInstructions: function() {
+  renderInstructions: function(otherParams) {
     return this.load(['template']).then((task) => {
       const params = this.get('instructionParams')
-      params["fbid"] = this.get('assignedVolunteer').get('fbid')
-      return task.related('template').renderInstructions(this.get())
+      _.assign(params, otherParams)
+      return task.related('template').renderInstructions(params)
     })
   },
   virtuals: {
