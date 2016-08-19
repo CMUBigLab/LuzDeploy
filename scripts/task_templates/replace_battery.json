@@ -49,7 +49,24 @@
 		},
 		{
 			"wait": 1,
-			"message": {"text": "Once the battery is replaced, put the beacon back together, place it on the wall, and return the depleted battery to the same location you picked up the new battery."}
-		}
+			"message": {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "button",
+            "text": "Once the battery is replaced, put the beacon back together, place it on the wall, and open the NavCog app with this link. Press the button once, wait a few seconds, and press it again to stop.",
+            "buttons": [{
+              "type":"web_url", 
+              "title": "Open NavCog", 
+              "url": "http://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&beacons={beacon}&wid={fbid}"
+            }]
+          }
+        }
+      }
+		},
+    {
+      "wait": 1,
+      "message": {"text": "After completing this final step, please relturn the depleted battery to NSH 4522."}
+    },  
 	]
 }
