@@ -34,11 +34,13 @@
       				"payload": {
         				"template_type": "generic",
         				"elements": [{
-          					"title": "Replacing the battery",
-          					"subtitle": "To open a beacon, pop off the back cover with your nail, remove the old battery, and put the new one in its place. The positive side of the battery goes towards the clip.",
-         					  "image_url":  "http://infinite-hamlet-59231.herokuapp.com/images/nail.jpg"
+          				"title": "Opening the beacon",
+          				"subtitle": "To open a beacon, pop off the back cover with your nail. Be careful not to break the clips.",
+         					"image_url":  "http://infinite-hamlet-59231.herokuapp.com/images/nail.jpg"
         				},
                 {
+                  "title": "Replacing the battery",
+                  "subtitle": "Remove the old battery, and put the new one in its place. The positive side of the battery goes towards the metal clip.",
         					"image_url": "http://infinite-hamlet-59231.herokuapp.com/images/batteries.jpg"
         				}]
       				}
