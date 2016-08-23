@@ -168,8 +168,9 @@ function assignMessage(payload, reply, args) {
           }
       }
       reply(response)
-    }
-  })
+    })
+  }
+})
 }
 
 // function onboardVolunteer(payload, reply) {
@@ -234,13 +235,13 @@ function assignTask(payload, reply) {
           reply({text: "Invalid task."})
            return
         } 
-        task.save({volunteer_fbid: vol,get('fbid')}, {patch: true}).then(() => {
+        task.save({volunteer_fbid: vol.get('fbid')}, {patch: true}).then(() => {
           Admin({fbid: args.adminId}).fetch().then(admin => {
             admin.sendMessage({text: `Assigned task ${task.id} to ${vol.name}.`})
           })
         })
       })
-  }
+  })
   // TODO: assign task based on id args
   // TODO: if already has assignedVol, then error
 }

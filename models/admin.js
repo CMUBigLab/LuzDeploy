@@ -1,7 +1,7 @@
 const bookshelf = require('../bookshelf')
 const Bot = require('../bot')
 
-require('./deployments')
+require('./deployment')
 require('./base-model')
 const Admin = bookshelf.model('BaseModel').extend({
   tableName: 'admins',

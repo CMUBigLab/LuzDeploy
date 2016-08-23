@@ -45,7 +45,7 @@ const Task = bookshelf.model('BaseModel').extend({
     return this.load(['template']).then((task) => {
       let params = this.get('instructionParams')
       params = _.assign(params, otherParams)
-      return task.related('template').renderInstructions(params)
+          return task.related('template').renderInstructions(params)
     })
   },
   virtuals: {
