@@ -1,6 +1,8 @@
-const Deployment = require('./models/deployment.js')
-const Volunteer = require('./models/volunteer.js')
-const constants = require('./constants.js')
+const Deployment = require('./models/deployment')
+const Volunteer = require('./models/volunteer')
+const Admin = require('./models/admin')
+const Task = require('./models/task')
+const constants = require('./constants')
 
 const messageHandlers = {
 	'hello': {
@@ -24,6 +26,10 @@ const messageHandlers = {
 	'help': {
 		handler: helpMessage,
 	},
+  'assign': {
+    handler: assignMessage,
+    adminRequired: true,
+  }
 }
 
 const postbackHandlers = {
@@ -31,9 +37,10 @@ const postbackHandlers = {
     handler: joinDeployment,
     volRequired: false,
   },
-  'ios_check': {
-    handler: iosCheck,
-    volRequired: true,
+  'assign_task': {
+    handler: assignTask,
+    volRequired: false,
+    adminRequired: true,
   }
 }
 
@@ -48,13 +55,21 @@ const aliases = {
 }
 
 module.exports.dispatchMessage = (payload, reply) => {
-  Volunteer.where({fbid: payload.sender.id}).fetch()
-  .then((vol) => {
+  Admin.where({fbid: payload.sender.id}).fetch()
+  .then(admin => {
+    if (admin) {
+      payload.sender.admin = admin
+    }
+    return Volunteer.where({fbid: payload.sender.id}).fetch()
+  })
+  .then(vol => {
     if (!vol) {
       onBoardVolunteer(payload, reply)
       return
     }
     payload.sender.volunteer = vol
+  })
+  .then(() => {
     if (!payload.message.text) {
       reply({text: "Sorry, I only handle text messages right now."})
       return
@@ -68,6 +83,8 @@ module.exports.dispatchMessage = (payload, reply) => {
       const commandHandler = messageHandlers[command]
       if (values.length-1 != (commandHandler.requiredArgs || 0)) {
         reply({text: `The ${command} command requires ${commandHandler.requiredArgs} arguments.`})
+      } else if (command.adminRequired && !payload.sender.admin) {
+        reply({text: `Permission denied`})
       } else {
         commandHandler.handler(payload, reply, values.slice(1));
       }
@@ -82,7 +99,13 @@ module.exports.dispatchPostback = (payload, reply) => {
   if (postback.type in postbackHandlers) {
     const found = postbackHandlers[result]
     payload.postback.payload = postback
-    if (found.volRequired) {
+    if (found.adminRequired) {
+      Admin.where({fbid: payload.sender.id}).fetch()
+      .then(() => {
+        payload.sender.admin = vol
+        found.handler(payload, reply)
+      })
+    } else if (found.volRequired) {
       Volunteer.where({fbid: payload.sender.id}).fetch()
       .then(() => {
         payload.sender.volunteer = vol
@@ -103,6 +126,50 @@ function greetingMessage(payload, reply) {
 function helpMessage(payload, reply) {
   const vol = payload.sender.volunteer
   vol.related('deployment').fetch().then(d => d.sendMentor(vol))
+}
+
+function assignMessage(payload, reply, args) {
+  const admin = payload.sender.admin
+  const taskType = args.shift()
+  // TODO: verify that there is correct number of args for taskType
+  if (args.length % 2 != 0) {
+    reply({text: "Incorrect number of parameters."})
+    return
+  }
+  const params = _.chunk(args, 2)
+    .reduce((res, curr) => {
+      res[curr[0]] = curr[1]
+    }, {})
+  Task({type: taskType, instructionParams: params}).fetch()
+  .then((model) => {
+    if (!model) {
+      reply({text: "I could not find a matching task."})
+      return
+    } else {
+      return Volunteer.fetchAll().then(volunteers => {
+        const response = {
+          "attachment":{
+            "type":"template",
+            "payload":{
+              "template_type": "button",
+              "text": `Who should I assign task #${model.id} to?`,
+              "buttons": volunteers.map((v) => ({
+                type:"postback", 
+                title: v.name, 
+                payload: JSON.stringify({
+                  type: "assign_task",
+                  args: {
+                    taskId: model.get('id'),
+                    volId: v.get('fbid')
+                  }
+                })
+              }))
+            }
+          }
+      }
+      reply(response)
+    }
+  })
 }
 
 // function onboardVolunteer(payload, reply) {
@@ -152,18 +219,30 @@ function sendDeploymentMessage(payload, reply) {
   })
 }
 
-function iosCheck(payload, reply) {
-  const vol = payload.sender.volunteer
-  const response = payload.postback.payload.value
-  if (response == "yes") {
-      vol.save({phoneType: "ios"}, {patch: true})
-      .then(() => {
-        reply({text: "Great, thanks!"})
+function assignTask(payload, reply) {
+  const args = payload.postback.payload.value
+  Volunteer({fbid: args.volId}).fetch()
+  .then(vol => {
+    if (!vol)
+    {
+      reply({text: "Invalid volunteer."})
+      return
+    }
+    Task({id: args.taskId}).fetch()
+      .then(task => {
+        if (!task) {
+          reply({text: "Invalid task."})
+           return
+        } 
+        task.save({volunteer_fbid: vol,get('fbid')}, {patch: true}).then(() => {
+          Admin({fbid: args.adminId}).fetch().then(admin => {
+            admin.sendMessage({text: `Assigned task ${task.id} to ${vol.name}.`})
+          })
+        })
       })
-      .then(() => sendDeploymentMessage(payload, reply))
-  } else {
-    reply({text: "Thanks for your interest, but we can't support your phone at this time!"})
   }
+  // TODO: assign task based on id args
+  // TODO: if already has assignedVol, then error
 }
 
 function joinDeployment(payload, reply) {

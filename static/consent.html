@@ -1,9 +1,26 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 <title>Consent Form - Carnegie Mellon University</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
+<div class="container">
 	<h1>ONLINE CONSENT FORM</h1>
 	<p>
 		This task is part of a research study conducted by Jeffrey Bigham at Carnegie Mellon University and is funded by Carnegie Mellon University. The purpose of the research is to understand how to coordinate volunteers to perform collective action that has a positive impact on the disabled.
@@ -50,18 +67,67 @@
 	<p>
 		Your participation in this research is voluntary. You may discontinue participation at any time during the research activity.
 	</p>
-	<form>
-	<label for="confirm_age">I am age 18 or older.</label>
-	<input type="radio" name="confirm_age" value="yes">Yes
-	<input type="radio" name="confirm_age" value="no">No<br />
-
-	<label for="confirm_understand">I have read and understand the information above.</label> 
-	<input type="radio" name="confirm_understand" value="yes">Yes
-	<input type="radio" name="confirm_understand" value="no">No<br />
-
-	<label for="confirm_participate">I want to participate in this research and continue with the task.</label> 
-	<input type="radio" name="confirm_participate" value="yes">Yes
-	<input type="radio" name="confirm_participate" value="no">No<br />
+	<form method="post" action="/consent">
+		<input id="fbid" type="hidden" name="fbid" />
+		<div class="form-group row">
+			<label class="form-check">
+				I am age 18 or older.
+				<input class="form-check-input" type="radio" name="confirm_age" value="yes" />Yes
+				<input class="form-check-input" type="radio" name="confirm_age" value="no" />No
+			</label>
+		</div>
+		<div class="form-group row">
+			<label class="form-check">
+				I have read and understand the information above.
+				<input class="form-check-input" type="radio" name="confirm_understand" value="yes" />Yes
+				<input class="form-check-input" type="radio" name="confirm_understand" value="no" />No
+			</label>
+		</div>
+		<div class="form-group row">
+			<label class="form-check" for="confirm_participate">
+				I want to participate in this research and continue with the task.
+				<input class="form-check-input" type="radio" name="confirm_participate" value="yes" />Yes
+				<input class="form-check-input" type="radio" name="confirm_participate" value="no" />No
+			</label> 
+		</div>
+		<div class="form-group row">
+    	<div class="offset-sm-2 col-sm-10">
+		<button type="submit" class="btn btn-primary">Submit</button>
+		</div>
+		</div>
 	</form>
+</div>
+<div class="modal fade" id="no-ios">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Sorry!</h4>
+      </div>
+      <div class="modal-body">
+        <p>You must have an iOS device to participate in this study.</p>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script>
+		var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+		if (!iOS) {
+			$('#no-ios').modal({backdrop:"static", keyboard:false})
+		}		
+		    		function getParameterByName(name, url) {
+    		if (!url) url = window.location.href;
+    		name = name.replace(/[\[\]]/g, "\\$&");
+    		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        	results = regex.exec(url);
+    		if (!results) return null;
+    		if (!results[2]) return '';
+    		return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+		$('#fbid').val(getParameterByName('fbid'));
+</script>
 </body>
 </html>
