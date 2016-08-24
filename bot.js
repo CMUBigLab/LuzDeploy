@@ -45,7 +45,7 @@ if (cli.interactive) {
   bot.startListening = function() {
     var app = express()
     app.use(express.static(__dirname + '/static'))
-    app.use(bodyParser.urlencoded())
+    app.use(bodyParser.urlencoded({extended: true}))
     app.use(routes)
     app.use(bot.middleware())
     var server = app.listen(process.env.PORT || 3000, () => {

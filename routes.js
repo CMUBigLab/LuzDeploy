@@ -1,7 +1,10 @@
 const Consent = require('./models/consent')
+const TaskTemplate = require('./models/task-template')
 
+const Task = require('./models/task')
 var express = require('express');
 var router = express.Router();
+var bookshelf = require('./bookshelf')
 
 const handlers = require('./handlers')
 
@@ -13,7 +16,7 @@ router.post('/consent', function(req, res) {
 })
 
 router.post('/task', function(req, res) {
-	new TemplateType({type: req.body.template_type}).fetch({require: true})
+	new TaskTemplate({type: req.body.template_type}).fetch({require: true})
 	.then(templateType => {
 		const params = _.omit(req.body, ['template_type', 'deployment'])
 		return new Task({
@@ -25,10 +28,10 @@ router.post('/task', function(req, res) {
 		}).save()
 	})
 	.then((result) => {
-		res.send(result, 201)
-	}).catch(NotFoundError, (err) => {
-		res.send(`Invalid template type ${req.body.template_type}`, 400)
-	})
+		res.status(201).send(result)
+	}).catch(bookshelf.NotFoundError, (err) => {
+		res.status(400).send(`Invalid template type ${req.body.template_type}`)
+	}).catch((e) => res.status(500).send(e))
 })
 
 module.exports = router
