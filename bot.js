@@ -9,7 +9,7 @@ const consent = require('./consent')
 process.on('unhandledRejection', function(error, promise) {
   console.error("UNHANDLED REJECTION", error.stack)
 })
-
+if (require.main === module) {
 let bot = null
 if (cli.interactive) {
   bot = require('./interactive').instance
@@ -41,6 +41,7 @@ if (cli.interactive) {
   })
 
   module.exports.sendMessage = bot.sendMessage.bind(bot)
+
   bot.startListening = function() {
     var app = express()
     app.use(express.static(__dirname + '/static'))
@@ -53,4 +54,6 @@ if (cli.interactive) {
   }
 }
 
+
 bot.startListening()
+}

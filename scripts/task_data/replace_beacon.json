@@ -1,4 +1,4 @@
-{"task":"replace_battery", "list": [
+{"task":"replace_beacon", "list": [
 	{"beacon": 15, "edge": 3},
 	{"beacon": 21, "edge": 4},
 	{"beacon": 40, "edge": 44},
