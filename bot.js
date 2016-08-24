@@ -5,7 +5,7 @@ var bodyParser = require('body-parser')
 
 const cli = require('./cli')
 const handlers = require('./handlers')
-const consent = require('./consent')
+const routes = require('./routes')
 process.on('unhandledRejection', function(error, promise) {
   console.error("UNHANDLED REJECTION", error.stack)
 })
@@ -46,7 +46,7 @@ if (cli.interactive) {
     var app = express()
     app.use(express.static(__dirname + '/static'))
     app.use(bodyParser.urlencoded())
-    app.post('/consent', consent.post)
+    app.use(routes)
     app.use(bot.middleware())
     var server = app.listen(process.env.PORT || 3000, () => {
       console.log(`Echo bot server running at port ${server.address().port}.`)
