@@ -73,6 +73,9 @@ module.exports.dispatchMessage = (payload, reply) => {
     payload.sender.volunteer = vol
   })
   .then(() => {
+    if (!payload.sender.admin || !payload.sender.volunteer) {
+      return
+    }
     if (!payload.message.text) {
       reply({text: "Sorry, I only handle text messages right now."})
       return
