@@ -202,7 +202,7 @@ function onboardVolunteer(payload, reply) {
               "buttons": [{
                 type: "web_url",
                 title: 'Open Consent Form', 
-                url: `${config.BASE_URL}/consent.html`
+                url: `${config.BASE_URL}/consent.html?fbid=${payload.sender.id}`
               }]
             }
           }
