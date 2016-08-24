@@ -78,13 +78,13 @@
 		<div class="form-group row">
 			<label class="form-check">
 				I have read and understand the information above.
-				<input class="form-check-input" type="checkbox" name="confirm_understand" />Yes
+				<input class="form-check-input" type="checkbox" name="confirm_understand" />
 			</label>
 		</div>
 		<div class="form-group row">
 			<label class="form-check" for="confirm_participate">
 				I want to participate in this research and continue with the task.
-				<input class="form-check-input" type="checkbox" name="confirm_participate" />Yes
+				<input class="form-check-input" type="checkbox" name="confirm_participate" />
 			</label> 
 		</div>
 		<div class="form-group row">
@@ -126,19 +126,22 @@
     		return decodeURIComponent(results[2].replace(/\+/g, " "));
 		}
 		$('#fbid').val(getParameterByName('fbid'));
-		var confirmAge = false, confirmParticipate = false, confirmUnderstand = false
+		var confirmAge = false, confirmParticipate = false, confirmUnderstand = false;
+		function setDisabled() {
+			$('button[type=submit]').prop('disabled', !(confirmAge && confirmParticipate && confirmUnderstand));
+		}
 		$(document).ready(function() {
    			$('input[type=checkbox][name=confirm_understand]').change(function() {
-       			confirmUnderstand = !confirmUnderstand
-       			$('button[type=submit]').disable(!(confirmAge && confirmParticipate && confirmUnderstand));
+       			confirmUnderstand = !confirmUnderstand;
+       			setDisabled();
    			});
    			$('input[type=checkbox][name=confirm_participate]').change(function() {
-       			confirmParticipate = !confirmParticipate
-       			$('button[type=submit]').disable(!(confirmAge && confirmParticipate && confirmUnderstand));
+       			confirmParticipate = !confirmParticipate;
+       			setDisabled();
    			});
    			$('input[type=checkbox][name=confirm_age]').change(function() {
-       			confirmAge = !confirmAge
-       			$('button[type=submit]').disable(!(confirmAge && confirmParticipate && confirmUnderstand));
+       			confirmAge = !confirmAge;
+       			setDisabled();
    			});
    		});
 </script>
