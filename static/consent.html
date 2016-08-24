@@ -130,17 +130,15 @@
 		$(document).ready(function() {
    			$('input[type=checkbox][name=confirm_understand]').change(function() {
        			confirmUnderstand = !confirmUnderstand
-       			$('button[type=submit]').disable(!confirmAge || !confirmParticipate || !confirmUnderstand);
+       			$('button[type=submit]').disable(!(confirmAge && confirmParticipate && confirmUnderstand));
    			});
    			$('input[type=checkbox][name=confirm_participate]').change(function() {
        			confirmParticipate = !confirmParticipate
-       			$('button[type=submit]').disable(!confirmAge || !confirmParticipate || !confirmUnderstand);
-
+       			$('button[type=submit]').disable(!(confirmAge && confirmParticipate && confirmUnderstand));
    			});
    			$('input[type=checkbox][name=confirm_age]').change(function() {
        			confirmAge = !confirmAge
-       			$('button[type=submit]').disable(!confirmAge || !confirmParticipate || !confirmUnderstand);
-
+       			$('button[type=submit]').disable(!(confirmAge && confirmParticipate && confirmUnderstand));
    			});
    		});
 </script>
