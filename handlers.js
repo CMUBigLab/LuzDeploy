@@ -3,6 +3,9 @@ const Volunteer = require('./models/volunteer')
 const Admin = require('./models/admin')
 const Task = require('./models/task')
 const constants = require('./constants')
+const Consent = require('./models/consent')
+
+const bot = require('./bot')
 
 const _ = require('lodash')
 const config = require('./config')
@@ -63,17 +66,22 @@ module.exports.dispatchMessage = (payload, reply) => {
     if (admin) {
       payload.sender.admin = admin
     }
-    return Volunteer.where({fbid: payload.sender.id}).fetch()
+    return Consent.where({fbid: payload.sender.id}).fetch()
   })
-  .then(vol => {
-    if (!vol) {
+  .then(consent => {
+    if (!consent) {
       onboardVolunteer(payload, reply)
       return
+    } else {
+      return Volunteer.where({fbid: payload.sender.id}).fetch()
+        .then(vol => {
+    if (!vol) {
+      sendDeploymentMessage(payload.sender.id)
+      return
+    } else {
+      payload.sender.volunteer = vol
     }
-    payload.sender.volunteer = vol
-  })
-  .then(() => {
-    if (!payload.sender.admin || !payload.sender.volunteer) {
+    if (!(payload.sender.admin || payload.sender.volunteer)) {
       return
     }
     if (!payload.message.text) {
@@ -96,6 +104,8 @@ module.exports.dispatchMessage = (payload, reply) => {
       }
     } else {
       reply({text: `Command ${command} not found. Try one of the following: ${Object.keys(messageHandlers)}.`})
+    }
+  })
     }
   })
 }
@@ -210,10 +220,10 @@ function onboardVolunteer(payload, reply) {
       reply(response)
 }
 
-function sendDeploymentMessage(payload, reply) {
+function sendDeploymentMessage(fbid) {
   Deployment.fetchAll().then(function(deployments) {
     if (deployments.count() == 0) {
-      reply({text: `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. 
+      bot.sendMessage(fbid, {text: `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. 
         We don't have any deployments right now, so please check back later!`})
     } else {
       const response = {
@@ -221,7 +231,7 @@ function sendDeploymentMessage(payload, reply) {
             "type":"template",
             "payload":{
               "template_type": "button",
-              "text": `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. Which deployment would you like to join?`,
+              "text": `Which deployment would you like to join?`,
               "buttons": deployments.map((d) => ({
                 type:"postback", 
                 title: d.get('name'), 
@@ -233,10 +243,12 @@ function sendDeploymentMessage(payload, reply) {
             }
           }
       }
-      reply(response)
+      bot.sendMessage(fbid, response)
     }
   })
 }
+
+module.exports.sendDeploymentMessage = sendDeploymentMessage;
 
 function assignTask(payload, reply, args) {
   new Volunteer({fbid: args.volId}).fetch()
