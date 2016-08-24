@@ -126,21 +126,20 @@
     		return decodeURIComponent(results[2].replace(/\+/g, " "));
 		}
 		$('#fbid').val(getParameterByName('fbid'));
-
+		var confirmAge = false, confirmParticipate = false, confirmUnderstand = false
 		$(document).ready(function() {
-			var confirmAge = false, confirmParticipate = false, confirmUnderstand = false
    			$('input[type=checkbox][name=confirm_understand]').change(function() {
        			confirmUnderstand = !confirmUnderstand
-       			$('button[type=submit]').disabled = !confirmAge || !confirmParticipate || !confirmUnderstand;
+       			$('button[type=submit]').disable(!confirmAge || !confirmParticipate || !confirmUnderstand);
    			});
    			$('input[type=checkbox][name=confirm_participate]').change(function() {
        			confirmParticipate = !confirmParticipate
-       			$('button[type=submit]').disabled = !confirmAge || !confirmParticipate || !confirmUnderstand;
+       			$('button[type=submit]').disable(!confirmAge || !confirmParticipate || !confirmUnderstand);
 
    			});
    			$('input[type=checkbox][name=confirm_age]').change(function() {
        			confirmAge = !confirmAge
-       			$('button[type=submit]').disabled = !confirmAge || !confirmParticipate || !confirmUnderstand;
+       			$('button[type=submit]').disable(!confirmAge || !confirmParticipate || !confirmUnderstand);
 
    			});
    		});
