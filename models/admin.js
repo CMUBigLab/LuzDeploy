@@ -1,5 +1,5 @@
 const bookshelf = require('../bookshelf')
-const Bot = require('../bot')
+const bot = require('../bot')
 
 require('./deployment')
 require('./base-model')

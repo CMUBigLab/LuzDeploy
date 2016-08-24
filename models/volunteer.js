@@ -2,6 +2,8 @@ const bookshelf = require('../bookshelf')
 const bot = require('../bot')
 const handlers = require('../handlers')
 
+const _ = require('lodash')
+
 require('./deployment')
 require('./task')
 require('./base-model')
@@ -32,6 +34,21 @@ const Volunteer = bookshelf.model('BaseModel').extend({
         	})
       	})
 	},
+	getNewTask: function() {
+		this.related('deployment').getTaskPool().then(pool => {
+			const preAssigned = _.find(pool, p => {
+				return p.get('volunteerFbid') == this.get('fbid')
+			})
+			if (preAssigned) {
+				this.assignTask(preAssigned)
+			}
+    		else if (pool.length > 0) {
+      			this.assignTask(pool.pop())
+    		} else {
+      			this.sendMessage({text: 'There are no tasks available right now.'})
+    		}
+  })
+	},
 	rejectTask: function() {
 		return this.related('currentTask').fetch()
 		.then((task) => {
@@ -43,17 +60,6 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 	},
 	sendMessage: function(message) {
 		bot.sendMessage(this.get('fbid'), message)
-	},
-	canDoTask: function(task) {
-		const requiredPhone = task.get('reuquiredPhoneType')
-		const volPhoneType = this.get('phoneType')
-		if (!volPhoneType) {
-			return false
-		}
-		if (requiredPhone && requiredPhone != this.get('phoneType')) {
-			return false
-		}
-		return true
 	},
 	virtuals: {
 		name: function() {

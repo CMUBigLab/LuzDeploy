@@ -25,9 +25,13 @@ const Task = bookshelf.model('BaseModel').extend({
       return this.save({startTime: new Date()})
   },
   finish: function() {
-      return this.save({completed: true, completedTime: new Date()}, {patch: true})
+    this.assignedVolunteer().fetch().then(vol => {
+      return Promise.all([
+        this.save({completed: true, completedTime: new Date()}, {patch: true}),
+        vol.save({currentTask: null})
+      ])
       .then(() => {
-        this.assignedVolunteer().sendMessage({text: `Thanks! You ended at ${this.get('completedTime')}.`})
+        vol.sendMessage({text: `Thanks! You ended at ${this.get('completedTime')}.`})
       })
       .then(() => {
         const webhook = this.get('completedWebhook')
@@ -40,6 +44,7 @@ const Task = bookshelf.model('BaseModel').extend({
           })
         }
       })
+    })
   },
   renderInstructions: function(otherParams) {
     return this.load(['template']).then((task) => {

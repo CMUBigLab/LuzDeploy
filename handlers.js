@@ -4,6 +4,8 @@ const Admin = require('./models/admin')
 const Task = require('./models/task')
 const constants = require('./constants')
 
+const _ = require('lodash')
+
 const messageHandlers = {
 	'hello': {
 		handler: greetingMessage,
@@ -81,12 +83,12 @@ module.exports.dispatchMessage = (payload, reply) => {
 
     if (command in messageHandlers) {
       const commandHandler = messageHandlers[command]
-      if (values.length-1 != (commandHandler.requiredArgs || 0)) {
+      if (commandHandler.requiredArgs  && values.length-1 != commandHandler.requiredArgs) {
         reply({text: `The ${command} command requires ${commandHandler.requiredArgs} arguments.`})
       } else if (command.adminRequired && !payload.sender.admin) {
         reply({text: `Permission denied`})
       } else {
-        commandHandler.handler(payload, reply, values.slice(1));
+        commandHandler.handler(payload, reply, values.slice(1))
       }
     } else {
       reply({text: `Command ${command} not found. Try one of the following: ${Object.keys(messageHandlers)}.`})
@@ -97,22 +99,22 @@ module.exports.dispatchMessage = (payload, reply) => {
 module.exports.dispatchPostback = (payload, reply) => {
   const postback = JSON.parse(payload.postback.payload)
   if (postback.type in postbackHandlers) {
-    const found = postbackHandlers[result]
+    const found = postbackHandlers[postback.type]
     payload.postback.payload = postback
     if (found.adminRequired) {
       Admin.where({fbid: payload.sender.id}).fetch()
-      .then(() => {
-        payload.sender.admin = vol
-        found.handler(payload, reply)
+      .then((admin) => {
+        payload.sender.admin = admin
+        found.handler(payload, reply, payload.postback.payload.args)
       })
     } else if (found.volRequired) {
       Volunteer.where({fbid: payload.sender.id}).fetch()
       .then(() => {
         payload.sender.volunteer = vol
-        found.handler(payload, reply)
+        found.handler(payload, reply, payload.postback.payload.args)
       })
     } else {
-      found.handler(payload, reply)
+      found.handler(payload, reply, payload.postback.payload.args)
     }
   } else {
     throw new Error(`invalid postback: ${payload.postback.payload}`)
@@ -130,6 +132,10 @@ function helpMessage(payload, reply) {
 
 function assignMessage(payload, reply, args) {
   const admin = payload.sender.admin
+  if (args.length < 1) {
+    reply({text: "Must supply a task type!"})
+    return
+  }
   const taskType = args.shift()
   // TODO: verify that there is correct number of args for taskType
   if (args.length % 2 != 0) {
@@ -138,9 +144,17 @@ function assignMessage(payload, reply, args) {
   }
   const params = _.chunk(args, 2)
     .reduce((res, curr) => {
-      res[curr[0]] = curr[1]
+      var val = curr[1]
+      if (!isNaN(val)) {
+        val = parseInt(val, 10)
+      }
+      res[curr[0]] = val
+      return res
     }, {})
-  Task({type: taskType, instructionParams: params}).fetch()
+  new Task({
+    templateType: taskType,
+    volunteer_fbid: null,
+  }).query('where','instruction_params','@>', JSON.stringify(params)).fetch()
   .then((model) => {
     if (!model) {
       reply({text: "I could not find a matching task."})
@@ -160,7 +174,8 @@ function assignMessage(payload, reply, args) {
                   type: "assign_task",
                   args: {
                     taskId: model.get('id'),
-                    volId: v.get('fbid')
+                    volId: v.get('fbid'),
+                    adminId: admin.get('fbid')
                   }
                 })
               }))
@@ -220,23 +235,22 @@ function sendDeploymentMessage(payload, reply) {
   })
 }
 
-function assignTask(payload, reply) {
-  const args = payload.postback.payload.value
-  Volunteer({fbid: args.volId}).fetch()
+function assignTask(payload, reply, args) {
+  new Volunteer({fbid: args.volId}).fetch()
   .then(vol => {
     if (!vol)
     {
       reply({text: "Invalid volunteer."})
       return
     }
-    Task({id: args.taskId}).fetch()
+    new Task({id: args.taskId}).fetch()
       .then(task => {
         if (!task) {
           reply({text: "Invalid task."})
            return
         } 
         task.save({volunteer_fbid: vol.get('fbid')}, {patch: true}).then(() => {
-          Admin({fbid: args.adminId}).fetch().then(admin => {
+          new Admin({fbid: args.adminId}).fetch().then(admin => {
             admin.sendMessage({text: `Assigned task ${task.id} to ${vol.name}.`})
           })
         })
@@ -246,12 +260,12 @@ function assignTask(payload, reply) {
   // TODO: if already has assignedVol, then error
 }
 
-function joinDeployment(payload, reply) {
+function joinDeployment(payload, reply, args) {
   Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']}).then((vol) => {
     if (vol && vol.related('deployment')) {
       reply({text: `You are already in a deployment (${vol.related('deployment').get('name')}). You must leave that first.`})
     } else {
-      const deployId = payload.postback.payload.value
+      const deployId = args
       Deployment.where({id: deployId}).fetch().then((deployment) => {
         if (!deployment) throw new Error(`invalid deployment id: ${deployId}`)
         let method = {method: 'insert'}
@@ -310,13 +324,7 @@ function askMessage(payload, reply) {
     reply({text: 'You already have a task! Finish that first.'})
     return
   }
-  vol.related('deployment').getTaskPool().then(pool => {
-    if (pool.length > 0) {
-      vol.assignTask(pool.pop())
-    } else {
-      reply({text: 'There are no tasks available right now.'})
-    }
-  })
+  vol.getNewTask()
 })
 }
 
@@ -381,7 +389,7 @@ function doneMessage(payload, reply) {
     .then((pool) => {
       if (pool.length > 0) {
         if (!deployment.isCasual) {
-          vol.assignTask(pool.pop())
+          vol.getNewTask()
         } else {
           reply({text: "You don't have any more tasks, but there are still some left for others."});
         }
