@@ -4,7 +4,7 @@ const express = require('express')
 
 const cli = require('./cli')
 const handlers = require('./handlers')
-const consent = require('consent')
+const consent = require('./consent')
 process.on('unhandledRejection', function(error, promise) {
   console.error("UNHANDLED REJECTION", error.stack)
 })
