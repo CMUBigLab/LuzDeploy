@@ -7,6 +7,7 @@ var router = express.Router();
 var bookshelf = require('./bookshelf')
 
 const handlers = require('./handlers')
+const _ = require('lodash')
 
 router.post('/consent', function(req, res) {
 	new Consent().save({fbid: req.body.fbid, date: new Date()}).then(() => {
@@ -27,11 +28,11 @@ router.post('/task', function(req, res) {
 			template_type: req.body.template_type,
 		}).save()
 	})
-	.then((result) => {
-		res.status(201).send(result)
+	.then(result => {
+		res.status(201).send(result.serialize())
 	}).catch(bookshelf.NotFoundError, (err) => {
 		res.status(400).send(`Invalid template type ${req.body.template_type}`)
-	}).catch((e) => res.status(500).send(e))
+	}).catch(err => { console.log(err); res.status(500).send(err) })
 })
 
 module.exports = router
