@@ -5,6 +5,7 @@ const Task = require('./models/task')
 const constants = require('./constants')
 
 const _ = require('lodash')
+const config = require('./config')
 
 const messageHandlers = {
 	'hello': {
@@ -66,7 +67,7 @@ module.exports.dispatchMessage = (payload, reply) => {
   })
   .then(vol => {
     if (!vol) {
-      onBoardVolunteer(payload, reply)
+      onboardVolunteer(payload, reply)
       return
     }
     payload.sender.volunteer = vol
@@ -188,24 +189,22 @@ function assignMessage(payload, reply, args) {
 })
 }
 
-// function onboardVolunteer(payload, reply) {
-//   const response = {
-//     "attachment": {
-//       "type":"template",
-//         "payload": {
-//           "template_type": "button",
-//               "text": `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. Which deployment would you like to join?`,
-//               "buttons": [
-//                 { type: "web_url", title: d.get('name'), 
-//                 payload: JSON.stringify({
-//                   type: "join_deployment",
-//                   args: d.get('id'),
-//                 })
-//               }))
-//             }
-//           }
-//       }
-// }
+function onboardVolunteer(payload, reply) {
+  const response = {
+    "attachment": {
+      "type":"template",
+        "payload": {
+          "template_type": "button",
+              "text": `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. To continue you must a) have an iOS and b) complete the following consent form.`,
+              "buttons": [{
+                type: "web_url",
+                title: 'Open Consent Form', 
+                url: `${config.BASE_URL}/consent.html`
+              }]
+            }
+          }
+      }
+}
 
 function sendDeploymentMessage(payload, reply) {
   Deployment.fetchAll().then(function(deployments) {
