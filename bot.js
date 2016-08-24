@@ -4,7 +4,7 @@ const express = require('express')
 
 const cli = require('./cli')
 const handlers = require('./handlers')
-
+const consent = require('consent')
 process.on('unhandledRejection', function(error, promise) {
   console.error("UNHANDLED REJECTION", error.stack)
 })
@@ -43,6 +43,7 @@ if (cli.interactive) {
   bot.startListening = function() {
     var app = express()
     app.use(express.static(__dirname + '/static'))
+    app.post('/consent', consent.post)
     app.use(bot.middleware())
     var server = app.listen(process.env.PORT || 3000, () => {
       console.log(`Echo bot server running at port ${server.address().port}.`)
