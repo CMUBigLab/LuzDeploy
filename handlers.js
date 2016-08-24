@@ -66,6 +66,7 @@ module.exports.dispatchMessage = (payload, reply) => {
     return Volunteer.where({fbid: payload.sender.id}).fetch()
   })
   .then(vol => {
+    console.log(vol)
     if (!vol) {
       onboardVolunteer(payload, reply)
       return
