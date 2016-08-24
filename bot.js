@@ -1,6 +1,7 @@
 const Bot = require('messenger-bot')
 const http = require('http')
 const express = require('express')
+var bodyParser = require('body-parser')
 
 const cli = require('./cli')
 const handlers = require('./handlers')
@@ -43,6 +44,7 @@ if (cli.interactive) {
   bot.startListening = function() {
     var app = express()
     app.use(express.static(__dirname + '/static'))
+    app.use(bodyParser.urlencoded())
     app.post('/consent', consent.post)
     app.use(bot.middleware())
     var server = app.listen(process.env.PORT || 3000, () => {
