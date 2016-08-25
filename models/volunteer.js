@@ -59,6 +59,17 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			return tasks.length ? total / tasks.length : 0
 		})
 	},
+	getAverageTime: function() {
+		return bookshelf.model('Task').collection()
+		.query('where', 'volunteer_fbid', '=', this.get('fbid'))
+		.query('where', 'completed', '=', true)
+		.query('where', 'completed_time', 'is not', null)
+		.query('where', 'start_time', 'is not', null)
+		.fetch().then(tasks => {
+			const total = _.sum(tasks.map(t => t.timeScore))
+			return tasks.length ? total / tasks.length : 0
+		})
+	},
 	rejectTask: function() {
 		return this.related('currentTask').fetch()
 		.then((task) => {

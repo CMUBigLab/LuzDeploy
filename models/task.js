@@ -63,6 +63,12 @@ const Task = bookshelf.model('BaseModel').extend({
     },
     estimatedTimeSec: function() {
       return this.estimatedTimeMin * 60
+    },
+    timeTakenSec: function() {
+      return (this.get('completedTime').getTime() - this.get('startTime').getTime())/1000
+    },
+    timeScore: function() {
+      return (this.estimatedTimeSec - this.timeTakenSec) / this.estimatedTimeSec
     }
   }
 })
