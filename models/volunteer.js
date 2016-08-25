@@ -53,9 +53,9 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 		return bookshelf.model('Task').collection()
 		.query('where', 'volunteer_fbid', '=', this.get('fbid'))
 		.query('where', 'completed', '=', true)
-		.query('where', 'score', '<>', null).fetch()
+		.query('where', 'score', 'is not', null).fetch()
 		.then(tasks => {
-			const total = _.sumBy(tasks, t => t.get('score'))
+			const total = _.sum(tasks.map(t => t.get('score')))
 			return tasks.length ? total / tasks.length : 0
 		})
 	},
