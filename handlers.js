@@ -224,10 +224,8 @@ function sendDeploymentMessage(fbid) {
   Deployment.collection().query('where', 'active', '=', true).fetch()
   .then(function(deployments) {
     if (deployments.length == 0) {
-      bot.sendMessage(fbid, {text:
-`Hi! I am the luzDeploy bot. 
-We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information,
-and I hope you can help us out! (I will keep repeating this message, so contact Cole Gleason for more info.)`})
+      bot.sendMessage(fbid, {
+        text: "Hi! I am the luzDeploy bot. We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information, and I hope you can help us out! (I will keep repeating this message, so contact Cole Gleason for more info.)"})
     } else {
       const response = {
           "attachment":{
