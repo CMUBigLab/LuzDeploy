@@ -31,7 +31,7 @@ if (cli.interactive) {
       return
     }
     bot.getProfile(payload.sender.id, (err, profile) => {
-      if (err) throw err
+      if (err) console.log(err)
       payload.sender.profile = profile
       handlers.dispatchMessage(payload, reply)  
     })
