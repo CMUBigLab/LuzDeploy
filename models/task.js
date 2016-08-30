@@ -37,10 +37,11 @@ const Task = bookshelf.model('BaseModel').extend({
         this.save({completed: true, completedTime: new Date()}, {patch: true}),
         vol.save({currentTask: null})
       ])
-      .then(() => {
+      .then(models => {
         vol.sendMessage({text: `Thanks! You ended at ${this.get('completedTime')}.`})
+        return models
       })
-      .then(() => {
+      .then(models => {
         const webhook = this.get('completedWebhook')
         if (webhook) {
           return request.post({url: webhook, data: this.serialize({shallow: true})})
