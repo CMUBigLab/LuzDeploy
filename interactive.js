@@ -1,6 +1,7 @@
 const readline = require('readline')
 
 const handlers = require('./handlers')
+var open = require('open');
 
 let instance = null
 
@@ -52,7 +53,9 @@ You can switch volunteer ids with the command '/vol <id>'.`)
         this.interface.prompt()
       } else if (values.length == 2 && values[0] == '/but') {
         const buttonIndex = parseInt(values[1], 10)
-        if (buttonIndex < this.buttons.length) {
+        if (buttonIndex > this.buttons.length) {
+          return
+        } else if (this.buttons[buttonIndex].type == 'postback') {
           const payload = {
             sender: {
             id: this.currentVolunteer,
@@ -64,6 +67,10 @@ You can switch volunteer ids with the command '/vol <id>'.`)
           postback: {payload: this.buttons[buttonIndex].payload}
         }
           handlers.dispatchPostback(payload, reply)
+        } else if (this.buttons[buttonIndex].type == 'web_url') {
+          open(this.buttons[buttonIndex].url)
+          console.log(`\topening url: ${this.buttons[buttonIndex].url}`)
+          this.interface.prompt()
         }
   		} else {
         const payload = {
