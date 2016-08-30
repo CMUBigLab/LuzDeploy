@@ -22,7 +22,7 @@ router.post('/consent', function(req, res) {
 		} else {
 			console.log(err)
 		}
-		return new Volunteer(vol).save().then(() => {
+		return new Volunteer().save(vol).then(() => {
 			res.send('<h1>Thanks! Please press the cancel button to return to the bot chat.</h1>')
 			handlers.sendDeploymentMessage(req.body.fbid)
 		})
