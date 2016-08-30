@@ -6,8 +6,11 @@ var bodyParser = require('body-parser')
 const cli = require('./cli')
 const handlers = require('./handlers')
 const routes = require('./routes')
+const Admin = require('./models/admin')
+
 process.on('unhandledRejection', function(error, promise) {
   console.error("UNHANDLED REJECTION", error.stack)
+  Admin.sendError(error)
 })
 if (require.main === module) {
 let bot = null
