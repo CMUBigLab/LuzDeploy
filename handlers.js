@@ -193,48 +193,48 @@ function assignMessage(payload, reply, args) {
 
 function onboardVolunteer(payload, reply) {
   const response = {
-    "attachment": {
-      "type":"template",
-        "payload": {
-          "template_type": "button",
-              "text": `Hi! ${payload.sender.profile.first_name}, I am the LuzDeploy bot. To continue you must a) have an iOS device and b) complete the following consent form.`,
-              "buttons": [{
-                type: "web_url",
-                title: 'Open Consent Form', 
-                url: `${config.BASE_URL}/consent.html?fbid=${payload.sender.id}`
-              }]
-            }
-          }
-      }
-      reply(response)
+	"attachment": {
+	  "type":"template",
+		"payload": {
+		  "template_type": "button",
+			  "text": `Hi! ${payload.sender.profile.first_name}, I am the LuzDeploy bot. To continue you must a) have an iOS device and b) complete the following consent form.`,
+			  "buttons": [{
+				type: "web_url",
+				title: 'Open Consent Form', 
+				url: `${config.BASE_URL}/consent.html?fbid=${payload.sender.id}`
+			  }]
+			}
+		  }
+	  }
+	  reply(response)
 }
 
 function sendDeploymentMessage(fbid) {
   Deployment.collection().query('where', 'active', '=', true).fetch()
   .then(function(deployments) {
-    if (deployments.length == 0) {
-      bot.sendMessage(fbid, {
-        text: "Hi! I am the LuzDeploy bot. We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information, and I hope you can help us out! (I will keep repeating this message, so contact Cole Gleason at m.me/coleagleason for more info.)"})
-    } else {
-      const response = {
-          "attachment":{
-            "type":"template",
-            "payload":{
-              "template_type": "button",
-              "text": `Which deployment would you like to join?`,
-              "buttons": deployments.map((d) => ({
-                type:"postback", 
-                title: d.get('name'), 
-                payload: JSON.stringify({
-                  type: "join_deployment",
-                  args: d.get('id'),
-                })
-              }))
-            }
-          }
-      }
-      bot.sendMessage(fbid, response)
-    }
+	if (deployments.length == 0) {
+	  bot.sendMessage(fbid, {
+		text: "Hi! I am the LuzDeploy bot. We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information, and I hope you can help us out! (I will keep repeating this message, so contact Cole Gleason at m.me/coleagleason for more info.)"})
+	} else {
+	  const response = {
+		  "attachment":{
+			"type":"template",
+			"payload":{
+			  "template_type": "button",
+			  "text": `Which deployment would you like to join?`,
+			  "buttons": deployments.map((d) => ({
+				type:"postback", 
+				title: d.get('name'), 
+				payload: JSON.stringify({
+				  type: "join_deployment",
+				  args: d.get('id'),
+				})
+			  }))
+			}
+		  }
+	  }
+	  bot.sendMessage(fbid, response)
+	}
   })
 }
 
