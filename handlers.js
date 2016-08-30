@@ -62,12 +62,13 @@ module.exports.dispatchMessage = (payload, reply) => {
 		if (admin) {
 			payload.sender.admin = admin
 		}
-		return Volunteer.where({fbid: payload.sender.id}).fetch()
+		return Volunteer.where({fbid: payload.sender.id})
+		.fetch({withRelated: ['deployment']})
 	})
 	.then(vol => {
 		if (vol) {
 			payload.sender.volunteer = vol
-			if (vol.deployment() === null) {
+			if (vol.get('deploymentId') === null) {
 				sendDeploymentMessage(payload.sender.id)
 				return
 			}
@@ -266,7 +267,7 @@ function assignTask(payload, reply, args) {
 
 function joinDeployment(payload, reply, args) {
 	Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']}).then((vol) => {
-		if (vol && vol.related('deployment')) {
+		if (vol && vol.get('deploymentId')) {
 			reply({text: `You are already in a deployment (${vol.related('deployment').get('name')}). You must leave that first.`})
 		} else {
 			const deployId = args
