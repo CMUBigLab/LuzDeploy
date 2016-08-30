@@ -223,7 +223,7 @@ function onboardVolunteer(payload, reply) {
 function sendDeploymentMessage(fbid) {
   Deployment.collection().query('where', 'active', '=', true).fetch()
   .then(function(deployments) {
-    if (deployments.count() == 0) {
+    if (deployments.length == 0) {
       bot.sendMessage(fbid, {text:
 `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. 
 We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information,
