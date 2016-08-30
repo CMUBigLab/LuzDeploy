@@ -208,7 +208,7 @@ function onboardVolunteer(payload, reply) {
       "type":"template",
         "payload": {
           "template_type": "button",
-              "text": `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. To continue you must a) have an iOS and b) complete the following consent form.`,
+              "text": `Hi! ${payload.sender.profile.first_name}, I am the LuzDeploy bot. To continue you must a) have an iOS device and b) complete the following consent form.`,
               "buttons": [{
                 type: "web_url",
                 title: 'Open Consent Form', 
@@ -225,7 +225,7 @@ function sendDeploymentMessage(fbid) {
   .then(function(deployments) {
     if (deployments.length == 0) {
       bot.sendMessage(fbid, {
-        text: "Hi! I am the luzDeploy bot. We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information, and I hope you can help us out! (I will keep repeating this message, so contact Cole Gleason for more info.)"})
+        text: "Hi! I am the LuzDeploy bot. We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information, and I hope you can help us out! (I will keep repeating this message, so contact Cole Gleason for more info.)"})
     } else {
       const response = {
           "attachment":{
