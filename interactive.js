@@ -53,9 +53,11 @@ You can switch volunteer ids with the command '/vol <id>'.`)
         this.interface.prompt()
       } else if (values.length == 2 && values[0] == '/but') {
         const buttonIndex = parseInt(values[1], 10)
-        if (buttonIndex > this.buttons.length) {
-          return
-        } else if (this.buttons[buttonIndex].type == 'postback') {
+        if (!(buttonIndex in this.buttons)) {
+          console.log(`Button ${buttonIndex} not found.`)
+          return this.interface.prompt()
+        }
+        if (this.buttons[buttonIndex].type == 'postback') {
           const payload = {
             sender: {
             id: this.currentVolunteer,
