@@ -17,7 +17,7 @@ if (cli.interactive) {
 } else {
   bot = new Bot({
     token: process.env.PAGE_ACCESS_TOKEN,
-    verify: 'testbot_verify_token',
+    verify: process.env.VERIFY_TOKEN,
     app_secret: process.env.APP_SECRET,
   })
 
