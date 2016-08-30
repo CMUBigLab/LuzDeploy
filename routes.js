@@ -12,7 +12,7 @@ const _ = require('lodash')
 
 router.post('/consent', function(req, res) {
 	const vol = {
-		id: req.body.fbid,
+		fbid: req.body.fbid,
 		consentDate: new Date(),
 	}
 	bot.getProfile(req.body.fbid, (err, profile) => {
