@@ -1,0 +1,26 @@
+{
+  "name": "LuzDeploy",
+  "scripts": {
+  },
+  "env": {
+    "PAGE_ACCESS_TOKEN": {
+      "required": true
+    },
+    "APP_SECRET": {
+      "required": true
+    },
+    "DATABASE_URL": {
+      "required": true
+    }
+  },
+  "formation": {
+  },
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
