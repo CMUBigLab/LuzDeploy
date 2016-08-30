@@ -14,9 +14,6 @@ const messageHandlers = {
 	'hello': {
 		handler: greetingMessage,
 	},
-	'kitten': {
-		handler: kittenMessage,
-	},
 	'done': {
 		handler: doneMessage,
 	},
@@ -298,17 +295,6 @@ function joinDeployment(payload, reply, args) {
       })
     }
   })
-}
-
-function kittenMessage(payload, reply) {
-    reply({
-        "attachment": {
-            "type": "image",
-            "payload": {
-                "url": "http://thecatapi.com/api/images/get?format=src&type=png&size=med"
-            },
-        }
-    })
 }
 
 function startMessage(payload, reply) {
