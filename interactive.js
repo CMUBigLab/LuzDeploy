@@ -9,7 +9,7 @@ class Interactive {
 		if (!instance) {
 			instance = this
 		}
-    this.currentVolunteer = 1
+    this.currentVolunteer = (process.env.FBID || 1)
 		this.interface = readline.createInterface({
 			input: process.stdin,
     	output: process.stdout,
