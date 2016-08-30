@@ -47,7 +47,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 	},
 	getTaskPool: function() {
     return this.tasks()
-    .fetch({withRelated: 'dependencies'})
+    .fetch({withRelated: ['dependencies', 'differentVolunteerSet']})
     .then((tasks) => {
     	const freeTasks = tasks.filter((t) => {
     		return !t.get('assignedVolunteer') && 

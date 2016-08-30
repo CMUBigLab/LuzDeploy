@@ -1,4 +1,4 @@
-const Consent = require('./models/consent')
+const bot = require('./bot')
 const TaskTemplate = require('./models/task-template')
 
 const Task = require('./models/task')
@@ -10,9 +10,21 @@ const handlers = require('./handlers')
 const _ = require('lodash')
 
 router.post('/consent', function(req, res) {
-	new Consent().save({fbid: req.body.fbid, date: new Date()}).then(() => {
-		res.send('<h1>Thanks! Please press the cancel button to return to the bot chat.</h1>')
-		handlers.sendDeploymentMessage(req.body.fbid)
+	const vol = {
+		id: req.body.fbid,
+		consentDate: new Date(),
+	}
+	bot.getProfile(req.body.fbid, (err, profile) => {
+		if (!err) {
+			vol.firstName = profile.first_name
+			vol.lastName = profile.last_name
+		} else {
+			console.log(err)
+		}
+		return new Volunteer(vol).save().then(() => {
+			res.send('<h1>Thanks! Please press the cancel button to return to the bot chat.</h1>')
+			handlers.sendDeploymentMessage(req.body.fbid)
+		})
 	})
 })
 

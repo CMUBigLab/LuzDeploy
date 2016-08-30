@@ -18,6 +18,13 @@ const Task = bookshelf.model('BaseModel').extend({
   dependencies: function() {
     return this.belongsToMany('Task', 'dependencies', 'parent', 'child')
   },
+  differentVolunteerSet: function() {
+    return this.belongsToMany('Task', 'different_volunteer_tasks', 'task1_id', 'task2_id')
+  },
+  allowedToTake: function(vol) {
+    return this.related(['differentVolunteerSet'])
+    .where({volunteerFbid: vol.get('fbid')}).length == 0
+  },
   template: function() {
     return this.belongsTo('TaskTemplate', 'template_type')
   },
@@ -73,6 +80,18 @@ const Task = bookshelf.model('BaseModel').extend({
   }
 })
 
+const DifferentVolunteerTasks = bookshelf.model('BaseModel').extend({
+  tableName: 'different_volunteer_tasks',
+  task1: function() {
+    return this.belongsTo('Task', 'task1_id')
+  },
+  task2: function() {
+    return this.belongsTo('Task', 'task2_id')
+  },
+})
+
+
+bookshelf.model('DifferentVolunteerTasks', DifferentVolunteerTasks)
 module.exports = bookshelf.model('Task', Task)
 
 // task types:

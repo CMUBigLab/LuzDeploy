@@ -26,21 +26,27 @@ if (cli.interactive) {
   })
 
   bot.on('message', (payload, reply) => {
+    if (!payload.message.text) {
+      reply({text: "Sorry, I only handle text messages right now."})
+      return
+    }
     bot.getProfile(payload.sender.id, (err, profile) => {
       if (err) throw err
       payload.sender.profile = profile
       handlers.dispatchMessage(payload, reply)  
     })
   })
+
   bot.on('postback',  (payload, reply) => {
     bot.getProfile(payload.sender.id, (err, profile) => {
       if (err) throw err
       payload.sender.profile = profile
-      handlers.dispatchPostback (payload, reply)  
+      handlers.dispatchPostback(payload, reply)
     })
   })
 
   module.exports.sendMessage = bot.sendMessage.bind(bot)
+  module.exports.getProfile = bot.getProfile.bind(bot)
 
   bot.startListening = function() {
     var app = express()

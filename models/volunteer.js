@@ -36,6 +36,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 	},
 	getNewTask: function() {
 		this.related('deployment').getTaskPool().then(pool => {
+			pool = _.filter(pool, t => t.allowedToTake(this))
 			const preAssigned = _.find(pool, p => {
 				return p.get('volunteerFbid') == this.get('fbid')
 			})
