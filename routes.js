@@ -1,5 +1,6 @@
 const bot = require('./bot')
 const TaskTemplate = require('./models/task-template')
+const Volunteer = require('./models/volunteer')
 
 const Task = require('./models/task')
 var express = require('express');
