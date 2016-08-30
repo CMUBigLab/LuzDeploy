@@ -222,9 +222,11 @@ function onboardVolunteer(payload, reply) {
 
 function sendDeploymentMessage(fbid) {
   Deployment.fetchAll().then(function(deployments) {
-    if (deployments.count() == 0) {
-      bot.sendMessage(fbid, {text: `Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. 
-        We don't have any deployments right now, so please check back later!`})
+    if (deployments.where({active: true}).count() == 0) {
+      bot.sendMessage(fbid, {text:
+`Hi! ${payload.sender.profile.first_name}, I am the luzDeploy bot. 
+We are launching on Thursday at 4pm in Gates-Hillman Center! I will reach out to you then with more information,
+and I hope you can help us out! (I will keep repeating this message, so contact Cole Gleason for more info.)`})
     } else {
       const response = {
           "attachment":{
