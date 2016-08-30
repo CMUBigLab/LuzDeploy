@@ -288,20 +288,6 @@ function joinDeployment(payload, reply, args) {
 	})
 }
 
-<<<<<<< f6e951448fcc93d3c3b046106af1dcb5b13c7ad3
-=======
-function kittenMessage(payload, reply) {
-		reply({
-				"attachment": {
-						"type": "image",
-						"payload": {
-								"url": "http://thecatapi.com/api/images/get?format=src&type=png&size=med"
-						},
-				}
-		})
-}
-
->>>>>>> clean up consent process
 function startMessage(payload, reply) {
 	const vol = payload.sender.volunteer
 	vol.related('currentTask').fetch().then((task) => {
