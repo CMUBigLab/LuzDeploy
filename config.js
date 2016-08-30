@@ -1,3 +1,10 @@
+if (!process.env.DATABASE_URL) {
+	throw new Error("DATABASE_URL is required.")
+}
+if (!process.env.HEROKU_APP_NAME) {
+	throw new Error("HEROKU_APP_NAME is required.")
+}
+
 module.exports = {
 	DB_CONFIG: {
 		client: 'pg',
