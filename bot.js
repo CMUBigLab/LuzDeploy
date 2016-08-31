@@ -45,7 +45,26 @@ if (require.main === module) {
 			console.log(err.message)
 		})
 
+		let ignoring = {}
+
 		bot.on('message', (payload, reply) => {
+			if (ignoring[payload.message.sender.id]) {
+				console.log(`ignoring message from ${payload.sender.id}`)
+				return
+			}
+			if (payload.message.is_echo) {
+				let msg = payload.message.text
+				if (msg && msg.startsWith('bot:')) {
+					if (msg.slice(4) == "on") {
+						delete ignoring[payload.message.recipient.id]
+					} else if (msg.slice(4) == "off") {
+						ignoring[payload.message.recipient.id] = true
+					} else {
+						console.log(`invalid command ${msg}`)
+					}
+				}
+				return
+			}
 			if (!payload.message.text) {
 				reply({text: "Sorry, I only handle text messages right now."})
 				return
