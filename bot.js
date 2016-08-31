@@ -29,7 +29,6 @@ function expressErrorHandler(err, req, res, next) {
 
 module.exports.sendMessage = function(message) { return; };
 
-console.log(require.main)
 if (require.main === module) {
 	let bot = null
 	if (cli.interactive) {
@@ -66,7 +65,6 @@ if (require.main === module) {
 			})
 		})
 
-		console.log("setting up bot.sendMessage!")
 		module.exports.sendMessage = bot.sendMessage.bind(bot)
 		module.exports.getProfile = bot.getProfile.bind(bot)
 
