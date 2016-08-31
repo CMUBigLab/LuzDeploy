@@ -48,7 +48,7 @@ if (require.main === module) {
 		let ignoring = {}
 
 		bot.on('message', (payload, reply) => {
-			if (ignoring[payload.message.sender.id]) {
+			if (ignoring[payload.sender.id]) {
 				console.log(`ignoring message from ${payload.sender.id}`)
 				return
 			}
@@ -56,9 +56,9 @@ if (require.main === module) {
 				let msg = payload.message.text
 				if (msg && msg.startsWith('bot:')) {
 					if (msg.slice(4) == "on") {
-						delete ignoring[payload.message.recipient.id]
+						delete ignoring[payload.recipient.id]
 					} else if (msg.slice(4) == "off") {
-						ignoring[payload.message.recipient.id] = true
+						ignoring[payload.recipient.id] = true
 					} else {
 						console.log(`invalid command ${msg}`)
 					}
