@@ -7,6 +7,7 @@ const cli = require('./cli')
 const handlers = require('./handlers')
 const routes = require('./routes')
 const Admin = require('./models/admin')
+const errors = require('./errors')
 
 // TODO(cgleason): this file is a mess. Interactive mode should actually
 // just talk to the real bot without all of this other nonsense
@@ -15,6 +16,17 @@ process.on('unhandledRejection', function(error, promise) {
 	console.error("UNHANDLED REJECTION", error.stack)
 	Admin.sendError(error)
 })
+
+function expressErrorHandler(err, req, res, next) {
+	// log error
+	console.log(err);
+	Admin.sendError(err);
+	if (err instanceof errors.BadRequestError) {
+		res.status(400).send({error: err.message});
+	} else {
+		res.status(500).end();
+	}
+}
 
 module.exports = {
 	sendMessage: function(message) { return; },
@@ -63,7 +75,9 @@ if (require.main === module) {
 			var app = express()
 			app.use(express.static(__dirname + '/static'))
 			app.use(bodyParser.urlencoded({extended: true}))
+			app.use(bodyParser.json())
 			app.use(routes)
+			app.use(expressErrorHandler)
 			app.use(bot.middleware())
 			var server = app.listen(process.env.PORT || 3000, () => {
 				console.log(`Echo bot server running at port ${server.address().port}.`)

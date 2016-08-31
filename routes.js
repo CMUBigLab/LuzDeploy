@@ -1,16 +1,20 @@
-const bot = require('./bot')
-const TaskTemplate = require('./models/task-template')
-const Volunteer = require('./models/volunteer')
-
-const Task = require('./models/task')
 var express = require('express');
-var router = express.Router();
-var bookshelf = require('./bookshelf')
-
-const handlers = require('./handlers')
 const _ = require('lodash')
 
-router.post('/consent', function(req, res) {
+var bookshelf = require('./bookshelf')
+const bot = require('./bot')
+const errors = require('./errors')
+const handlers = require('./handlers')
+
+const TaskTemplate = require('./models/task-template')
+const Volunteer = require('./models/volunteer')
+const Task = require('./models/task')
+const Admin = require('./models/admin')
+
+var router = express.Router();
+
+// Creates a new volunteer.
+router.post('/consent', function(req, res, next) {
 	const vol = {
 		fbid: req.body.fbid,
 		consentDate: new Date(),
@@ -26,26 +30,45 @@ router.post('/consent', function(req, res) {
 			res.send('<h1>Thanks! Please press the cancel button to return to the bot chat.</h1>')
 			handlers.sendDeploymentMessage(req.body.fbid)
 		})
+		.catch(next)
 	})
 })
 
-router.post('/task', function(req, res) {
-	new TaskTemplate({type: req.body.template_type}).fetch({require: true})
-	.then(templateType => {
-		const params = _.omit(req.body, ['template_type', 'deployment'])
-		return new Task({
-			instructionParams: JSON.stringify(params),
-			estimatedTime: templateType.get('estimatedTime'),
-			deployment_id: req.body.deployment,
-			completedWebhook: templateType.get('completedWebhook'),
-			template_type: req.body.template_type,
-		}).save()
+// Batch add tasks.
+router.post('/tasks', function(req, res) {
+	let templates = _.map(req.body, 'template_type')
+	TaskTemplate.collection()
+	.query('where', 'type', 'in', templates)
+	.fetch()
+	.then(function(models) {
+		return models.reduce((acc, t) => {
+			acc[t.get('type')] = t
+			return acc
+		}, {})
 	})
-	.then(result => {
-		res.status(201).send(result.serialize())
-	}).catch(bookshelf.NotFoundError, (err) => {
-		res.status(400).send(`Invalid template type ${req.body.template_type}`)
-	}).catch(err => { console.log(err); res.status(500).send(err) })
+	.then(function(templates) {
+		let ps = req.body.map(function(task) {
+			if (!(task.template_type in templates)) {
+				throw new errors.BadRequestError(`No template named ${task.get('templateType')}`)
+			}
+			let template = templates[task.template_type]
+			const params = _.omit(task
+				['template_type', 'deployment_id', 'dependencies']
+			)
+			return new Task({
+				instructionParams: JSON.stringify(params),
+				estimatedTime: template.get('estimatedTime'),
+				deployment_id: task.deployment_id,
+				completedWebhook: template.get('completedWebhook'),
+				template_type: task.template_type,
+			}).save()
+		})
+		return Promise.all(ps)
+	})
+	.then(results => {
+		res.status(201).send(results.map(r => r.serialize()))
+	})
+	.catch(next)
 })
 
 module.exports = router
