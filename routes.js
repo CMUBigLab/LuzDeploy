@@ -35,7 +35,7 @@ router.post('/consent', function(req, res, next) {
 })
 
 // Batch add tasks.
-router.post('/tasks', function(req, res) {
+router.post('/tasks', function(req, res, next) {
 	let templates = _.map(req.body, 'template_type')
 	TaskTemplate.collection()
 	.query('where', 'type', 'in', templates)
