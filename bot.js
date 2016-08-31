@@ -31,6 +31,7 @@ module.exports = {
 	sendMessage: function(message) { return; },
 }
 
+console.log(require.main)
 if (require.main === module) {
 	let bot = null
 	if (cli.interactive) {
