@@ -1,0 +1,26 @@
+{
+	"type": "place_beacon",
+	"estimated_time": "20 min",
+	"completed_webhook": null,
+	"instructions": [{
+		"wait": 0,
+		"message": {
+			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!",
+			"image": "http://www.relatably.com/m/img/welcome-memes/bb52744768.png"
+
+
+		}
+	}, {
+		"wait": 1,
+		"message": {
+			"text": "You will be placing beacons. Go to the Supply Station <br> and grab a beacon. Find the Beacon Location <br> using the number on the back, and place the beacon on the wall about 10 feet off the ground. <br> <b>Tell me when you’re done! <b>",
+			"image": "<Send map here>"
+		}
+	}, {
+		"wait": 1,
+		"message": {
+			"text": "Fantastic! You've placed <beacon count here> beacons",
+			"image": "http://www.mememaker.net/static/images/memes/3542684.jpg"
+		}
+	}]
+}
