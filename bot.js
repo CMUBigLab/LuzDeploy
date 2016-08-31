@@ -13,7 +13,7 @@ const errors = require('./errors')
 
 process.on('unhandledRejection', function(error, promise) {
 	console.error("UNHANDLED REJECTION", error.stack)
-	Admin.sendError(error)
+	Admin.sendError(error).catch(err => console.log(`admin logging error ${err}`))
 })
 
 function expressErrorHandler(err, req, res, next) {
