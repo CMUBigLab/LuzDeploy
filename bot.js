@@ -67,6 +67,7 @@ if (require.main === module) {
 			})
 		})
 
+		console.log("setting up bot.sendMessage!")
 		module.exports.sendMessage = bot.sendMessage.bind(bot)
 		module.exports.getProfile = bot.getProfile.bind(bot)
 
