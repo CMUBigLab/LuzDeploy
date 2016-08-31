@@ -27,9 +27,7 @@ function expressErrorHandler(err, req, res, next) {
 	}
 }
 
-module.exports = {
-	sendMessage: function(message) { return; },
-}
+module.exports.sendMessage = function(message) { return; };
 
 console.log(require.main)
 if (require.main === module) {
