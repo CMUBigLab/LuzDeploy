@@ -1,0 +1,37 @@
+{
+	"type": "fingerprinting",
+	"estimated_time": "20 min",
+	"completed_webhook": null,
+	"instructions": [{
+		"wait": 0,
+		"message": {
+			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!",
+			"image": "http://m.memegen.com/urlnfd.jpg"
+
+
+		}
+	}, {
+		"wait": 1,
+		"message": {
+			"text": "You will be collecting data to help navigate the blind.<br> Please go the location of X as shown on the map.<br> Place you back against the wall so that you are facing the direction towards location Y.<br>  Once you click on the link provided below an app will spawn on your phone.<br> Press the start button and, once the countdown reaches zero take a step towards location Y.<br>  Repeat these two operations until you have arrived at location Y.<br> Now click on the following link.",
+			"image": "<Send map here>"
+		}
+	}, 
+
+	{
+		"wait": 1,
+		"message": {
+			"text": "Woot! You have done <number of tasks done> task(s) out of the <total number of tasks> given to you.",
+			"image": "https://cdn.meme.am/instances/63468446.jpg"
+		}
+	}, 
+
+
+	{
+		"wait": 1,
+		"message": {
+			"text": "Whooo! You have finished all your tasks!!",
+			"image": "http://www.focusrs.org/forum/attachments/8331d1461868372-who-made-onto-first-ship-3732074.jpg"
+		}
+	}]
+}
