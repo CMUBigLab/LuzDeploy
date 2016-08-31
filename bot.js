@@ -1,7 +1,6 @@
 const Bot = require('messenger-bot')
 const http = require('http')
 const express = require('express')
-var bodyParser = require('body-parser')
 
 const cli = require('./cli')
 const handlers = require('./handlers')
@@ -74,8 +73,6 @@ if (require.main === module) {
 		bot.startListening = function() {
 			var app = express()
 			app.use(express.static(__dirname + '/static'))
-			app.use(bodyParser.urlencoded({extended: true}))
-			app.use(bodyParser.json())
 			app.use(routes)
 			app.use(expressErrorHandler)
 			app.use(bot.middleware())

@@ -1,5 +1,6 @@
 var express = require('express');
 const _ = require('lodash')
+var bodyParser = require('body-parser')
 
 var bookshelf = require('./bookshelf')
 const bot = require('./bot')
@@ -14,7 +15,7 @@ const Admin = require('./models/admin')
 var router = express.Router();
 
 // Creates a new volunteer.
-router.post('/consent', function(req, res, next) {
+router.post('/consent', bodyParser.urlencoded({extended: true}), function(req, res, next) {
 	const vol = {
 		fbid: req.body.fbid,
 		consentDate: new Date(),
@@ -35,7 +36,7 @@ router.post('/consent', function(req, res, next) {
 })
 
 // Batch add tasks.
-router.post('/tasks', function(req, res, next) {
+router.post('/tasks', bodyParser.json(), function(req, res, next) {
 	let templates = _.map(req.body, 'template_type')
 	TaskTemplate.collection()
 	.query('where', 'type', 'in', templates)
