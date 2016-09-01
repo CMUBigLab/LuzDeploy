@@ -8,32 +8,45 @@ const bot = require('./bot')
 
 const _ = require('lodash')
 const config = require('./config')
-
+let msgUtil = require('./message-utils')
 const messageHandlers = {
 	'hello': {
 		handler: greetingMessage,
+		description: "A greeting!"
 	},
 	'done': {
 		handler: doneMessage,
+		description: "Let me know when you finish a task."
 	},
 	'start': {
 		handler: startMessage,
+		description: "Tell me when you start a task."
 	},
 	'ask': {
 		handler: askMessage,
+		description: "Ask for a new task."
 	},
 	'reject': {
 		handler: rejectMessage,
+		description: "Turn down a task you have."
 	},
 	'mentor': {
 		handler: mentorMessage,
+		description: "Request that another volunteer come help you."
 	},
 	'assign': {
 		handler: assignMessage,
+		description: "Assign a task to a volunteer.",
 		adminRequired: true,
 	},
 	'leave': {
 		handler: leaveMessage,
+		description: "Leave the deployment (Quit)."
+	},
+	'help': {
+		handler: helpMessage,
+		volRequired: true,
+		description: "Pull up a menu that allows you to list commands."
 	}
 }
 
@@ -46,6 +59,13 @@ const postbackHandlers = {
 		handler: assignTask,
 		volRequired: false,
 		adminRequired: true,
+	},
+	'send_mentor': {
+		handler: mentorMessage,
+		volRequired: true,
+	},
+	'list_commands': {
+		handler: listCommands,
 	},
 	'cancel_mentor': {
 		handler: cancelMentor,
@@ -60,6 +80,7 @@ const aliases = {
 	'a': 'ask',
 	'hi': 'hello',
 	'hey': 'hello',
+	'h': 'help'
 }
 
 module.exports.dispatchMessage = (payload, reply) => {
@@ -152,6 +173,46 @@ function leaveMessage(payload, reply) {
 	})
 }
 
+function helpMessage(payload, reply) {
+	const vol = payload.sender.volunteer
+	let buttons = [{
+		type: "postback",
+		title: "List Commands",
+		payload: JSON.stringify({
+			type: "list_commands",
+			args: {}
+		})
+	},
+	{
+		type: "postback",
+		title: "Send Mentor",
+		payload: JSON.stringify({
+			type: "send_mentor",
+			args: {}
+		})
+	}]
+	return reply(msgUtil.buttonMessage(
+		"Here is a list of commands you can say to me! Press 'Send Mentor' to have another volunteer come help you.",
+		buttons
+	))
+}
+
+function listCommands(payload, reply) {
+	let aliasLookup = _.invert(aliases)
+	let text = "Here are the commands I know how to process:\n"
+	for (var k in messageHandlers) {
+		if (!messageHandlers[k].adminRequired) {
+			var alias = '';
+			if (aliasLookup[k]) {
+				alias = ` (${aliasLookup[k]})`
+			}
+			text = text + `${k}${alias}: ${messageHandlers[k].description}\n`
+		}
+	}
+	reply({text})
+}
+
+// warning: used by message and by postback
 function mentorMessage(payload, reply) {
 	const vol = payload.sender.volunteer
 	return vol.getMentorshipTask()
