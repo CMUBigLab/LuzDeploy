@@ -122,7 +122,8 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			return bookshelf.model('Task').forge({
 				templateType: 'mentor',
 				instructionParams: params,
-				deploymentId: this.get('deploymentId')
+				deploymentId: this.get('deploymentId'),
+				estimatedTime: '15 min',
 			})
 			.save()
 		})

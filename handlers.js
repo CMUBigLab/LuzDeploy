@@ -227,7 +227,7 @@ function listCommands(payload, reply) {
 			msg = msg + `${k}${alias}: ${messageHandlers[k].description}\n`
 		}
 	}
-	reply({text: msg}, console.log)
+	reply({text: msg})
 }
 
 // warning: used by message and by postback
