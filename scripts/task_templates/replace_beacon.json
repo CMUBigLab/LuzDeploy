@@ -12,12 +12,14 @@
 		{
 			"wait": 1,
 			"message": {
-        "text": "Once you have the new beacon, head to the beacon location marked in orange on this map.\nTake the old one down and put the new beacon in its place."
-      }
+				"text": "Once you have the new beacon, head to the beacon location marked in orange on this map.\nTake the old one down and put the new beacon in its place."
+			}
 		},
-    {
-      "wait": 1,
-      "message": {"text": "After completing this final step, please return the beacon your removed from the wall to NSH 4522."}
-    } 
+		{
+			"wait": 1,
+			"message": {
+				"text": "After completing this final step, please return the beacon your removed from the wall to NSH 4522."
+			}
+		}
 	]
 }

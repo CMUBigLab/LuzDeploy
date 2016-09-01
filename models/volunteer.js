@@ -17,22 +17,22 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 		return this.belongsTo('Deployment')
 	},
 	assignTask: function(task) {
-  		return Promise.all([
-  			this.save({currentTask: task.id}, {patch: true}),
-  			task.save({volunteer_fbid: this.id}, {patch: true})
-  		])
-  		.then(() => {
-  			this.sendMessage({text: `Your task should take ${task.estimatedTimeMin} minutes.`})
-        	task.renderInstructions({fbid: this.id}).then(instructions => {
-        		let currWait = 0
-	       		const msgFn = this.sendMessage.bind(this)
-        		instructions.forEach((i) => {
-          			currWait = currWait + i.wait
-          			setTimeout(msgFn, currWait*1000, i.message)
-        		})
-        		setTimeout(msgFn, (currWait+1)*1000, {text: "Once you understood the steps please write 's' when you start and then 'd' when you are done. You can also write 'r' if you want to not do the task before you have written 'd'. "})
-        	})
-      	})
+		return Promise.all([
+			this.save({currentTask: task.id}, {patch: true}),
+			task.save({volunteer_fbid: this.id}, {patch: true})
+		])
+		.then(() => {
+			this.sendMessage({text: `Your task should take ${task.estimatedTimeMin} minutes.`})
+			task.renderInstructions({fbid: this.id}).then(instructions => {
+				let currWait = 0
+				const msgFn = this.sendMessage.bind(this)
+				instructions.forEach((i) => {
+					currWait = currWait + i.wait
+					setTimeout(msgFn, currWait*1000, i.message)
+				})
+				setTimeout(msgFn, (currWait+1)*1000, {text: "Once you understood the steps please write 's' when you start and then 'd' when you are done. You can also write 'r' if you want to not do the task before you have written 'd'. "})
+			})
+		})
 	},
 	getNewTask: function() {
 		this.related('deployment').getTaskPool().then(pool => {
@@ -43,12 +43,12 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			if (preAssigned) {
 				this.assignTask(preAssigned)
 			}
-    		else if (pool.length > 0) {
-      			this.assignTask(pool.pop())
-    		} else {
-      			this.sendMessage({text: 'There are no tasks available right now.'})
-    		}
-  		})
+			else if (pool.length > 0) {
+				this.assignTask(pool.pop())
+			} else {
+				this.sendMessage({text: 'There are no tasks available right now.'})
+			}
+		})
 	},
 	getAverageExpertise: function() {
 		return bookshelf.model('Task').collection()
