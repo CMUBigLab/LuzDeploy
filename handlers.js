@@ -130,7 +130,19 @@ function greetingMessage(payload, reply) {
 
 function mentorMessage(payload, reply) {
 	const vol = payload.sender.volunteer
-	vol.requestHelp()
+	return vol.getMentorshipTask()
+	.then(function(task) {
+		if (task) {
+			return reply({text: "A mentor is already on the way!"})
+		} else {
+			return vol.createMentorshipTask()
+			.then(function(task) {
+				return reply({
+					text: "Okay, we will let you know when we are sending someone your way!"
+				})
+			})
+		}
+	})
 }
 
 function assignMessage(payload, reply, args) {

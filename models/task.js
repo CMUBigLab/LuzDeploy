@@ -1,7 +1,9 @@
 const request = require('request-promise')
 const _ = require('lodash')
+var Promise = require('bluebird')
 
 const bookshelf = require('../bookshelf')
+
 require('./deployment')
 require('./volunteer')
 require('./task-template')

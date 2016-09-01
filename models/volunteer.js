@@ -1,8 +1,6 @@
 const bookshelf = require('../bookshelf')
 const bot = require('../bot')
 const handlers = require('../handlers')
-const mentor = require('../mentor')
-
 
 const _ = require('lodash')
 
@@ -37,18 +35,18 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 		})
 	},
 	getNewTask: function() {
-		this.deployment().doesAnyoneNeedHelp()
+		this.deployment().fetch()
+		.then(deployment => {
+			return [deployment, deployment.doesAnyoneNeedHelp()]
+		})
 		// if someone needs help, add mentorship task
-		.then(function(mentee) {
-			if (mentee) {
-				return mentor.createMentorshipTask(this, mentee)
-				.tap(function(task) {
-					return mentee.save({needsHelp: false}, {patch: true})
-				})
+		.spread((deployment, task) => {
+			if (task) {
+				return task
 			} else {
 				// otherwise, get normal task, looking for pre-assigned things
-				return this.related('deployment').getTaskPool().then(pool => {
-					pool = _.filter(pool, t => t.allowedToTake(this))
+				return deployment.getTaskPool().then(pool => {
+					//pool = _.filter(pool, t => t.allowedToTake(this))
 					const preAssigned = _.find(pool, p => {
 						return p.get('volunteerFbid') == this.get('fbid')
 					})
@@ -62,8 +60,8 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 				})
 			}
 		})
-		// actuall assign the task
-		.then(function(task) {
+		// actually assign the task
+		.then((task) => {
 			if (!task) {
 				return this.sendMessage({text: 'There are no tasks available right now.'})
 			} else {
@@ -101,15 +99,22 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			])
 		})
 	},
-	requestHelp: function() {
-		return this.save({needsHelp: true}).then(function(model) {
-			model.sendMessage({text: "Okay, we will let you know when we are sending someone your way!"})
+	getMentorshipTask: function() {
+		return bookshelf.model('Task').query(qb => {
+			qb.where('template_type', '=', 'mentor')
+			.andWhere('instruction_params','<@', {mentee: {fbid: this.get('fbid')}})
 		})
+		.fetch()
 	},
-	cancelHelp: function() {
-		return this.save({needsHelp: false}).then(function(model) {
-			model.sendMessage({text: "Help request cancelled."})
+	createMentorshipTask: function() {
+		return bookshelf.model('Task').forge({
+			templateType: 'mentor',
+			instructionParams: {
+				mentee: this.toJSON({virtuals: true})
+			},
+			deploymentId: this.get('deploymentId')
 		})
+		.save()
 	},
 	sendMessage: function(message) {
 		bot.sendMessage(this.get('fbid'), message)

@@ -33,18 +33,6 @@ const Deployment = bookshelf.model('BaseModel').extend({
 			})
 		})
 	},
-	sendMentor: function(mentee) {
-		this.related('volunteers').fetch().then((vols) => {
-			vols.remove(mentee)
-			const mentor = vols.reduce((prev, current) => {
-				return (prev.weight > current.weight) ? prev : current
-			})
-  			// send message to mentee
-  			mentee.sendMessage({text: `We are sending ${mentor.name} to help you.`})
-  			// send message to mentor
-  			mentor.sendMessage({text: `Go help volunteer ${mentee.name}`})
-  		})
-	},
 	getTaskPool: function() {
     return this.tasks()
     .fetch({withRelated: ['dependencies', 'differentVolunteerSet']})
@@ -58,22 +46,14 @@ const Deployment = bookshelf.model('BaseModel').extend({
     })
   },
   doesAnyoneNeedHelp: function() {
-    return this.volunteers()
-    .query('where', 'needs_help', '=', true)
-    .fetchOne()
-  },
-  checkThresholds: function() {
-  	return this.related('volunteers').fetch().then((volunteers) => {
-  		volunteers.forEach((v) => {
-      	if (v.get('weight') < this.get('sendHelpThreshold')) {
-    			this.sendMentor(v)
-  			} else if (v.get('weight') < this.get('askThreshold')) {
-    			v.sendMessage({text: "Do you want help? If so do..."})
-  			} else if (v.get('weight') < this.get('warningThreshold')) {
-    			v.sendMessage({text: "You are lagging behind"})
-  			}
+    return this.tasks()
+    .query(function(qb) {
+      qb.where({
+        template_type: 'mentor', 
+        volunteer_fbid: null,
+        completed: false
       })
-  	})
+    }).fetchOne()
   },
   start: function() {
   	return this.related('volunteers').fetchAll().then((volunteers) => {
