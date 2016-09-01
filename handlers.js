@@ -125,7 +125,7 @@ module.exports.dispatchMessage = (payload, reply) => {
 				commandHandler.handler(payload, reply, values.slice(1))
 			}
 		} else {
-			reply({text: `Command ${command} not found. Try one of the following: ${Object.keys(messageHandlers)}.`})
+			reply({text: `I don't know how to interpret '${command}'. You can always ask for 'help' if you need it.`})
 		}
 	})
 }
