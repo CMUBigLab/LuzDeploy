@@ -1,5 +1,5 @@
 {
-	"type": "sweep",
+	"type": "sweep_edge",
 	"estimated_time": "10 min",
 	"completed_webhook": null,
 	"instructions": [

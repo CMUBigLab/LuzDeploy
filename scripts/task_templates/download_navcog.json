@@ -1,13 +1,12 @@
 {
-	"type": "navcog",
+	"type": "download_navcog",
 	"estimated_time": "10 min",
 	"completed_webhook": null,
 	"instructions": [
 		{
 			"wait": 0,
 			"message": {
-				"text": "Welcome! Thank you for helping revolutionize CMU and bring accessibility to the blind! <br>  Some tasks need you to work with awesome accessibility software, like Navcog ",
-				"image":"https://media.makeameme.org/created/brace-yourself-the-y59985.jpg"
+				"text": "Before continuing on to some other tasks, you'll need the right tools!",
 			}
 		},
 		{
@@ -17,7 +16,7 @@
             		"type": "template",
             		"payload": {
               			"template_type": "button",
-              			"text": "Download the software you need on your phone below.",
+              			"text": "NavCog is an iOS navigation application for the blind. It will also help us collect the data we need. Download it using the link below.",
               			"buttons": [{
                				"type":"web_url", 
                 			"title": "Download Navcog", 
