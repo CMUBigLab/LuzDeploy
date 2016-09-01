@@ -35,12 +35,11 @@ const Deployment = bookshelf.model('BaseModel').extend({
 	},
 	getTaskPool: function() {
     return this.tasks()
-    .fetch({withRelated: ['dependencies', 'differentVolunteerSet']})
+    .fetch()
     .then((tasks) => {
     	const freeTasks = tasks.filter((t) => {
     		return !t.get('assignedVolunteer') && 
-    			     !t.get('completed') && 
-    			     !t.hasOutstandingDependancies
+    			     !t.get('completed')
     		})
     	return freeTasks
     })
@@ -73,12 +72,8 @@ const Deployment = bookshelf.model('BaseModel').extend({
   },
     isComplete: function() {
       return this.tasks()
-      .query('where', 'completed', '=', 'false')
-      .count()
-      .then(count => {
-        console.log(count)
-        return count == 0
-      })
+      .query({where: {completed: false}}).count()
+      .then(count => count == 0)
     },
 	virtuals: {
 		isCasual: function() {
