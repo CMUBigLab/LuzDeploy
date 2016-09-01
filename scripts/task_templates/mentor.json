@@ -1,0 +1,19 @@
+{
+	"type": "mentor",
+	"estimated_time": "15 min",
+	"completed_webhook": null,
+	"instructions": [
+		{
+			"wait": 0,
+			"message": {
+				"text": "{mentee.name} could use some help with their task. Please go talk to them and see if you can offer any advice."
+			}
+		},
+		{
+			"wait": 1,
+			"message": {
+				"text": "Their task is at the location marked on this map."
+			}
+		}
+	]
+}

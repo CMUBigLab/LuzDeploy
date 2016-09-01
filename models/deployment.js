@@ -57,6 +57,11 @@ const Deployment = bookshelf.model('BaseModel').extend({
     	return freeTasks
     })
   },
+  doesAnyoneNeedHelp: function() {
+    return this.volunteers()
+    .query('where', 'needs_help', '=', true)
+    .fetchOne()
+  },
   checkThresholds: function() {
   	return this.related('volunteers').fetch().then((volunteers) => {
   		volunteers.forEach((v) => {

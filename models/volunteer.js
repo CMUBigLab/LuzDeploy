@@ -1,6 +1,8 @@
 const bookshelf = require('../bookshelf')
 const bot = require('../bot')
 const handlers = require('../handlers')
+const mentor = require('../mentor')
+
 
 const _ = require('lodash')
 
@@ -35,18 +37,37 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 		})
 	},
 	getNewTask: function() {
-		this.related('deployment').getTaskPool().then(pool => {
-			pool = _.filter(pool, t => t.allowedToTake(this))
-			const preAssigned = _.find(pool, p => {
-				return p.get('volunteerFbid') == this.get('fbid')
-			})
-			if (preAssigned) {
-				this.assignTask(preAssigned)
-			}
-			else if (pool.length > 0) {
-				this.assignTask(pool.pop())
+		this.deployment().doesAnyoneNeedHelp()
+		// if someone needs help, add mentorship task
+		.then(function(mentee) {
+			if (mentee) {
+				return mentor.createMentorshipTask(this, mentee)
+				.tap(function(task) {
+					return mentee.save({needsHelp: false}, {patch: true})
+				})
 			} else {
-				this.sendMessage({text: 'There are no tasks available right now.'})
+				// otherwise, get normal task, looking for pre-assigned things
+				return this.related('deployment').getTaskPool().then(pool => {
+					pool = _.filter(pool, t => t.allowedToTake(this))
+					const preAssigned = _.find(pool, p => {
+						return p.get('volunteerFbid') == this.get('fbid')
+					})
+					if (preAssigned) {
+						return preAssigned
+					} else if (pool.length > 0) {
+						return pool.pop()
+					} else {
+						return null
+					}
+				})
+			}
+		})
+		// actuall assign the task
+		.then(function(task) {
+			if (!task) {
+				return this.sendMessage({text: 'There are no tasks available right now.'})
+			} else {
+				return this.assignTask(task)
 			}
 		})
 	},
