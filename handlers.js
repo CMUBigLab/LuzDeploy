@@ -70,6 +70,10 @@ const postbackHandlers = {
 	'cancel_mentor': {
 		handler: cancelMentor,
 		volRequired: true,
+	},
+	'task_score': {
+		handler: taskScore,
+		volRequired: true,
 	}
 }
 
@@ -170,6 +174,20 @@ function leaveMessage(payload, reply) {
 	})
 	.then(() => {
 		reply({text: "Sorry to see you go! We are always happy to have you back."})
+	})
+}
+
+function taskScore(payload, reply, args) {
+	const vol = payload.sender.volunteer
+	return vol.currentTask().fetch().then(task => {
+		if (!task || !task.get('startTime') || task.get('completed')) {
+			return reply({text: "You don't seem to have an active task. Did you forget to 'start' it?"})
+		} else {
+			return task.save({score: args.score}, {patch: true})
+			.then(function() {
+				reply({text: "Great, now just type 'done' to complete the task!"})
+			})
+		}
 	})
 }
 
@@ -441,7 +459,7 @@ function startMessage(payload, reply) {
 			return
 		} else {
 			task.start().then((model) => {
-				reply({text: `Task started at ${task.get('startTime')}.`})
+				reply({text: `Task started at ${task.get('startTime')}.  Send 'done' when you have completed all of the steps.`})
 			})
 		}
 	})
@@ -474,7 +492,7 @@ function rejectMessage(payload, reply) {
 			reply({text: 'You don\'t have a task.'})
 			return
 		}
-		vol.rejectTask().then(() => reply({text: "Task rejected."}))
+		vol.unassignTask().then(() => reply({text: "Task rejected."}))
 	})
 }
 

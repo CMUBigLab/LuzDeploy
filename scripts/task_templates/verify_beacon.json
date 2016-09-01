@@ -1,18 +1,59 @@
 {
-	"type": "fingerprint",
-	"estimated_time": "20 min",
+	"type": "verify_beacon",
+	"estimated_time": "5 min",
 	"completed_webhook": null,
-	"instructions": [{
-		"wait": 0,
-		"message": {
-			"text": "Some beacons have been placed along an edge in the building. We need you to go collect some data from them so our map of the building is complete! Later blind users will use the same data to locate themselves in the building.",
+	"instructions": [
+		{
+			"wait": 0,
+			"message": {
+				"text": "Another volunteer setup beacon {beacon} earlier. We need you to go double check their work. Later blind users will use these beacons to locate themselves in the building, so they can't be missing or out of place."
+			}
+		},
+		{
+			"wait": 1,
+			"message": {
+				"attachment": {
+					"type": "template",
+					"payload": {
+						"template_type": "button",
+						"text": "Here is what you need to do to complete this task:\n1. Please go to the location on the map below and look for beacon {beacon}.\n2. If you found the beacon but it isn't in the right location, please move it to the location on the map and press the button below.\n3. Press the appropriate response button once you are done.",
+						"buttons": [{
+							"type":"web_url", 
+							"title": "Open Map", 
+							"url": "http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon={beacon}"
+						}]
+					}
+				}
+			}
+		},
+		{
+			"wait": 2,
+			"message": {
+				"attachment": {
+					"type": "template",
+					"payload": {
+						"template_type": "button",
+						"text": "Please press the corresponding button when you are done.",
+						"buttons": [
+							{
+								"type":"postback", 
+								"title": "Looks Good!", 
+								"payload": "{\"type\":\"task_score\",\"args\":{\"score\":1}}"
+							},
+							{
+								"type":"postback", 
+								"title": "Wrong Placement", 
+								"payload": "{\"type\":\"task_score\",\"args\":{\"score\":0.5}}"
+							},
+							{
+								"type":"postback", 
+								"title": "Missing Beacon", 
+								"payload": "{\"type\":\"task_score\",\"args\":{\"score\":0}}"
+							}
+						]
+					}
+				}
+			}
 		}
-	}, {
-		"wait": 1,
-		"message": {
-			"text": "Please go to one end of the location shown on the map. Once you click on the link provided below an app will spawn on your phone.<br> Press the start button and, once the countdown reaches zero take a step towards location Y.<br>  Repeat these two operations until you have arrived at location Y.<br> Now click on the following link.",
-			"image": "<Send map here>"
-		}
-	}, 
-]
+	]
 }
