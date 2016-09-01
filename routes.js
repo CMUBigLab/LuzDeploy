@@ -50,7 +50,7 @@ router.post('/tasks', bodyParser.json(), function(req, res, next) {
 	.then(function(templates) {
 		let ps = req.body.map(function(task) {
 			if (!(task.template_type in templates)) {
-				throw new errors.BadRequestError(`No template named ${task.get('templateType')}`)
+				throw new errors.BadRequestError(`No template named ${task.template_type}`)
 			}
 			let template = templates[task.template_type]
 			const params = _.omit(task,
