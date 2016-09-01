@@ -72,7 +72,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		})
 	},
 	start: function() {
-		return this.save({startTime: new Date()})
+		return this.save({startTime: new Date(), active: true})
 	},
 	finish: function() {
 		return this.volunteers().fetch().then(volunteers => {
