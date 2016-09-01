@@ -43,7 +43,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 			return freeTasks
 		})
 	},
-	doesAnyoneNeedHelp: function() {
+	doesAnyoneNeedHelp: function(mentor) {
 		return this.tasks()
 		.query(function(qb) {
 			qb.where({
@@ -51,6 +51,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 				volunteer_fbid: null,
 				completed: false
 			})
+			.andWhereNot('instruction_params','@>', {mentee: {fbid: mentor.get('fbid')}})
 		}).fetchOne()
 	},
 	checkThresholds: function() {

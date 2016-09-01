@@ -37,7 +37,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 	getNewTask: function() {
 		this.deployment().fetch()
 		.then(deployment => {
-			return [deployment, deployment.doesAnyoneNeedHelp()]
+			return [deployment, deployment.doesAnyoneNeedHelp(this)]
 		})
 		// if someone needs help, add mentorship task
 		.spread((deployment, task) => {
