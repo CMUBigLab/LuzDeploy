@@ -5,10 +5,7 @@
 	"instructions": [{
 		"wait": 0,
 		"message": {
-			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!<br> You will be helping to verify beacons so blind people can always navigate a building. ",
-			"image": "http://m.memegen.com/urlnfd.jpg"
-
-
+			"text": "You will be helping to verify beacons so blind people can always navigate a building. ",
 		}
 	}, {
 		"wait": 1,
@@ -17,21 +14,5 @@
 			"image": "<Send map here>"
 		}
 	}, 
-
-	{
-		"wait": 1,
-		"message": {
-			"text": "Woot! You have done <number of tasks done> task(s) out of the <total number of tasks> given to you.<br> In total everyone has done <number of tasks done>, and just <number of tasks missing> more tasks to go.<br> Let's do more!",
-			"image": "https://cdn.meme.am/instances/63468446.jpg"
-		}
-	}, 
-
-
-	{
-		"wait": 1,
-		"message": {
-			"text": "Whooo! You have finished all your tasks!!",
-			"image": "http://www.focusrs.org/forum/attachments/8331d1461868372-who-made-onto-first-ship-3732074.jpg"
-		}
-	}]
+]
 }

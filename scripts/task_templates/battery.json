@@ -5,33 +5,13 @@
 	"instructions": [{
 		"wait": 0,
 		"message": {
-			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind! <br> In this task you will help replace the battery of beacons so blind people can always navigate through CMU. Wooo!",
-			"image": "http://www.relatably.com/m/img/welcome-memes/63341322.jpg"
-
-
+			"text": "In this task you will help replace the battery of beacons so blind people can always navigate through CMU. Wooo!",
 		}
 	}, {
 		"wait": 1,
 		"message": {
 			"text": "Your task will be to give life to old beacons!<br> Please go to the location on the map to help replace the battery of beacon <Beacon Number>.<br> Once there if you find the beacon take it down and open it (see nifty image below!).<br> Measure the voltage of the battery by placing the battery in between the multimeter's probes. <br>If the battery level is below 2.8 volts or no battery is found place a new battery. If no beacon is found, help rescue it by sending me the message of \"Missing\".",
 			"image": "https://www.dropbox.com/s/m0i2ey417qozfe6/battery.png?dl=0"
-		}
-	}, 
-
-	{
-		"wait": 1,
-		"message": {
-			"text": "Woot! You have done <number of tasks done> task(s) out of the <total number of tasks> given to you.<br> In total everyone has done <number of tasks done>, and just <number of tasks missing> more tasks to go.<br> Let's do more! Yeah!",
-			"image": "https://cdn.meme.am/instances/64120805.jpg"
-		}
-	}, 
-
-
-	{
-		"wait": 1,
-		"message": {
-			"text": "Yes! Well done! You have finished all your tasks!!",
-			"image": "https://cdn.meme.am/instances/56647059.jpg"
 		}
 	}]
 }

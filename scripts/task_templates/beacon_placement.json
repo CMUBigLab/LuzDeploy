@@ -1,0 +1,17 @@
+{
+	"type": "beacon_placement",
+	"estimated_time": "20 min",
+	"completed_webhook": null,
+	"instructions": [{
+		"wait": 0,
+		"message": {
+			"text": "In this task you will help place beacons in the environment to help the blind navigate.",
+		}
+	}, {
+		"wait": 1,
+		"message": {
+			"text": "You will be placing beacons. Go to the Supply Station <br> and grab a beacon. Find the Beacon Location <br> using the number on the back, and place the beacon on the wall about 10 feet off the ground. <br> <b>Tell me when you’re done! <b>",
+			"image": "<Send map here>"
+		}
+	}]
+}

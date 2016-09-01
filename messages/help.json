@@ -1,9 +1,4 @@
-{
-	"type": "help",
-	"estimated_time": "10 min",
-	"completed_webhook": null,
-	"instructions": [
-		{
+	{
 			"wait": 0,
 			"message": {
 				"text": "So you need help? Don't panic! We are here to help!",
@@ -30,5 +25,4 @@
             		}
           		}
       		}
-		}]
-}
+		}

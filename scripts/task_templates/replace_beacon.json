@@ -18,21 +18,5 @@
     {
       "wait": 1,
       "message": {"text": "After completing this final step, please return the beacon your removed from the wall to NSH 4522."}
-    },
-    {
-		"wait": 1,
-		"message": {
-			"text": "Woot! You have done <number of tasks done> task(s) out of the <total number of tasks> given to you.<br> In total everyone has done <number of tasks done>, and just <number of tasks missing>more tasks to go.<br> Let's do more!",
-			"image": "https://cdn.meme.am/instances/500x/54548643.jpg"
-		}
-	}, 
-
-
-	{
-		"wait": 1,
-		"message": {
-			"text": "Yes! Well done! You have finished all your tasks!!",
-			"image": "http://s2.quickmeme.com/img/52/529c9e0cd806e50f846bc6ea20c3e67144b5fc1e2d692cc66a5cd29a5f027a38.jpg"
-		}
-	}]
+    }]
 }
