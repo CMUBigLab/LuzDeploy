@@ -34,7 +34,7 @@ const Task = bookshelf.model('BaseModel').extend({
       return this.save({startTime: new Date()})
   },
   finish: function() {
-    this.assignedVolunteer().fetch().then(vol => {
+    return this.assignedVolunteer().fetch().then(vol => {
       return Promise.all([
         this.save({completed: true, completedTime: new Date()}, {patch: true}),
         vol.save({currentTask: null}, {patch: true})
