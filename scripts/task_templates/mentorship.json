@@ -1,0 +1,37 @@
+{
+	"type": "mentorship",
+	"estimated_time": "20 min",
+	"completed_webhook": null,
+	"instructions": [{
+		"wait": 0,
+		"message": {
+			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!<br> In this task you will mentor other volunteers. ",
+			"image": "https://cdn.meme.am/instances/400x/53091769.jpg"
+
+
+		}
+	}, {
+		"wait": 1,
+		"message": {
+			"text": "So far you have been a super star doing tasks.<br> But, some newbies need help.<br> Please rescue them!",
+			"image": "<Send map here>"
+		}
+	}, 
+
+	{
+		"wait": 1,
+		"message": {
+			"text": "Woot! You rock! You rescued someone and have done <number of tasks done> task(s) out of the <total number of tasks> given to you.<br> In total everyone has done <number of tasks done>, and just <number of tasks missing> more tasks to go.<br> Let's do more!",
+			"image": "http://images.memes.com/meme/396227"
+		}
+	}, 
+
+
+	{
+		"wait": 1,
+		"message": {
+			"text": "Whooo! You have finished all your tasks!!",
+			"image": "http://www.mememaker.net/static/images/memes/3709747.jpg"
+		}
+	}]
+}

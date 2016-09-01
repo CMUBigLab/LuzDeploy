@@ -1,0 +1,30 @@
+{
+	"type": "navcog",
+	"estimated_time": "10 min",
+	"completed_webhook": null,
+	"instructions": [
+		{
+			"wait": 0,
+			"message": {
+				"text": "Welcome! Thank you for helping revolutionize CMU and bring accessibility to the blind! <br>  Some tasks need you to work with awesome accessibility software, like Navcog ",
+				"image":"https://media.makeameme.org/created/brace-yourself-the-y59985.jpg"
+			}
+		},
+		{
+			"wait": 1,
+			"message": {
+        		"attachment": {
+            		"type": "template",
+            		"payload": {
+              			"template_type": "button",
+              			"text": "Download the software you need on your phone below.",
+              			"buttons": [{
+               				"type":"web_url", 
+                			"title": "Download Navcog", 
+                			"url": "https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=1042163426&mt=8"
+              			}]
+            		}
+          		}
+      		}
+		}]
+}

@@ -5,7 +5,7 @@
 	"instructions": [{
 		"wait": 0,
 		"message": {
-			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!<br> You will be helping to verify beacons so blind people can always navigate a building. ",
+			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!",
 			"image": "http://m.memegen.com/urlnfd.jpg"
 
 
