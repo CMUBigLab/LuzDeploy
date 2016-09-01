@@ -10,13 +10,19 @@
 			}
 		},
 		{
+			"wait": 1,
+			"message": {
+				"text": "Here are the steps you will need to complete:\n1. Go to the Supply Station (GHC 5th floor entrance) and grab beacon number {beacon}.\n2. Then open the map below to see where the beacon belongs. Go to that location."
+			}
+		},
+		{
 			"wait": 2,
 			"message": {
 				"attachment": {
 					"type": "template",
 					"payload": {
 						"template_type": "button",
-						"text": "Here are the steps you will need to complete:\n1. Go to the Supply Station and grab beacon number {beacon}.\n2. Then open the map below to see where the beacon belongs. Go to that location.\n3. Place the beacon on the wall about 10 feet off the ground. Try to make it look neat.\n4. Tell me when you are done!",
+						"text": "3. Place the beacon on the wall about 10 feet off the ground. Try to make it look neat.\n4. Tell me when you are done!",
 						"buttons": [{
 							"type":"web_url", 
 							"title": "Open Map", 
