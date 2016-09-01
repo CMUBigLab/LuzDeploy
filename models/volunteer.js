@@ -108,14 +108,24 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 		.fetch()
 	},
 	createMentorshipTask: function() {
-		return bookshelf.model('Task').forge({
-			templateType: 'mentor',
-			instructionParams: {
-				mentee: this.toJSON({virtuals: true})
-			},
-			deploymentId: this.get('deploymentId')
+		return this.currentTask().fetch().then(task => {
+			if (!task) {
+				throw new Error("There is no current task!")
+			}
+			let params = {mentee: this.serialize({shallow: true})}
+			params.mentee.name = this.name
+			if (task.get('instructionParams').beacon) {
+				params.beacon = task.get('instructionParams').beacon
+			} else {
+				throw new Error("This task does not support mentorship yet.")
+			}
+			return bookshelf.model('Task').forge({
+				templateType: 'mentor',
+				instructionParams: params,
+				deploymentId: this.get('deploymentId')
+			})
+			.save()
 		})
-		.save()
 	},
 	sendMessage: function(message) {
 		bot.sendMessage(this.get('fbid'), message)

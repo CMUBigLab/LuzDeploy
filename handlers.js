@@ -233,31 +233,29 @@ function listCommands(payload, reply) {
 // warning: used by message and by postback
 function mentorMessage(payload, reply) {
 	const vol = payload.sender.volunteer
-	return vol.getMentorshipTask()
-	.then(function(task) {
-		if (task) {
-			return reply({text: "A mentor is already on the way!"})
+	vol.currentTask().fetch().then(task => {
+		if (!task) {
+			return reply({text: "We can't send a mentor to you until you have a task. Try 'ask' to get a new one."})
 		} else {
-			return vol.createMentorshipTask()
+			return vol.getMentorshipTask()
 			.then(function(task) {
-				const response = {
-					"attachment":{
-						"type":"template",
-						"payload":{
-							"template_type": "button",
-							"text": "Okay, we will let you know when someone is on their way! You can cancel this request at any time using the button below.",
-							"buttons": [{
-								type:"postback", 
-								title: "Cancel Help Request", 
-								payload: JSON.stringify({
-									type: "cancel_mentor",
-									args: {taskId: task.get('id')}
-								})
-							}]
-						}
-					}
+				if (task) {
+					return reply({text: "We are already searching for a good mentor to send you."})
+				} else {
+					return vol.createMentorshipTask()
+					.then(function(task) {
+						let text =  "Okay, we will let you know when someone is on their way! You can cancel this request at any time using the button below."
+						let buttons = [{
+							type:"postback", 
+							title: "Cancel Help Request", 
+							payload: JSON.stringify({
+								type: "cancel_mentor",
+								args: {taskId: task.get('id')}
+							})
+						}]
+						return reply(msgUtil.buttonMessage(text, buttons))
+					})
 				}
-				return reply(response)
 			})
 		}
 	})

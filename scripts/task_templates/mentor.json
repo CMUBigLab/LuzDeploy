@@ -4,28 +4,27 @@
 	"completed_webhook": null,
 	"instructions": [
 		{
-		"wait": 0,
-		"message": {
-			"text": "In this task you will mentor other volunteers. ",
-		}
-	}, {
-		"wait": 1,
-		"message": {
-			"text": "So far you have been a super star doing tasks.<br> But, some newbies need help.<br> Please rescue them!",
-			"image": "<Send map here>"
-		}
-	}
-		{
 			"wait": 0,
 			"message": {
-				"text": "{mentee.name} could use some help with their task. Please go talk to them and see if you can offer any advice."
+				"text": "You've been doing a great job! {mentee.name} could use some help with their task. Please go talk to them and see if you can offer any advice."
 			}
 		},
 		{
 			"wait": 1,
 			"message": {
-				"text": "Their task is at the location marked on this map."
+				"attachment": {
+					"type": "template",
+					"payload": {
+						"template_type": "button",
+						"text": "{mentee.firstName}'s task is at the location marked in this map (beacon {beacon}). Go there to meet them.",
+						"buttons": [{
+							"type":"web_url", 
+							"title": "Open Map", 
+							"url": "http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon={beacon}"
+						}]
+					}
+				}
 			}
-		}
+ 		}
 	]
 }
