@@ -51,7 +51,6 @@ const aliases = {
 	'r': 'reject',
 	's': 'start',
 	'a': 'ask',
-	'h': 'help',
 	'hi': 'hello',
 	'hey': 'hello',
 }
