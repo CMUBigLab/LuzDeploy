@@ -458,10 +458,12 @@ function startMessage(payload, reply) {
 		} else {
 			return task.start()
 			.tap(task => {
-				bot.sendMessage(
-					task.get('instructionParams').mentee.fbid,
-					{text: `You asked for help, so ${vol.name} is coming to help you at your task location.`}
-				)
+				if (task.get('templateType') == 'mentor') {
+					bot.sendMessage(
+						task.get('instructionParams').mentee.fbid,
+						{text: `You asked for help, so ${vol.name} is coming to help you at your task location.`}
+					)
+				}
 			})
 			.then((task) => {
 				reply({text: `Task started at ${task.get('startTime')}.  Send 'done' when you have completed all of the steps.`})
