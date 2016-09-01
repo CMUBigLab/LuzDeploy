@@ -80,6 +80,16 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			])
 		})
 	},
+	requestHelp: function() {
+		return this.save({needsHelp: true}).then(function(model) {
+			model.sendMessage({text: "Okay, we will let you know when we are sending someone your way!"})
+		})
+	},
+	cancelHelp: function() {
+		return this.save({needsHelp: false}).then(function(model) {
+			model.sendMessage({text: "Help request cancelled."})
+		})
+	},
 	sendMessage: function(message) {
 		bot.sendMessage(this.get('fbid'), message)
 	},

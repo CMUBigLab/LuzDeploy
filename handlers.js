@@ -130,7 +130,7 @@ function greetingMessage(payload, reply) {
 
 function mentorMessage(payload, reply) {
 	const vol = payload.sender.volunteer
-	vol.related('deployment').fetch().then(d => d.sendMentor(vol))
+	vol.requestHelp()
 }
 
 function assignMessage(payload, reply, args) {
