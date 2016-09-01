@@ -1,5 +1,6 @@
 const bookshelf = require('../bookshelf')
 const _ = require('lodash')
+const msgUtil = require('../message-utils')
 
 require('./volunteer')
 require('./task')
@@ -60,10 +61,15 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		})
 	},
 	finish: function() {
-		return this.load(['volunteers']).then((d) => {
-			d.related('volunteers').forEach((v) => {
-				// TODO(cgleason): make survey into a button
-				v.sendMessage({text: "Thank you very much!\nYou just helped by giving light to the visually impaired.\n\nI am still in research phase, please answer this survey so I can become better at helping.\n\nhttps://docs.google.com/forms/d/1hcwB18hnyniWFUQAQDm2MSMdlQQL4QYOG_Md9eFsQnE/viewform"})
+		return this.volunteers().fetch().then(volunteers => {
+			volunteers.forEach((v) => {
+				let buttons = [{
+					type: "web_url",
+					url: "https://docs.google.com/forms/d/1hcwB18hnyniWFUQAQDm2MSMdlQQL4QYOG_Md9eFsQnE/viewform",
+					title: "Open Survey"
+				}]
+				let text = "Thank you very much!\nYou just helped make CMU accessible.\n\nI am still in the research phase, so please answer this survey so I can become better!"
+				v.sendMessage(msgUtil.buttonMessage(text, buttons))
 			})
 			return this.save({doneTime: new Date()})
 		})
