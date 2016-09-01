@@ -53,15 +53,15 @@ router.post('/tasks', bodyParser.json(), function(req, res, next) {
 				throw new errors.BadRequestError(`No template named ${task.get('templateType')}`)
 			}
 			let template = templates[task.template_type]
-			const params = _.omit(task
+			const params = _.omit(task,
 				['template_type', 'deployment_id', 'dependencies']
 			)
 			return new Task({
 				instructionParams: JSON.stringify(params),
 				estimatedTime: template.get('estimatedTime'),
-				deployment_id: task.deployment_id,
+				deploymentId: task.deployment_id,
 				completedWebhook: template.get('completedWebhook'),
-				template_type: task.template_type,
+				templateType: task.template_type,
 			}).save()
 		})
 		return Promise.all(ps)
