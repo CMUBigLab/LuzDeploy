@@ -268,12 +268,12 @@ function cancelMentor(payload, reply, args) {
 		if (!task) {
 			return reply({text: "Hmm, that task was not found."})
 		} else {
-			task.assignedVolunteer().fetch()
+			return task.assignedVolunteer().fetch()
 			.then(vol => {
 				if (vol) {
-					vol.save({current_task: null}, {patch: true})
-					.tap(() => {
-						task.destroy()
+					return vol.save({current_task: null}, {patch: true})
+					.then(() => {
+						return task.destroy()
 					})
 					.then(() => {
 						vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`})
@@ -284,7 +284,7 @@ function cancelMentor(payload, reply, args) {
 				}
 			})
 			.then(() => {
-				reply({text: "No problem, help cancelled!"})
+				return reply({text: "No problem, help cancelled!"})
 			})
 		}
 	})
