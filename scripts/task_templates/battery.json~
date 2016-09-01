@@ -21,7 +21,7 @@
 	{
 		"wait": 1,
 		"message": {
-			"text": "Woot! You have done <number of tasks done> task(s) out of the <total number of tasks> given to you.<br> In total everyone has done <number of tasks done>, and just <number of tasks missing> more tasks to go.<br> Let's do more! Yeah!",
+			"text": "Woot! You have done <number of tasks done> task(s) out of the <total number of tasks> given to you.<br> In total everyone has done <number of tasks done>, and just <number of tasks missing>",
 			"image": "https://cdn.meme.am/instances/64120805.jpg"
 		}
 	}, 
