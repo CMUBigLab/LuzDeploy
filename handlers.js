@@ -228,7 +228,7 @@ function listCommands(payload, reply) {
 		}
 	}
 	console.log(msg)
-	reply({text: msg})
+	reply({text: msg}, console.log)
 }
 
 // warning: used by message and by postback
