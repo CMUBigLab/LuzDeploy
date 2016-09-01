@@ -62,10 +62,21 @@ const Task = bookshelf.model('BaseModel').extend({
           return task.related('template').renderInstructions(params)
     })
   },
+  hasOutstandingDependancies: function() {
+      return this.dependencies()
+      .query('where', 'completed', '=', false)
+      .fetch()
+      .then(d => (d.length > 0))
+  },
+  getPlaceTask: function() {
+    return bookshelf.model('Task').forge({
+      deploymentId: this.get('deploymentId'),
+      templateType: 'place_beacon',
+    }).query((qb) => {
+      qb.where('instruction_params', '=', this.get('instructionParams'))
+    }).fetch()
+  },
   virtuals: {
-    hasOutstandingDependancies: function() {
-      return this.related('dependencies').filter((t) => !t.completed).length
-    },
     estimatedTimeMin: function() {
       const int = _.defaults(this.get('estimatedTime'), {hours: 0, minutes: 0, seconds: 0})
       return int.hours * 60 + int.minutes + int.seconds / 60

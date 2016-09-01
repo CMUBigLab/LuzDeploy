@@ -1,6 +1,7 @@
 const bookshelf = require('../bookshelf')
 const _ = require('lodash')
 const msgUtil = require('../message-utils')
+var Promise = require('bluebird')
 
 require('./volunteer')
 require('./task')
@@ -35,11 +36,11 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		return this.tasks()
 		.query({where:{completed: false, volunteer_fbid: null}})
 		.fetch({withRelated: ['dependencies']})
-		.then((tasks) => {
-			const freeTasks = tasks.filter((t) => {
-				return !t.hasOutstandingDependancies
-				})
-			return freeTasks
+		.then(tasks => {
+			return Promise.filter(
+				tasks.models,
+				t => t.hasOutstandingDependancies().then(r => !r)
+				)
 		})
 	},
 	doesAnyoneNeedHelp: function(mentor) {
@@ -90,7 +91,6 @@ const Deployment = bookshelf.model('BaseModel').extend({
 	isComplete: function() {
 		return this.tasks()
 		.query({where: {completed: false}}).count()
-		.tap(console.log)
 		.then(count => count == 0)
 	},
 	virtuals: {
