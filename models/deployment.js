@@ -53,12 +53,25 @@ const Deployment = bookshelf.model('BaseModel').extend({
 			})
 		}).fetchOne()
 	},
-	start: function() {
-		return this.related('volunteers').fetchAll().then((volunteers) => {
-			const updates = volunteers.map((v) => v.save({weight: 1/volunteers.length}))
-			updates.push(this.save({startTime: new Date()}))
-			return Promise.all(updates)
+	checkThresholds: function() {
+		return this.volunteers().fetch({withRelated: ['currentTask']})
+		.then(function(volunteers) {
+			volunteers.forEach(v => {
+				if (v.get('currentTask') && v.get('startTime') && !v.get('completed')) {
+					if (v.currentTask().timeScore < 0 && v.currentTask().timeScore > -1) {
+						let text = "You didn't finish your task in the estimated thim period. Do you need help?"
+						let buttons = [{type: "postback", title: "Yes, please send someone.", payload:"{\"type\":\"send_mentor\",\"args\":{}}"}]
+						v.sendMessage(msgUtil.buttonMessage(text, buttons))
+					} else if (v.currentTask().timeScore < -1) {
+						v.sendMessage({text: "You haven't finished your task in more that twice the estimated time it would take. We are going to send someone to help you."})
+						return v.createMentorshipTask()
+					}
+				}
+			})
 		})
+	},
+	start: function() {
+		return this.save({startTime: new Date()})
 	},
 	finish: function() {
 		return this.volunteers().fetch().then(volunteers => {

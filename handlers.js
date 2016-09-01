@@ -47,6 +47,11 @@ const messageHandlers = {
 		handler: helpMessage,
 		volRequired: true,
 		description: "List commands."
+	},
+	'startdep': {
+		handler: startDeployment,
+		adminRequired: true,
+		description: "start a deployment"
 	}
 }
 
@@ -174,6 +179,19 @@ function leaveMessage(payload, reply) {
 	})
 	.then(() => {
 		reply({text: "Sorry to see you go! We are always happy to have you back."})
+	})
+}
+
+function startDeployment(payload, reply, args) {
+	return Deployment.forge({id: args[0]})
+	.then(deployment => {
+		if (deployment.get('active')) {
+			reply({text: "already started"})
+		} else {
+			return deployment.start().then(d => {
+				reply({text: "started"})
+			})
+		}
 	})
 }
 
@@ -440,7 +458,7 @@ function joinDeployment(payload, reply, args) {
 					last_name: payload.sender.profile.last_name
 				}, method).then(function(vol) {
 					reply({text: `Great! Welcome to the ${deployment.get('name')} deployment!`})
-					return vol.getNewTask()
+					return 	vol.getNewTask()
 				})
 			})
 		}

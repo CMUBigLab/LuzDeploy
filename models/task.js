@@ -33,7 +33,7 @@ const Task = bookshelf.model('BaseModel').extend({
     return this.belongsTo('TaskTemplate', 'template_type')
   },
   start: function() {
-      return this.save({startTime: new Date()})
+      return this.save({startTime: new Date(), active: true})
   },
   finish: function() {
     return this.assignedVolunteer().fetch().then(vol => {
