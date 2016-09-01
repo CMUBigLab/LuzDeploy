@@ -466,10 +466,6 @@ function startMessage(payload, reply) {
 function askMessage(payload, reply) {
 	// Get a task in the pool, and ask if he wants to do it.
 	const vol = payload.sender.volunteer
-	if (!vol.deployment().isCasual) {
-		reply({text: 'Sorry, you can\'t ask for a task in this deployment.'})
-		return
-	}
 	if (vol.get('currentTask')) {
 		reply({text: 'You already have a task! Finish that first.'})
 		return
