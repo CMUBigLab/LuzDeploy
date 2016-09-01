@@ -33,42 +33,26 @@ const Deployment = bookshelf.model('BaseModel').extend({
 			})
 		})
 	},
-	sendMentor: function(mentee) {
-		this.related('volunteers').fetch().then((vols) => {
-			vols.remove(mentee)
-			const mentor = vols.reduce((prev, current) => {
-				return (prev.weight > current.weight) ? prev : current
-			})
-  			// send message to mentee
-  			mentee.sendMessage({text: `We are sending ${mentor.name} to help you.`})
-  			// send message to mentor
-  			mentor.sendMessage({text: `Go help volunteer ${mentee.name}`})
-  		})
-	},
 	getTaskPool: function() {
     return this.tasks()
-    .fetch({withRelated: ['dependencies', 'differentVolunteerSet']})
+    .fetch()
     .then((tasks) => {
     	const freeTasks = tasks.filter((t) => {
     		return !t.get('assignedVolunteer') && 
-    			     !t.get('completed') && 
-    			     !t.hasOutstandingDependancies
+    			     !t.get('completed')
     		})
     	return freeTasks
     })
   },
-  checkThresholds: function() {
-  	return this.related('volunteers').fetch().then((volunteers) => {
-  		volunteers.forEach((v) => {
-      	if (v.get('weight') < this.get('sendHelpThreshold')) {
-    			this.sendMentor(v)
-  			} else if (v.get('weight') < this.get('askThreshold')) {
-    			v.sendMessage({text: "Do you want help? If so do..."})
-  			} else if (v.get('weight') < this.get('warningThreshold')) {
-    			v.sendMessage({text: "You are lagging behind"})
-  			}
+  doesAnyoneNeedHelp: function() {
+    return this.tasks()
+    .query(function(qb) {
+      qb.where({
+        template_type: 'mentor', 
+        volunteer_fbid: null,
+        completed: false
       })
-  	})
+    }).fetchOne()
   },
   start: function() {
   	return this.related('volunteers').fetchAll().then((volunteers) => {
@@ -88,12 +72,8 @@ const Deployment = bookshelf.model('BaseModel').extend({
   },
     isComplete: function() {
       return this.tasks()
-      .query('where', 'completed', '=', 'false')
-      .count()
-      .then(count => {
-        console.log(count)
-        return count == 0
-      })
+      .query({where: {completed: false}}).count()
+      .then(count => count == 0)
     },
 	virtuals: {
 		isCasual: function() {

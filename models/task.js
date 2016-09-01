@@ -1,7 +1,9 @@
 const request = require('request-promise')
 const _ = require('lodash')
+var Promise = require('bluebird')
 
 const bookshelf = require('../bookshelf')
+
 require('./deployment')
 require('./volunteer')
 require('./task-template')
@@ -35,18 +37,15 @@ const Task = bookshelf.model('BaseModel').extend({
     this.assignedVolunteer().fetch().then(vol => {
       return Promise.all([
         this.save({completed: true, completedTime: new Date()}, {patch: true}),
-        vol.save({currentTask: null})
+        vol.save({currentTask: null}, {patch: true})
       ])
-      .then(models => {
-        vol.sendMessage({text: `Thanks! You ended at ${this.get('completedTime')}.`})
-        return models
-      })
-      .then(models => {
+      .spread((task, vol) => {
+        vol.sendMessage({text: `Thanks! You ended at ${task.get('completedTime')}.`})
         const webhook = this.get('completedWebhook')
         if (webhook) {
-          return request.post({url: webhook, data: this.serialize({shallow: true})})
+          return request.post({url: webhook, data: task.serialize({shallow: true})})
           .then((parsedBody) => {
-            return Promise.resolve(this.set('score', parsedBody.score))
+            return Promise.resolve(task.set('score', parsedBody.score))
           }).catch((err) => {
             console.error(err)
           })

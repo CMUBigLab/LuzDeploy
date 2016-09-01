@@ -25,8 +25,8 @@ const messageHandlers = {
 	'reject': {
 		handler: rejectMessage,
 	},
-	'help': {
-		handler: helpMessage,
+	'mentor': {
+		handler: mentorMessage,
 	},
 	'assign': {
 		handler: assignMessage,
@@ -43,6 +43,10 @@ const postbackHandlers = {
 		handler: assignTask,
 		volRequired: false,
 		adminRequired: true,
+	},
+	'cancel_mentor': {
+		handler: cancelMentor,
+		volRequired: true,
 	}
 }
 
@@ -51,7 +55,6 @@ const aliases = {
 	'r': 'reject',
 	's': 'start',
 	'a': 'ask',
-	'h': 'help',
 	'hi': 'hello',
 	'hey': 'hello',
 }
@@ -112,7 +115,7 @@ module.exports.dispatchPostback = (payload, reply) => {
 			})
 		} else if (found.volRequired) {
 			Volunteer.where({fbid: payload.sender.id}).fetch()
-			.then(() => {
+			.then(vol => {
 				payload.sender.volunteer = vol
 				found.handler(payload, reply, payload.postback.payload.args)
 			})
@@ -128,9 +131,65 @@ function greetingMessage(payload, reply) {
 	reply({text: "Hi!"})
 }
 
-function helpMessage(payload, reply) {
+function mentorMessage(payload, reply) {
 	const vol = payload.sender.volunteer
-	vol.related('deployment').fetch().then(d => d.sendMentor(vol))
+	return vol.getMentorshipTask()
+	.then(function(task) {
+		if (task) {
+			return reply({text: "A mentor is already on the way!"})
+		} else {
+			return vol.createMentorshipTask()
+			.then(function(task) {
+				const response = {
+					"attachment":{
+						"type":"template",
+						"payload":{
+							"template_type": "button",
+							"text": "Okay, we will let you know when someone is on their way! You can cancel this request at any time using the button below.",
+							"buttons": [{
+								type:"postback", 
+								title: "Cancel Help Request", 
+								payload: JSON.stringify({
+									type: "cancel_mentor",
+									args: {taskId: task.get('id')}
+								})
+							}]
+						}
+					}
+				}
+				return reply(response)
+			})
+		}
+	})
+}
+
+function cancelMentor(payload, reply, args) {
+	const mentee = payload.sender.volunteer
+	return Task.forge({id: args.taskId}).fetch()
+	.then(task => {
+		if (!task) {
+			return reply({text: "Hmm, that task was not found."})
+		} else {
+			task.assignedVolunteer().fetch()
+			.then(vol => {
+				if (vol) {
+					vol.save({current_task: null}, {patch: true})
+					.tap(() => {
+						task.destroy()
+					})
+					.then(() => {
+						vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`})
+						return vol.getNewTask()
+					})
+				} else {
+					return task.destroy()
+				}
+			})
+			.then(() => {
+				reply({text: "No problem, help cancelled!"})
+			})
+		}
+	})
 }
 
 function assignMessage(payload, reply, args) {
@@ -375,8 +434,6 @@ function doneMessage(payload, reply) {
 		.then((complete) => {
 			if (complete) {
 				deployment.finish()
-			} else {
-				deployment.checkThresholds()
 			}
 		})
 		.then(deployment.getTaskPool.bind(deployment))
