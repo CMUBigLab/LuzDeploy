@@ -1,0 +1,24 @@
+{
+	"type": "navcog",
+	"estimated_time": "10 min",
+	"completed_webhook": null,
+	"instructions": [
+		
+		{
+			"wait": 1,
+			"message": {
+        		"attachment": {
+            		"type": "template",
+            		"payload": {
+              			"template_type": "button",
+              			"text": "You are a rock start! Thank you for revolutionizing CMU for the blind! <br> Please complete the survey for our study to help the visually impaired.",
+              			"buttons": [{
+               				"type":"web_url", 
+                			"title": "Complete Survey", 
+                			"url": "goo.gl/To40aQ"
+              			}]
+            		}
+          		}
+      		}
+		}]
+}
