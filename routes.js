@@ -37,7 +37,7 @@ router.post('/consent', bodyParser.urlencoded({extended: true}), function(req, r
 
 // Batch add tasks.
 router.post('/tasks', bodyParser.json(), function(req, res, next) {
-	let templates = _.map(req.body, 'template_type')
+	let templates = _.map(req.body, 'template_type').uniq()
 	TaskTemplate.collection()
 	.query('where', 'type', 'in', templates)
 	.fetch()
