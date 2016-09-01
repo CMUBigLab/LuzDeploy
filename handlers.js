@@ -387,8 +387,6 @@ function doneMessage(payload, reply) {
 		.then((complete) => {
 			if (complete) {
 				deployment.finish()
-			} else {
-				deployment.checkThresholds()
 			}
 		})
 		.then(deployment.getTaskPool.bind(deployment))
