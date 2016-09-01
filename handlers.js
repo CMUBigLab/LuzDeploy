@@ -227,7 +227,6 @@ function listCommands(payload, reply) {
 			msg = msg + `${k}${alias}: ${messageHandlers[k].description}\n`
 		}
 	}
-	console.log(msg)
 	reply({text: msg}, console.log)
 }
 
