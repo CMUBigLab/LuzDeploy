@@ -475,17 +475,11 @@ function askMessage(payload, reply) {
 
 function rejectMessage(payload, reply) {
 	const vol = payload.sender.volunteer
-	vol.related('deployment').fetch().then(deployment => {
-		if (!deployment.isCasual) {
-			reply({text: 'Sorry, you can\'t reject a task in this deployment.'})
-			return
-		}
-		if (!vol.get('currentTask')) {
-			reply({text: 'You don\'t have a task.'})
-			return
-		}
-		vol.unassignTask().then(() => reply({text: "Task rejected."}))
-	})
+	if (!vol.get('currentTask')) {
+		reply({text: 'You don\'t have a task.'})
+		return
+	}
+	vol.unassignTask().then(() => reply({text: "Task rejected."}))
 }
 
 function doneMessage(payload, reply) {
