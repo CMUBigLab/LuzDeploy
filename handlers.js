@@ -183,7 +183,7 @@ function leaveMessage(payload, reply) {
 }
 
 function startDeployment(payload, reply, args) {
-	return Deployment.forge({id: args[0]})
+	return Deployment.forge({id: args[0]}).fetch()
 	.then(deployment => {
 		if (deployment.get('active')) {
 			reply({text: "already started"})
