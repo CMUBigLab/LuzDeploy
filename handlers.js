@@ -16,11 +16,11 @@ const messageHandlers = {
 	},
 	'done': {
 		handler: doneMessage,
-		description: "Let me know when you finish a task."
+		description: "Finish a task."
 	},
 	'start': {
 		handler: startMessage,
-		description: "Tell me when you start a task."
+		description: "Start a task."
 	},
 	'ask': {
 		handler: askMessage,
@@ -28,11 +28,11 @@ const messageHandlers = {
 	},
 	'reject': {
 		handler: rejectMessage,
-		description: "Turn down a task you have."
+		description: "Reject task you have."
 	},
 	'mentor': {
 		handler: mentorMessage,
-		description: "Request that another volunteer come help you."
+		description: "Ask for help from others."
 	},
 	'assign': {
 		handler: assignMessage,
@@ -41,12 +41,12 @@ const messageHandlers = {
 	},
 	'leave': {
 		handler: leaveMessage,
-		description: "Leave the deployment (Quit)."
+		description: "Quit."
 	},
 	'help': {
 		handler: helpMessage,
 		volRequired: true,
-		description: "Pull up a menu that allows you to list commands."
+		description: "List commands."
 	}
 }
 
