@@ -1,0 +1,34 @@
+{
+	"type": "help",
+	"estimated_time": "10 min",
+	"completed_webhook": null,
+	"instructions": [
+		{
+			"wait": 0,
+			"message": {
+				"text": "So you need help? Don't panic! We are here to help!",
+				"image":"http://cdn0.dailydot.com/uploaded/images/original/2012/10/16/Screen_Shot_2012-10-17_at_10.22.19_AM.png"
+			}
+		},
+		{
+			"wait": 1,
+			"message": {
+        		"attachment": {
+            		"type": "template",
+            		"payload": {
+              			"template_type": "button",
+              			"text": "Select the type of help you'd like to receive.",
+              			"buttons": [{
+               				"type":"web_url", 
+                			"title": "Send me a Cool Mentor", 
+                			"url": "url mentor"
+              			},{
+               				"type":"web_url", 
+                			"title": "Show me helpful instructions!", 
+                			"url": "url instructions"
+              			}]
+            		}
+          		}
+      		}
+		}]
+}
