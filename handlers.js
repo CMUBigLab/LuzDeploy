@@ -217,18 +217,18 @@ function helpMessage(payload, reply) {
 
 function listCommands(payload, reply) {
 	let aliasLookup = _.invert(aliases)
-	let text = "Here are the commands I know how to process:\n"
+	let msg = "Here are the commands I know how to process:\n"
 	for (var k in messageHandlers) {
 		if (!messageHandlers[k].adminRequired) {
 			var alias = '';
 			if (aliasLookup[k]) {
 				alias = ` (${aliasLookup[k]})`
 			}
-			text = text + `${k}${alias}: ${messageHandlers[k].description}\n`
+			msg = msg + `${k}${alias}: ${messageHandlers[k].description}\n`
 		}
 	}
-	console.log(text)
-	reply({text: text})
+	console.log(msg)
+	reply({text: msg})
 }
 
 // warning: used by message and by postback
