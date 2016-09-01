@@ -488,7 +488,8 @@ function rejectMessage(payload, reply) {
 		reply({text: 'You don\'t have a task.'})
 		return
 	}
-	vol.unassignTask().then(() => reply({text: "Task rejected."}))
+	vol.unassignTask()
+	.then(() => reply({text: "Task rejected. If you wish to continue, you can 'ask' for another."}))
 }
 
 function doneMessage(payload, reply) {
