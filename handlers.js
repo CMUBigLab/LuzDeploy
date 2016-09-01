@@ -474,7 +474,7 @@ function joinDeployment(payload, reply, args) {
 
 function startMessage(payload, reply) {
 	const vol = payload.sender.volunteer
-	vol.related('currentTask').fetch().then((task) => {
+	vol.currentTask().fetch().then((task) => {
 		if (!task) {
 			reply({text: 'You don\'t have a task!'})
 			return
