@@ -190,6 +190,13 @@ function startDeployment(payload, reply, args) {
 		} else {
 			return deployment.start().then(d => {
 				reply({text: "started"})
+				return d.volunteers().fetch()
+				.then(volunteers => {
+					volunteers.forEach(v => {
+						v.sendMessage({text: "Hi! We are ready to get started for our deployment today! To get your first task, type the command 'ask'. Want an overview of the whole project? Stop by our table on GHC 5th floor near the Randy Pausch bridge."})
+						v.sendMessage({text: "If you decide you need to leave the deployment, type 'leave'. You can always rejoin later! For bug reports and questions, stop by our table or email cgleason@cs.cmu.edu."})
+					})
+				})
 			})
 		}
 	})
