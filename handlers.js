@@ -564,7 +564,7 @@ function doneMessage(payload, reply) {
 				if (!deployment.isCasual) {
 					vol.getNewTask()
 				} else {
-					reply({text: "You don't have any more tasks, but there are still some left for others."});
+					reply({text: "There are more tasks available! Say 'ask' to get another."});
 				}
 			} else {
 				reply({text: "No more tasks available right now."})
