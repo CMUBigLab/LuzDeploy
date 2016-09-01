@@ -25,8 +25,8 @@ const messageHandlers = {
 	'reject': {
 		handler: rejectMessage,
 	},
-	'help': {
-		handler: helpMessage,
+	'mentor': {
+		handler: mentorMessage,
 	},
 	'assign': {
 		handler: assignMessage,
@@ -128,7 +128,7 @@ function greetingMessage(payload, reply) {
 	reply({text: "Hi!"})
 }
 
-function helpMessage(payload, reply) {
+function mentorMessage(payload, reply) {
 	const vol = payload.sender.volunteer
 	vol.related('deployment').fetch().then(d => d.sendMentor(vol))
 }
