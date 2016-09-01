@@ -466,8 +466,7 @@ function startMessage(payload, reply) {
 function askMessage(payload, reply) {
 	// Get a task in the pool, and ask if he wants to do it.
 	const vol = payload.sender.volunteer
-	vol.related('deployment').fetch().then(deployment => {
-	if (!deployment.isCasual) {
+	if (!vol.deployment().isCasual) {
 		reply({text: 'Sorry, you can\'t ask for a task in this deployment.'})
 		return
 	}
@@ -476,7 +475,6 @@ function askMessage(payload, reply) {
 		return
 	}
 	vol.getNewTask()
-})
 }
 
 function rejectMessage(payload, reply) {
