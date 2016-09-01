@@ -90,12 +90,11 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			return tasks.length ? total / tasks.length : 0
 		})
 	},
-	// TODO: rename unassign
-	rejectTask: function() {
-		return this.related('currentTask').fetch()
+	unassignTask: function() {
+		return this.currentTask().fetch()
 		.then((task) => {
 			return Promise.all([
-				this.save({currentTask: null}),
+				this.save({currentTask: null}, {patch: true}),
 				task.save({volunteer_fbid: null, startTime: null}, {patch: true})
 			])
 		})

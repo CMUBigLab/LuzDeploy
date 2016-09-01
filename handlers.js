@@ -31,6 +31,9 @@ const messageHandlers = {
 	'assign': {
 		handler: assignMessage,
 		adminRequired: true,
+	},
+	'leave': {
+		handler: leaveMessage,
 	}
 }
 
@@ -129,6 +132,24 @@ module.exports.dispatchPostback = (payload, reply) => {
 
 function greetingMessage(payload, reply) {
 	reply({text: "Hi!"})
+}
+
+function leaveMessage(payload, reply) {
+	const vol = payload.sender.volunteer
+	vol.currentTask().fetch()
+	.then((task) => {
+		if (task) {
+			return vol.unassignTask()
+		} else {
+			return Promise.resolve()
+		}
+	})
+	.then(() => {
+		return vol.save({deploymentId: null}, {patch: true})
+	})
+	.then(() => {
+		reply({text: "Sorry to see you go! We are always happy to have you back."})
+	})
 }
 
 function mentorMessage(payload, reply) {
