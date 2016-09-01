@@ -1,5 +1,5 @@
 {
-	"type": "beacon_placement",
+	"type": "place_beacon",
 	"estimated_time": "20 min",
 	"completed_webhook": null,
 	"instructions": [{

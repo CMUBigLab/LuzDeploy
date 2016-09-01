@@ -1,0 +1,18 @@
+{
+	"type": "fingerprint",
+	"estimated_time": "20 min",
+	"completed_webhook": null,
+	"instructions": [{
+		"wait": 0,
+		"message": {
+			"text": "Some beacons have been placed along an edge in the building. We need you to go collect some data from them so our map of the building is complete! Later blind users will use the same data to locate themselves in the building.",
+		}
+	}, {
+		"wait": 1,
+		"message": {
+			"text": "Please go to one end of the location shown on the map. Once you click on the link provided below an app will spawn on your phone.<br> Press the start button and, once the countdown reaches zero take a step towards location Y.<br>  Repeat these two operations until you have arrived at location Y.<br> Now click on the following link.",
+			"image": "<Send map here>"
+		}
+	}, 
+]
+}

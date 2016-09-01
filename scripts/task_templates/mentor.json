@@ -4,6 +4,18 @@
 	"completed_webhook": null,
 	"instructions": [
 		{
+		"wait": 0,
+		"message": {
+			"text": "In this task you will mentor other volunteers. ",
+		}
+	}, {
+		"wait": 1,
+		"message": {
+			"text": "So far you have been a super star doing tasks.<br> But, some newbies need help.<br> Please rescue them!",
+			"image": "<Send map here>"
+		}
+	}
+		{
 			"wait": 0,
 			"message": {
 				"text": "{mentee.name} could use some help with their task. Please go talk to them and see if you can offer any advice."
