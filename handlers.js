@@ -219,7 +219,6 @@ function listCommands(payload, reply) {
 	let aliasLookup = _.invert(aliases)
 	let text = "Here are the commands I know how to process:\n"
 	for (var k in messageHandlers) {
-		console.log(k)
 		if (!messageHandlers[k].adminRequired) {
 			var alias = '';
 			if (aliasLookup[k]) {
@@ -228,7 +227,8 @@ function listCommands(payload, reply) {
 			text = text + `${k}${alias}: ${messageHandlers[k].description}\n`
 		}
 	}
-	reply({text})
+	console.log(text)
+	reply({text: text})
 }
 
 // warning: used by message and by postback
