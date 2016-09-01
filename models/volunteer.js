@@ -90,6 +90,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			return tasks.length ? total / tasks.length : 0
 		})
 	},
+	// TODO: rename unassign
 	rejectTask: function() {
 		return this.related('currentTask').fetch()
 		.then((task) => {
@@ -102,7 +103,8 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 	getMentorshipTask: function() {
 		return bookshelf.model('Task').query(qb => {
 			qb.where('template_type', '=', 'mentor')
-			.andWhere('instruction_params','<@', {mentee: {fbid: this.get('fbid')}})
+			.andWhere('completed', '=', false)
+			.andWhere('instruction_params','@>', {mentee: {fbid: this.get('fbid')}})
 		})
 		.fetch()
 	},

@@ -43,6 +43,10 @@ const postbackHandlers = {
 		handler: assignTask,
 		volRequired: false,
 		adminRequired: true,
+	},
+	'cancel_mentor': {
+		handler: cancelMentor,
+		volRequired: true,
 	}
 }
 
@@ -111,7 +115,7 @@ module.exports.dispatchPostback = (payload, reply) => {
 			})
 		} else if (found.volRequired) {
 			Volunteer.where({fbid: payload.sender.id}).fetch()
-			.then(() => {
+			.then(vol => {
 				payload.sender.volunteer = vol
 				found.handler(payload, reply, payload.postback.payload.args)
 			})
@@ -136,9 +140,53 @@ function mentorMessage(payload, reply) {
 		} else {
 			return vol.createMentorshipTask()
 			.then(function(task) {
-				return reply({
-					text: "Okay, we will let you know when we are sending someone your way!"
-				})
+				const response = {
+					"attachment":{
+						"type":"template",
+						"payload":{
+							"template_type": "button",
+							"text": "Okay, we will let you know when someone is on their way! You can cancel this request at any time using the button below.",
+							"buttons": [{
+								type:"postback", 
+								title: "Cancel Help Request", 
+								payload: JSON.stringify({
+									type: "cancel_mentor",
+									args: {taskId: task.get('id')}
+								})
+							}]
+						}
+					}
+				}
+				return reply(response)
+			})
+		}
+	})
+}
+
+function cancelMentor(payload, reply, args) {
+	const mentee = payload.sender.volunteer
+	return Task.forge({id: args.taskId}).fetch()
+	.then(task => {
+		if (!task) {
+			return reply({text: "Hmm, that task was not found."})
+		} else {
+			task.assignedVolunteer().fetch()
+			.then(vol => {
+				if (vol) {
+					vol.save({current_task: null}, {patch: true})
+					.tap(() => {
+						task.destroy()
+					})
+					.then(() => {
+						vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`})
+						return vol.getNewTask()
+					})
+				} else {
+					return task.destroy()
+				}
+			})
+			.then(() => {
+				reply({text: "No problem, help cancelled!"})
 			})
 		}
 	})
