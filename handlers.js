@@ -161,7 +161,7 @@ module.exports.dispatchPostback = (payload, reply) => {
 }
 
 function greetingMessage(payload, reply) {
-	reply({text: "Hi!"})
+	reply({text: "Hi! If you want a new task, use the command 'ask'."})
 }
 
 function leaveMessage(payload, reply) {
