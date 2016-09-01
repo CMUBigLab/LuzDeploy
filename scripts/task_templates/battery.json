@@ -5,7 +5,7 @@
 	"instructions": [{
 		"wait": 0,
 		"message": {
-			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!",
+			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind! <br> In this task you will help replace the battery of beacons so blind people can always navigate through CMU. Wooo!",
 			"image": "http://www.relatably.com/m/img/welcome-memes/63341322.jpg"
 
 

@@ -5,7 +5,7 @@
 	"instructions": [{
 		"wait": 0,
 		"message": {
-			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!",
+			"text": "Welcome! Thank you for helping revolutionize CMU and bring accesibility to the blind!<br> In this task you will mentor other volunteers. ",
 			"image": "https://cdn.meme.am/instances/400x/53091769.jpg"
 
 
