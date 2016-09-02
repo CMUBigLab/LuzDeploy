@@ -107,6 +107,8 @@ module.exports.dispatchMessage = (payload, reply) => {
 			if (vol.get('deploymentId') === null) {
 				sendDeploymentMessage(payload.sender.id)
 				return
+			} else if (!vol.deployment().get('active')) {
+				return reply({text: "This deployment is paused! We will let you know when we start back up."})
 			}
 		} else {
 			onboardVolunteer(payload, reply)
