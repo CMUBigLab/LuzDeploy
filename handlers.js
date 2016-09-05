@@ -104,10 +104,10 @@ module.exports.dispatchMessage = (payload, reply) => {
 	.then(vol => {
 		if (vol) {
 			payload.sender.volunteer = vol
-			if (vol.get('deploymentId') === null) {
+			if (vol.related('deployment') === null) {
 				sendDeploymentMessage(payload.sender.id)
 				return
-			} else if (!vol.deployment().get('active')) {
+			} else if (!vol.related('deployment').get('active')) {
 				return reply({text: "This deployment is paused! We will let you know when we start back up."})
 			}
 		} else {
