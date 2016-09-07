@@ -52,6 +52,11 @@ const messageHandlers = {
 		handler: startDeployment,
 		adminRequired: true,
 		description: "start a deployment"
+	},
+	'sendsurvey': {
+		handler: sendSurvey,
+		adminRequired: true,
+		description: "send survey"
 	}
 }
 
@@ -107,7 +112,7 @@ module.exports.dispatchMessage = (payload, reply) => {
 			if (vol.related('deployment') === null) {
 				sendDeploymentMessage(payload.sender.id)
 				return
-			} else if (!vol.related('deployment').get('active')) {
+			} else if (!payload.sender.admin && !vol.related('deployment').get('active')) {
 				return reply({text: "This deployment is paused! We will let you know when we start back up."})
 			}
 		} else {
@@ -201,6 +206,21 @@ function startDeployment(payload, reply, args) {
 				})
 			})
 		}
+	})
+}
+
+
+function sendSurvey(payload, reply, args) {
+	return Deployment.forge({id: args[0]}).fetch()
+	.then(deployment => {
+		return deployment.volunteers().fetch()
+		.then(volunteers => {
+			volunteers.forEach(v => {
+				v.sendMessage({text: "Thanks for all of your help last week. We really appreciate it! Together we placed over 350 beacons around Gates-Hillman Center."})
+				deployment.sendSurvey(v)
+			})
+			reply({text: "sent"})
+		})
 	})
 }
 

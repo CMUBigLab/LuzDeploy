@@ -74,16 +74,20 @@ const Deployment = bookshelf.model('BaseModel').extend({
 	start: function() {
 		return this.save({startTime: new Date(), active: true})
 	},
+	sendSurvey: function(vol) {
+		let buttons = [{
+			type: "web_url",
+			url: `https://docs.google.com/forms/d/e/1FAIpQLSfkJZb1GOGR1HfC8zw2nipkl3yi_-7cDbUNvigl2PjqLxhbqw/viewform?entry.2036103825=${vol.get('fbid')}`,
+			title: "Open Survey"
+		}]
+		let text = "I am work-in-progress, so please help me become a better bot by answering this quick survey!"
+		return vol.sendMessage(msgUtil.buttonMessage(text, buttons))
+	},
 	finish: function() {
 		return this.volunteers().fetch().then(volunteers => {
 			volunteers.forEach((v) => {
-				let buttons = [{
-					type: "web_url",
-					url: "https://docs.google.com/forms/d/1hcwB18hnyniWFUQAQDm2MSMdlQQL4QYOG_Md9eFsQnE/viewform",
-					title: "Open Survey"
-				}]
-				let text = "Thank you very much!\nYou just helped make CMU accessible.\n\nI am still in the research phase, so please answer this survey so I can become better!"
-				v.sendMessage(msgUtil.buttonMessage(text, buttons))
+				v.sendMessage({text: "Thank you very much!\nYou just helped make CMU accessible."})
+				this.sendSurvey(v)
 			})
 			return this.save({doneTime: new Date()})
 		})
