@@ -30,7 +30,29 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 					currWait = currWait + i.wait
 					setTimeout(msgFn, currWait*1000, i.message)
 				})
-				setTimeout(msgFn, (currWait+1)*1000, {text: "Once you understand the steps required to complete the task, reply with 'start'. If you don't want to do the task, reply with 'reject'."})
+				setTimeout(msgFn, (currWait+1)*1000, {text: "If you don't want to do the task, reply with 'reject'."})
+			})
+			this.currentTask().fetch().then((task) => {
+				if (!task) {
+					this.sendMessage({text: 'You don\'t have a task!'})
+					return
+				} else if (task.get('startTime')) {
+					this.sendMessage({text: 'This task has already been started!'})
+					return
+				} else {
+					return task.start()
+					.tap(task => {
+						if (task.get('templateType') == 'mentor') {
+							this.sendMessage(
+								task.get('instructionParams').mentee.fbid,
+								{text: `You asked for help, so ${vol.name} is coming to help you at your task location.`}
+							)
+						}
+					})
+					.then((task) => {
+						this.sendMessage({text: `Task started at ${task.get('startTime')}.  Send 'done' when you have completed all of the steps.`})
+					})
+				}
 			})
 		})
 	},
