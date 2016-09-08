@@ -30,7 +30,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 					currWait = currWait + i.wait
 					setTimeout(msgFn, currWait*1000, i.message)
 				})
-				setTimeout(msgFn, (currWait+1)*1000, {text: "Once you understand the steps required to complete the task, reply with 'start'. If you don't want to do the task, reply with 'reject'."})
+				setTimeout(msgFn, (currWait+1)*1000, {text: "If you don't want to do the task, reply with 'reject'."})
 			})
 		})
 	},
