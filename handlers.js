@@ -244,8 +244,13 @@ function sendSurvey(payload, reply, args) {
 		return deployment.volunteers().fetch()
 		.then(volunteers => {
 			volunteers.forEach(v => {
-				v.sendMessage({text: "Thanks for all of your help last week. We really appreciate it! Together we placed over 350 beacons around Gates-Hillman Center."})
-				deployment.sendSurvey(v)
+				let buttons = [{
+					type: "web_url",
+					url: `https://docs.google.com/a/andrew.cmu.edu/forms/d/e/1FAIpQLSehyEKkp7nZFS01hbIWMVwAgEWo0sRjs8_NkJ46pku9CZMMIg/viewform?entry.403963864=${v.get('fbid')}`,
+					title: "Open Form"
+				}]
+				let text = `Hi ${v.get('firstName')}! We need to check up on some older beacons. Do you have time in the next few days to help us for a few minutes? If you do, and have an iOS device, please let us know using this form!`
+				return v.sendMessage(msgUtil.buttonMessage(text, buttons))
 			})
 			reply({text: "sent"})
 		})
