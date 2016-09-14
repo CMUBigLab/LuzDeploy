@@ -57,7 +57,12 @@ const messageHandlers = {
 		handler: sendSurvey,
 		adminRequired: true,
 		description: "send survey"
-	}
+	},
+	'mass': {
+		handler: massMessage,
+		adminRequired: true,
+		description: "send message to all"
+	},
 }
 
 const postbackHandlers = {
@@ -206,6 +211,29 @@ function startDeployment(payload, reply, args) {
 				})
 			})
 		}
+	})
+}
+
+function massMessage(payload, reply, args) {
+	if (!args.length) {
+		reply({text: "need deploy id"})
+		return
+	}
+	const start = payload.message.text.indexOf(args[0])+1
+	const msg = payload.message.text.slice(start).trim()
+	if (!msg.length) {
+		reply({text: 'need message!'})
+		return
+	}
+	return Deployment.forge({id: args[0]}).fetch()
+	.then(deployment => {
+		return deployment.volunteers().fetch()
+		.then(volunteers => {
+			volunteers.forEach(v => {
+				v.sendMessage({text: msg})
+			})
+			reply({text: "sent"})
+		})
 	})
 }
 
