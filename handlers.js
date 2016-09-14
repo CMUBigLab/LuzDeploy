@@ -136,7 +136,7 @@ module.exports.dispatchMessage = (payload, reply) => {
 			const commandHandler = messageHandlers[command]
 			if (commandHandler.requiredArgs  && values.length-1 != commandHandler.requiredArgs) {
 				reply({text: `The ${command} command requires ${commandHandler.requiredArgs} arguments.`})
-			} else if (command.adminRequired && !payload.sender.admin) {
+			} else if (messageHandlers[command].adminRequired && !payload.sender.admin) {
 				reply({text: `Permission denied`})
 			} else {
 				commandHandler.handler(payload, reply, values.slice(1))
