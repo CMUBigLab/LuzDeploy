@@ -2,7 +2,10 @@ const bookshelf = require('../bookshelf')
 const bot = require('../bot')
 const handlers = require('../handlers')
 
+const Promise = require('bluebird')
+
 const _ = require('lodash')
+let msgUtil = require('../message-utils')
 
 require('./deployment')
 require('./task')
@@ -21,38 +24,40 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			this.save({currentTask: task.id}, {patch: true}),
 			task.save({volunteer_fbid: this.id}, {patch: true})
 		])
-		.then(() => {
-			this.sendMessage({text: `Your task should take ${task.estimatedTimeMin} minutes.`})
-			task.renderInstructions({fbid: this.id}).then(instructions => {
+		.spread((vol, task) => {
+			return task.renderInstructions({fbid: vol.id})
+			.then(instructions => {
 				let currWait = 0
-				const msgFn = this.sendMessage.bind(this)
+				const msgFn = vol.sendMessage.bind(vol)
 				instructions.forEach((i) => {
 					currWait = currWait + i.wait
 					setTimeout(msgFn, currWait*1000, i.message)
 				})
-				setTimeout(msgFn, (currWait+1)*1000, {text: "If you don't want to do the task, reply with 'reject'."})
-			})
-			this.currentTask().fetch().then((task) => {
-				if (!task) {
-					this.sendMessage({text: 'You don\'t have a task!'})
-					return
-				} else if (task.get('startTime')) {
-					this.sendMessage({text: 'This task has already been started!'})
-					return
-				} else {
-					return task.start()
-					.tap(task => {
-						if (task.get('templateType') == 'mentor') {
-							this.sendMessage(
-								task.get('instructionParams').mentee.fbid,
-								{text: `You asked for help, so ${vol.name} is coming to help you at your task location.`}
-							)
-						}
-					})
-					.then((task) => {
-						this.sendMessage({text: `Task started at ${task.get('startTime')}.  Send 'done' when you have completed all of the steps.`})
-					})
-				}
+				vol.related('deployment').fetch()
+				.then(function(deployment) {
+					if (deployment.isCasual) {
+						let buttons = [{
+							type: "postback",
+							title: "Yes, accept task.",
+							payload: JSON.stringify({
+								type: "accept_task",
+								args: {}
+							})
+						},{
+							type: "postback",
+							title: "I can't do this now.",
+							payload: JSON.stringify({
+								type: "reject_task",
+								args: {}
+							})
+						}]
+						let text = `${vol.get('firstName')}, this task should take ${task.estimatedTimeMin} minutes. Do you have time to do it now?`
+						setTimeout(msgFn, (currWait+2)*1000, msgUtil.buttonMessage(text, buttons))
+					} else {
+						setTimeout(msgFn, (currWait+1)*1000, {text: `This task should take ${task.estimatedTimeMin} minutes. If you don't want to do the task, reply with 'reject'.`})
+						setTimeout(task.start.bind(task), (currWait+2)*1000)
+					}
+				})
 			})
 		})
 	},

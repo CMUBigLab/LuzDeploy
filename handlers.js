@@ -89,7 +89,15 @@ const postbackHandlers = {
 	'task_score': {
 		handler: taskScore,
 		volRequired: true,
-	}
+	},
+	'accept_task': {
+		handler: acceptTask,
+		volRequired: true,
+	},
+	'reject_task': {
+		handler: rejectMessage,
+		volRequired: true,
+	},
 }
 
 const aliases = {
@@ -571,6 +579,18 @@ function rejectMessage(payload, reply) {
 	}
 	vol.unassignTask()
 	.then(() => reply({text: "Task rejected. If you wish to continue, you can 'ask' for another."}))
+}
+
+function acceptTask(payload, reply, args) {
+	const vol = payload.sender.volunteer
+	return vol.related('currentTask').fetch()
+	.then(task => {
+		if (!task) {
+			reply({text: 'You don\'t have a task.'})
+			return
+		}
+		return task.start()
+	})
 }
 
 function doneMessage(payload, reply) {

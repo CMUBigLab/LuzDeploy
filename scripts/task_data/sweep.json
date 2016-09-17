@@ -1,4 +1,4 @@
-{"task":"sweep", "list": [
+{"task":"sweep_edge", "list": [
 	{"edge": 2, "beacons": "7,8"},
 	{"edge": 3, "beacons": "9-18"},
 	{"edge": 4, "beacons": "19-24,41-49"},

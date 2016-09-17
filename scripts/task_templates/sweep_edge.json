@@ -33,7 +33,7 @@
 								"type": "template",
 								"payload": {
 										"template_type": "button",
-										"text": "Once you are at one of the endpoints of that edge, use the link below to open NavCog.\nPress the button to start, walk to the end of the edge, and press the button again to stop.",
+										"text": "Once you are at one of the endpoints of that path, use the link below to open NavCog.\nPress the button to start, walk to the end of the path, and press the button again to stop.",
 										"buttons": [{
 											"type":"web_url", 
 											"title": "Open NavCog", 
@@ -42,6 +42,6 @@
 								}
 						}
 				}
-		},
+		}
 	]
 }

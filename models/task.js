@@ -33,7 +33,20 @@ const Task = bookshelf.model('BaseModel').extend({
     return this.belongsTo('TaskTemplate', 'template_type')
   },
   start: function() {
-      return this.save({startTime: new Date()})
+      return this.save({startTime: new Date()}, {patch: true})
+      .tap(task => {
+        if (task.get('templateType') == 'mentor') {
+          bot.sendMessage(
+            task.get('instructionParams').mentee.fbid,
+            {text: `You asked for help, so ${task.assignedVolunteer().name} is coming to help you at your task location.`}
+          )
+        }
+      })
+      .tap((task) => {
+        bot.sendMessage(
+          task.get('volunteerFbid'),
+          {text: `Task started at ${task.get('startTime')}.  Send 'done' when you have completed all of the steps.`})
+      })
   },
   finish: function() {
     return this.assignedVolunteer().fetch().then(vol => {
