@@ -1,22 +1,16 @@
 {
 	"type": "sweep_edge",
 	"estimated_time": "10 min",
-	"completed_webhook": null,
+	"completed_webhook": "http://hulop.qolt.cs.cmu.edu/datacheck/verifye.php?edge={edgeId}&user={volunteerId}",
 	"instructions": [
 		{
 			"wait": 0,
-			"message": {
-				"text": "We need you to help us check which beacons are not working in an area."
-			}
-		},
-		{
-			"wait": 1,
 			"message": {
 						"attachment": {
 								"type": "template",
 								"payload": {
 										"template_type": "button",
-										"text": "The location we need you to check is highlighted in red on this map.",
+										"text": "We need you to help us check which beacons are not working in an area. The location we need you to check is highlighted in red on this map.",
 										"buttons": [{
 											"type":"web_url", 
 											"title": "Open Map", 

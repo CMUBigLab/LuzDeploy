@@ -122,7 +122,7 @@ module.exports.dispatchMessage = (payload, reply) => {
 	.then(vol => {
 		if (vol) {
 			payload.sender.volunteer = vol
-			if (vol.related('deployment') === null) {
+			if (vol.get('deploymentId') === null) {
 				sendDeploymentMessage(payload.sender.id)
 				return
 			} else if (!payload.sender.admin && !vol.related('deployment').get('active')) {

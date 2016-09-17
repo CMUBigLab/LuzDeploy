@@ -1,7 +1,7 @@
 const TaskTemplate = require('../models/task-template')
 const Task = require('../models/task')
 
-const DEPLOYMENT = 1
+const DEPLOYMENT = 2
 
 var fs = require("fs")
 var Promise = require('bluebird')
