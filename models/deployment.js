@@ -7,16 +7,6 @@ require('./volunteer')
 require('./task')
 require('./base-model')
 const Deployment = bookshelf.model('BaseModel').extend({
-	//averageWeight: 1,
-	//bestWeight: 0,
-	//warnThreshold: 1/2, // TODO (cgleason): fix these thresholds
-	//askThreshold: 1/3,
-	//sendThreshold: 1/4,
-	//roundRobinInterval: 1 * constants.MS_IN_MIN,
-	//type:'event', // casual, semi-casual, event
-	//lat: null,
-	//long: null,
-	//weightMultiplier
 	tableName: 'deployments',
 	volunteers: function() {
 		return this.hasMany('Volunteer')
@@ -34,7 +24,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 	},
 	getTaskPool: function() {
 		return this.tasks()
-		.query({where:{completed: false, volunteer_fbid: null}})
+		.query({where:{completed: false, volunteer_fbid: null, disabled: false}})
 		.fetch({withRelated: ['dependencies']})
 		.then(tasks => {
 			return Promise.filter(
