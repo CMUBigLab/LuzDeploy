@@ -10,25 +10,12 @@
 								"type": "template",
 								"payload": {
 										"template_type": "button",
-										"text": "We need you to help us check which beacons are not working in an area. The location we need you to check is highlighted in red on this map.",
+										"text": "We need you to help us check which beacons are not working in an area.\n1. Go to the location highlighted in red on this map. 2. Stand at one of the endpoints of that path, use the link below to open NavCog, and press the button to start.\n3. Walk to the end of the path, and press the button again to stop.",
 										"buttons": [{
 											"type":"web_url", 
 											"title": "Open Map", 
 											"url": "http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&edge={edge}"
-										}]
-								}
-							}
-					}
-		},
-		{
-			"wait": 1,
-			"message": {
-						"attachment": {
-								"type": "template",
-								"payload": {
-										"template_type": "button",
-										"text": "Once you are at one of the endpoints of that path, use the link below to open NavCog.\nPress the button to start, walk to the end of the path, and press the button again to stop.",
-										"buttons": [{
+										},{
 											"type":"web_url", 
 											"title": "Open NavCog", 
 											"url": "http://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&beacons={beacons}&wid={fbid}"
