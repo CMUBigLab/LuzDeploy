@@ -33,7 +33,9 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 					currWait = currWait + i.wait
 					setTimeout(msgFn, currWait*1000, i.message)
 				})
-				vol.related('deployment').fetch()
+				bookshelf.model('Deployment')
+				.forge({id: vol.get('deploymentId')})
+				.fetch()
 				.then(function(deployment) {
 					if (deployment.isCasual) {
 						let buttons = [{
