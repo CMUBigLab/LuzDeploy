@@ -20,6 +20,7 @@
     "dustjs-linkedin": "^2.7.3",
     "express": "^4.14.0",
     "knex": "^0.11.9",
+    "machina": "github:colegleason/machina.js",
     "messenger-bot": "^2.3.0",
     "open": "0.0.5",
     "pg": "^6.0.1",
