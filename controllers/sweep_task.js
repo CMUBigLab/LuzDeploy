@@ -18,11 +18,7 @@ var SweepTaskFsm = machina.BehavioralFsm.extend({
 				}];
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
-					msgUtil.buttonMessage(text, buttons, [{
-						"content_type":"text",
-						"title":"there",
-						"payload":"sweep_edge.there"}
-					])
+					msgUtil.buttonMessage(text, buttons)
 					);
 			},
 			"msg:there": "sweep",
