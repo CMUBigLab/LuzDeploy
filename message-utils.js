@@ -1,7 +1,5 @@
 module.exports.buttonMessage = function(text, buttons, quick_replies) {
-	quick_replies = quick_replies || []
-	return {
-		"quick_replies": quick_replies,
+	var message =  {
 		"attachment":{
 			"type":"template",
 			"payload":{
@@ -11,4 +9,8 @@ module.exports.buttonMessage = function(text, buttons, quick_replies) {
 			}
 		}
 	}
+	if (quick_replies) {
+		message['quick_replies'] = quick_replies;
+	}
+	return message;
 }
