@@ -1,5 +1,5 @@
 var pg = require('pg')
-pg.defaults.ssl = false
+pg.defaults.ssl = true
 const config = require('./config')
 const knex = require('knex')(config.DB_CONFIG)
 const bookshelf = require('bookshelf')(knex)

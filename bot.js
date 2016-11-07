@@ -90,7 +90,14 @@ if (require.main === module) {
 			})
 		})
 
-		module.exports.sendMessage = bot.sendMessage.bind(bot)
+		module.exports.sendMessage = function(fbid, payload, callback) {
+			if (!callback) {
+				callback = function(err, info) {
+					if (err) console.log(err);
+				}
+			}
+			bot.sendMessage(fbid, payload, callback)
+		};
 		module.exports.getProfile = bot.getProfile.bind(bot)
 
 		bot.startListening = function() {
