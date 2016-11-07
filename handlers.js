@@ -4,31 +4,22 @@ const Admin = require('./models/admin')
 const Task = require('./models/task')
 const constants = require('./constants')
 
+const TaskController = require('./controllers/task')
+
 const bot = require('./bot')
 
 const _ = require('lodash')
 const config = require('./config')
 let msgUtil = require('./message-utils')
+
 const messageHandlers = {
 	'hello': {
 		handler: greetingMessage,
 		description: "A greeting!"
 	},
-	'done': {
-		handler: doneMessage,
-		description: "Finish a task."
-	},
-	'start': {
-		handler: startMessage,
-		description: "Start a task."
-	},
 	'ask': {
 		handler: askMessage,
 		description: "Ask for a new task."
-	},
-	'reject': {
-		handler: rejectMessage,
-		description: "Reject task you have."
 	},
 	'mentor': {
 		handler: mentorMessage,
@@ -94,20 +85,31 @@ const postbackHandlers = {
 		handler: acceptTask,
 		volRequired: true,
 	},
-	'reject_task': {
-		handler: rejectMessage,
-		volRequired: true,
-	},
 }
 
 const aliases = {
 	'd': 'done',
-	'r': 'reject',
 	's': 'start',
 	'a': 'ask',
 	'hi': 'hello',
 	'hey': 'hello',
 	'h': 'help'
+}
+
+function getVolTask(vol) {
+	return vol.related('currentTask').fetch()
+	.then(function(task) {
+		if (!task) {
+			return null;
+		} else {
+			if (task.get('templateType') == 'sweep_edge') {
+				task.loadState();
+				return task;
+			} else {
+				throw new Error('task fsm not implemented')
+			}
+		}
+	})
 }
 
 module.exports.dispatchMessage = (payload, reply) => {
@@ -149,6 +151,11 @@ module.exports.dispatchMessage = (payload, reply) => {
 			} else {
 				commandHandler.handler(payload, reply, values.slice(1))
 			}
+		} else if (payload.sender.volunteer && payload.sender.volunteer.get('currentTask')) {
+			getVolTask(payload.sender.volunteer)
+			.then(function(task) {
+				TaskController.userMessage(task, command);
+			});
 		} else {
 			reply({text: `I don't know how to interpret '${command}'. You can always ask for 'help' if you need it.`})
 		}
@@ -366,6 +373,10 @@ function cancelMentor(payload, reply, args) {
 					.then(() => {
 						vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`})
 						return vol.getNewTask()
+						.then(function(task) {
+							var controller = taskControllers[task.get('type')];
+							return controller.start(task)
+						})
 					})
 				} else {
 					return task.destroy()
@@ -535,115 +546,38 @@ function joinDeployment(payload, reply, args) {
 	})
 }
 
-function startMessage(payload, reply) {
-	const vol = payload.sender.volunteer
-	vol.currentTask().fetch().then((task) => {
-		if (!task) {
-			reply({text: 'You don\'t have a task!'})
-			return
-		} else if (task.get('startTime')) {
-			reply({text: 'This task has already been started!'})
-			return
-		} else {
-			return task.start()
-			.tap(task => {
-				if (task.get('templateType') == 'mentor') {
-					bot.sendMessage(
-						task.get('instructionParams').mentee.fbid,
-						{text: `You asked for help, so ${vol.name} is coming to help you at your task location.`}
-					)
-				}
-			})
-			.then((task) => {
-				reply({text: `Task started at ${task.get('startTime')}.  Send 'done' when you have completed all of the steps.`})
-			})
-		}
-	})
-}
-
 function askMessage(payload, reply) {
 	// Get a task in the pool, and ask if he wants to do it.
 	const vol = payload.sender.volunteer
-	if (vol.get('currentTask')) {
-		reply({text: 'You already have a task! Finish that first.'})
-		return
-	}
-	vol.getNewTask()
+	getVolTask(vol).then(function(task) {
+		if (task) {
+			reply({text: 'You already have a task! Finish that first.'});
+			return
+		} else {
+			vol.getNewTask().then(function(task) {
+				if (!task) {
+					return reply({text: 'There are no tasks available right now.'})
+				} else {
+					TaskController.assign(task, vol)
+					.then(function() {
+						TaskController.start(task);
+					});
+				}
+			})
+		}
+	});
 }
 
-function rejectMessage(payload, reply) {
-	const vol = payload.sender.volunteer
-	if (!vol.get('currentTask')) {
-		reply({text: 'You don\'t have a task.'})
-		return
-	}
-	vol.unassignTask()
-	.then(() => reply({text: "Task rejected. If you wish to continue, you can 'ask' for another."}))
-}
 
 function acceptTask(payload, reply, args) {
 	const vol = payload.sender.volunteer
-	return vol.related('currentTask').fetch()
+	return getVolTask(vol)
 	.then(task => {
 		if (!task) {
 			reply({text: 'You don\'t have a task.'})
 			return
 		}
-		return task.start()
-	})
-}
-
-function doneMessage(payload, reply) {
-	const vol = payload.sender.volunteer
-	vol.load(['deployment', 'currentTask']).then(vol => {
-		const task = vol.related('currentTask')
-		if (!task || !task.get('startTime')) {
-			reply({text: "You don't have an active task."})
-			return
-		}
-
-		const deployment = vol.related('deployment')
-		// TODO (cgleason): double check this math works with ms conversion
-		const xi =  task.estimatedTimeSec / task.elapsedTime
-		let bestWeight = deployment.get('bestWeight')
-		if (xi > bestWeight) {
-			bestWeight = xi
-		}
-						
-		// Dragans Cool Math
-		const nVol = deployment.related('volunteers').count()
-		const avgWeight = ((deployment.get('avgWeight')*(nVol - 1))/nVol) - xi/nVol
-		const currWeight = (xi - (avgWeight/2)) / (bestWeight - (avgWeight/2));
-		const newWeight = ((vol.get('weight'))*(1 - deployment.get('weightMultiplier'))) + currWeight*deployment.get('weightMultiplier');
-		const subtract = (newWeight - vol.get('weight'))/(nVol - 1);
-						
-		//UPDATE WEIGHTS!
-		const updates = deployment.related('volunteers').map((v) => {
-			if (v.id != vol.id)
-				return v.save({weight: v.get('weight') - subtract}, {patch: true})
-			else
-					return v.save({weight: newWeight, currentTask: null}, {patch: true})
-		})
-		updates.push(deployment.save({bestWeight: bestWeight, avgWeight: avgWeight}, {patch: true}))
-		updates.push(task.finish())
-		return Promise.all(updates)
-		.then(deployment.isComplete.bind(deployment))
-		.then((complete) => {
-			if (complete) {
-				deployment.finish()
-			}
-		})
-		.then(deployment.getTaskPool.bind(deployment))
-		.then((pool) => {
-			if (pool.length > 0) {
-				if (!deployment.isCasual) {
-					vol.getNewTask()
-				} else {
-					reply({text: "There are more tasks available! Say 'ask' to get another."});
-				}
-			} else {
-				reply({text: "No more tasks available right now."})
-			}
-		})
+		var controller = taskControllers[task.get('type')];
+		return controller.start(task)
 	})
 }

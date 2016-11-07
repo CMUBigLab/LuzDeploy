@@ -65,14 +65,20 @@ if (require.main === module) {
 				}
 				return
 			}
-			if (!payload.message.text) {
-				reply({text: "Sorry, I only handle text messages right now."})
-				return
-			}
+
 			bot.getProfile(payload.sender.id, (err, profile) => {
 				if (err) console.log(err)
 				payload.sender.profile = profile
-				handlers.dispatchMessage(payload, reply)  
+				if (payload.message.attachments) {
+					handlers.dispatchAttachment(payload, reply)
+					return
+				} else if (!payload.message.text) {
+					reply({text: "Sorry, I only handle text messages right now."})
+					return
+				} else {
+					handlers.dispatchMessage(payload, reply);
+					return
+				}
 			})
 		})
 

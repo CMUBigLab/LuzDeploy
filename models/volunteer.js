@@ -24,47 +24,29 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			this.save({currentTask: task.id}, {patch: true}),
 			task.save({volunteer_fbid: this.id}, {patch: true})
 		])
-		.spread((vol, task) => {
-			return task.renderInstructions({fbid: vol.id})
-			.then(instructions => {
-				let currWait = 0
-				const msgFn = vol.sendMessage.bind(vol)
-				instructions.forEach((i) => {
-					currWait = currWait + i.wait
-					setTimeout(msgFn, currWait*1000, i.message)
-				})
-				bookshelf.model('Deployment')
-				.forge({id: vol.get('deploymentId')})
-				.fetch()
-				.then(function(deployment) {
-					if (deployment.isCasual) {
-						let buttons = [{
-							type: "postback",
-							title: "Yes, accept task.",
-							payload: JSON.stringify({
-								type: "accept_task",
-								args: {}
-							})
-						},{
-							type: "postback",
-							title: "I can't do this now.",
-							payload: JSON.stringify({
-								type: "reject_task",
-								args: {}
-							})
-						}]
-						let text = `This task should take ${task.estimatedTimeMin} minutes. Do you have time to do it now?`
-						setTimeout(msgFn, (currWait+2)*1000, msgUtil.buttonMessage(text, buttons))
-					} else {
-						setTimeout(msgFn, (currWait+1)*1000, {text: `This task should take ${task.estimatedTimeMin} minutes. If you don't want to do the task, reply with 'reject'.`})
-						setTimeout(task.start.bind(task), (currWait+2)*1000)
-					}
-				})
-			})
-		})
+					// if (deployment.isCasual) {
+					// 	let buttons = [{
+					// 		type: "postback",
+					// 		title: "Yes, accept task.",
+					// 		payload: JSON.stringify({
+					// 			type: "accept_task",
+					// 			args: {}
+					// 		})
+					// 	},{
+					// 		type: "postback",
+					// 		title: "I can't do this now.",
+					// 		payload: JSON.stringify({
+					// 			type: "reject_task",
+					// 			args: {}
+					// 		})
+					// 	}]
+					// 	let text = `This task should take ${task.estimatedTimeMin} minutes. Do you have time to do it now?`
+					// 	setTimeout(msgFn, (currWait+2)*1000, msgUtil.buttonMessage(text, buttons))
+					// } else {
+					// 	setTimeout(msgFn, (currWait+1)*1000, {text: `This task should take ${task.estimatedTimeMin} minutes. If you don't want to do the task, reply with 'reject'.`})
 	},
 	getNewTask: function() {
-		this.deployment().fetch()
+		return this.deployment().fetch()
 		.then(deployment => {
 			return [deployment, deployment.doesAnyoneNeedHelp(this)]
 		})
@@ -102,15 +84,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 					}
 				})
 			}
-		})
-		// actually assign the task
-		.then((task) => {
-			if (!task) {
-				return this.sendMessage({text: 'There are no tasks available right now.'})
-			} else {
-				return this.assignTask(task)
-			}
-		})
+		});
 	},
 	getAverageExpertise: function() {
 		return bookshelf.model('Task').collection()
@@ -133,12 +107,15 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			return tasks.length ? total / tasks.length : 0
 		})
 	},
+	completeTask: function() {
+		return this.save({currentTask: null}, {patch: true})
+	},
 	unassignTask: function() {
 		return this.currentTask().fetch()
 		.then((task) => {
 			return Promise.all([
 				this.save({currentTask: null}, {patch: true}),
-				task.save({volunteer_fbid: null, startTime: null}, {patch: true})
+				task.save({volunteer_fbid: null, startTime: null, taskState: null}, {patch: true})
 			])
 		})
 	},

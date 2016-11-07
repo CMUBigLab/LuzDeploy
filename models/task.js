@@ -34,29 +34,21 @@ const Task = bookshelf.model('BaseModel').extend({
   },
   start: function() {
       return this.save({startTime: new Date()}, {patch: true})
-      .tap(task => {
+      // TODO: extract following code into specific task controller
+/*      .tap(task => {
         if (task.get('templateType') == 'mentor') {
           bot.sendMessage(
             task.get('instructionParams').mentee.fbid,
             {text: `You asked for help, so ${task.assignedVolunteer().name} is coming to help you at your task location.`}
           )
         }
-      })
-      .tap((task) => {
-        bot.sendMessage(
-          task.get('volunteerFbid'),
-          {text: `Task started at ${task.get('startTime')}.  Send 'done' when you have completed all of the steps.`})
-      })
+      })*/
   },
   finish: function() {
-    return this.assignedVolunteer().fetch().then(vol => {
-      return Promise.all([
-        this.save({completed: true, completedTime: new Date()}, {patch: true}),
-        vol.save({currentTask: null}, {patch: true})
-      ])
-      .spread((task, vol) => {
-        vol.sendMessage({text: `Thanks! You ended at ${task.get('completedTime')}.`})
-        const webhook = this.get('completedWebhook')
+    return this.save({completed: true, completedTime: new Date()}, {patch: true});
+
+// TODO: extract into task controller
+/*        const webhook = this.get('completedWebhook')
         if (webhook) {
           return request.post({url: webhook, data: task.serialize({shallow: true})})
           .then((parsedBody) => {
@@ -64,9 +56,7 @@ const Task = bookshelf.model('BaseModel').extend({
           }).catch((err) => {
             console.error(err)
           })
-        }
-      })
-    })
+        }*/
   },
   renderInstructions: function(otherParams) {
     return this.load(['template']).then((task) => {
@@ -88,6 +78,12 @@ const Task = bookshelf.model('BaseModel').extend({
     }).query((qb) => {
       qb.where('instruction_params', '=', this.get('instructionParams'))
     }).fetch()
+  },
+  saveState: function() {
+    return this.save({taskState: this.__machina__}, {patch: true})
+  },
+  loadState: function() {
+    this.__machina__ = this.get('taskState');
   },
   virtuals: {
     estimatedTimeMin: function() {
