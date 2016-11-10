@@ -157,7 +157,8 @@ module.exports.dispatchMessage = (payload, reply) => {
 				TaskController.userMessage(task, command);
 			});
 		} else {
-			reply({text: `I don't know how to interpret '${command}'. You can always ask for 'help' if you need it.`})
+			var cmds = _.keys(messageHandlers)
+			reply({text: `I don't know how to interpret '${command}'. Try 'ask' for a new task or 'help' for more info.`})
 		}
 	})
 }
