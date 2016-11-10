@@ -3,6 +3,8 @@ var machina = require('machina');
 var bot = require('../bot');
 let msgUtil = require('../message-utils');
 var Promise = require('bluebird');
+var _ =require('lodash');
+
 var SweepTaskFsm = require('./sweep_task')
 
 var taskControllers = {
@@ -118,18 +120,7 @@ TaskFsm.on('nohandler', function(event) {
 	event.client.assignedVolunteer().fetch()
 	.then(function(vol) {
 		if (event.inputType.startsWith('msg:')) {
-			var cmds = TaskFsm.states[event.client.__machina__.state];
-			cmds = _(cmds).keys()
-			.filter((c) => c != "*")
-			.filter((c) => !c.startsWith('_'))
-			.map((c) => {
-				if (c.startsWith('msg:')) {
-					return c.slice(4)
-				} else {
-					return c
-				}
-			}).value();
-			vol.sendMessage({text: `Sorry, this task can't handle "${event.inputType.slice(4)}". Current commands here are: ${cmds}`})
+			vol.sendMessage({text: `Sorry, this task can't handle "${event.inputType.slice(4)}".`})
 		} else {
 			throw new Error(`no handler defined for ${event.inputType}`)
 		}
