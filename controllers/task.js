@@ -51,9 +51,7 @@ var TaskFsm = new machina.BehavioralFsm({
 					volunteer = vol;
 					return Promise.all([task.finish(), vol.completeTask()])
 				})
-				.spread(function(task, vol) {
-					vol.sendMessage({text: `Thanks! You ended at ${task.get('completedTime')}.`})
-				}).then(() => this.emit('taskComplete', task, volunteer))
+				.then(() => this.emit('taskComplete', task, volunteer))
 			}
 		}
 	},
@@ -63,13 +61,7 @@ var TaskFsm = new machina.BehavioralFsm({
 	},
 	start: function(task) {
 		return task.start()
-		.then(function(task) {
-			// send message to user that we started the task
-			return bot.sendMessage(
-				task.get('volunteer_fbid'),
-				{text: `Here's a new task for you! Started: ${task.get('startTime')}.`}
-				);
-		}).then(() => this.handle(task, 'start'));
+		.then(() => this.handle(task, 'start'));
 	},
 	userMessage: function(task, message) {
 		this.handle(task, 'msg:' + message);
