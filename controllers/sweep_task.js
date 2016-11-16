@@ -23,6 +23,9 @@ var SweepTaskFsm = machina.BehavioralFsm.extend({
 			},
 			"msg:done": function(task) {
 				this.handle(task, "complete");
+			},
+			"webhook:done": function(task) {
+				this.handle(task, "complete");
 			}
 		},
 	}

@@ -65,6 +65,9 @@ var TaskFsm = new machina.BehavioralFsm({
 	},
 	userMessage: function(task, message) {
 		this.handle(task, 'msg:' + message);
+	},
+	webhook: function(task, message) {
+		this.handle(task, 'webhook:' + message);
 	}
 });
 
