@@ -35,6 +35,19 @@ router.post('/consent', bodyParser.urlencoded({extended: true}), function(req, r
 	})
 })
 
+router.post('/webhook', bodyParser.urlencoded({extended: true}), function(req,res,next) {
+	if (!req.body.wid || !req.body.message) {
+		return res.status(400).send('message and wid are required');
+	}
+	handlers.handleWebhook(req).then(function(err) {
+		if (!err) {
+			res.send('OK');
+		} else {
+			res.status(400).send(err);
+		}
+	})
+});
+
 // Batch add tasks.
 router.post('/tasks', bodyParser.json(), function(req, res, next) {
 	let templates = _.uniq(_.map(req.body, 'template_type'))

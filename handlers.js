@@ -163,6 +163,26 @@ module.exports.dispatchMessage = (payload, reply) => {
 	})
 }
 
+module.exports.handleWebhook = (req) => {
+	return Volunteer.where({fbid: req.body.wid})
+	.fetch({withRelated: ['deployment']})
+	.then(vol => {
+		if (vol) {
+			return getVolTask(vol)
+		} else {
+			throw new Error(`Could not find volunteer with id ${req.body.wid}.`)
+		}
+	})
+	.then(function(task) {
+		if (task) {
+			return TaskController.webhook(task, req.body.message);
+		} else {
+			throw new Error("Could not find active task.")
+		}
+	})
+}
+
+
 module.exports.dispatchPostback = (payload, reply) => {
 	const postback = JSON.parse(payload.postback.payload)
 	if (postback.type in postbackHandlers) {
