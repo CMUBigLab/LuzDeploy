@@ -2,6 +2,7 @@ var machina = require('machina');
 
 var bot = require('../bot');
 let msgUtil = require('../message-utils');
+var config = require('../config');
 
 var SweepTaskFsm = machina.BehavioralFsm.extend({
 	namespace: "sweep_edge",
