@@ -19,7 +19,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		pickup: {
 			_onEnter: function(task) {
 				var text = "Great! Now grab as many beacons as you are willing to place. Tell me how many you take.";
-				bot.sendMessage(task, {text});
+				bot.sendMessage(task.get('volunteer_fbid'), {text});
 			},
 			"*": function(task, number) {
 				var n = parseInt(number, 10);

@@ -3,7 +3,7 @@ var machina = require('machina');
 var bot = require('../bot');
 let msgUtil = require('../message-utils');
 var Promise = require('bluebird');
-var _ =require('lodash');
+var _ = require('lodash');
 
 var SweepTaskFsm = require('./sweep_task');
 var PlaceBeaconFsm = require('./place_beacon_task');

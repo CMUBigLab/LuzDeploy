@@ -11,3 +11,11 @@ module.exports.buttonMessage = function(text, buttons) {
 	}
 	return message;
 }
+
+module.exports.quickReplyMessage = function(text, quickReplies) {
+	var message = {
+		text: text,
+		quick_replies: quickReplies,
+	}
+	return message;
+}
