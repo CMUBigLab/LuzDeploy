@@ -45,6 +45,10 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					currentSlot: null,
 					currentBeacon: null,
 				}
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					{text: `Great, you have ${task.context.numBeacons} beacons to place.`}
+				);
 				this.transition(task, "which");
 			},
 		},
@@ -56,11 +60,12 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				);
 			},
 			"*": function(task, number) {
+				number = number.slice(4);
 				var id = parseInt(number, 10);
 				if (isNaN(id)) {
 					bot.sendMessage(
 						task.get('volunteerFbid'),
-						{text: `${number} doens't look like a beacon id. Try a number.`}
+						{text: `'${number}' doens't look like a beacon id. Try a number.`}
 					);
 					return;
 				}
