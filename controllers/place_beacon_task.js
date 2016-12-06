@@ -64,7 +64,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					"url": `http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
 				}];
 				bot.sendMessage(
-					task.get('volunteer_fbid'),
+					task.get('volunteerFbid'),
 					{text: `Please go to the location marked on the map below. Tell me when you are 'there'.`}
 				);
 			},
