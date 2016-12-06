@@ -102,7 +102,7 @@ function getVolTask(vol) {
 		if (!task) {
 			return null;
 		} else {
-			if (task.get('templateType') == 'sweep_edge') {
+			if (task.get('templateType') == 'sweep_edge' || task.get('templateType') == 'place_beacon') {
 				task.loadState();
 				return task;
 			} else {
