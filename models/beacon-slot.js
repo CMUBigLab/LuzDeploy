@@ -15,9 +15,6 @@ var BeaconSlot = bookshelf.model('BaseModel').extend({
 		return this.collection().query({where: {beacon_id: null}}).fetch()
 		.then(function(slots) {
 			// TODO: Be smarter about finding clusters of beacons
-			console.log(slots);
-			console.log(slots.sortBy('floor'));
-			console.log(slots.sortBy('floor').slice(0, n));
 			return slots.sortBy('floor').slice(0, n);
 		});
 	}

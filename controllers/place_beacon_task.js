@@ -14,7 +14,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (GHC 5th floor entrance). Tell me when you are 'there'.";
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
-					{text}
+					msgUtil.quickReplyMessage(text, ['there'])
 				);
 			},
 			"msg:there": "pickup",
@@ -24,7 +24,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var text = "Great! Now grab as many beacons as you are willing to place. Tell me how many you take.";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					{text}
+					msgUtil.quickReplyMessage(text, ['1','3','5','10'])
 				);
 			},
 			"*": function(task, number) {
@@ -63,7 +63,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					"url": `http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
 				}];
 				bot.sendMessage(
-					task.get('volunteerFbid'),
+					task.get('volunteer_fbid'),
 					{text: `Please go to the location marked on the map below. Tell me when you are 'there'.`}
 				);
 			},
@@ -96,7 +96,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var text = "Place beacon on the wall (you can double check using the map), and try to make it look neat. Tell me when you are 'done'.";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					{text}
+					msgUtil.quickReplyMessage(text, ['done'])
 				)
 			},
 			"msg:done": function(task) {
