@@ -46,7 +46,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				};
 				var self = this;
 				BeaconSlot.getNSlots(n).then(function(slots) {
-					task.context.slots = slots;
+					task.context.slots = slots.map(s => s.get('id'));
 					self.transition(task, "go");
 				});
 				bot.sendMessage(
@@ -95,15 +95,16 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		},
 		place: {
 			_onEnter: function(task) {
-				var text = "Place beacon on the wall (you can double check using the map), and try to make it look neat. Tell me when you are 'done'.";
+				var text = "Place the beacon on the wall (you can double check using the map), and try to make it look neat. Tell me when you are 'done'.";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.quickReplyMessage(text, ['done'])
 				)
 			},
 			"msg:done": function(task) {
-				task.context.currentSlot.beaconId = task.context.currentBeacon.id;
-				task.context.currentSlot.save();
+				BeaconSlot
+				.forge({id: task.context.currentSlot})
+				.save({beaconId: task.context.currentBeacon.id}, {patch: true});
 				task.context.numBeacons--;
 				if (task.context.numBeacons == 0) {
 					this.handle(task, "complete");
