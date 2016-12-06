@@ -5,10 +5,12 @@ let msgUtil = require('../message-utils');
 var Promise = require('bluebird');
 var _ =require('lodash');
 
-var SweepTaskFsm = require('./sweep_task')
+var SweepTaskFsm = require('./sweep_task');
+var PlaceBeaconFsm = require('./place_beacon_task');
 
 var taskControllers = {
-	sweep_edge: new SweepTaskFsm()
+	sweep_edge: new SweepTaskFsm(),
+	place_beacon: new PlaceBeaconFsm(),
 }
 
 function rejectTask(task) {

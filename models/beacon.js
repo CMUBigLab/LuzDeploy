@@ -10,7 +10,7 @@ const Beacon = bookshelf.model('BaseModel').extend({
 	tableName: 'beacons',
 	slot: function() {
 		return this.belongsTo(bookshelf.model('BeaconSlot'))
-	}),
+	},
 	heldBy: function() {
 		return this.belongsTo(bookshelf.model('Volunteer'))
 	}

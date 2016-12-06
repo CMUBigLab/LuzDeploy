@@ -80,10 +80,19 @@ const Task = bookshelf.model('BaseModel').extend({
     }).fetch()
   },
   saveState: function() {
-    return this.save({taskState: this.__machina__}, {patch: true})
+    var taskState = this.__machina__;
+    if (this.context) {
+      taskState.context = this.context;
+    }
+    return this.save({taskState}, {patch: true})
   },
   loadState: function() {
-    this.__machina__ = this.get('taskState');
+    var state = this.get('taskState');
+    if (state.context) {
+      this.context = state.context;
+      delete state.context;
+    }
+    this.__machina__ = state;
   },
   virtuals: {
     estimatedTimeMin: function() {
