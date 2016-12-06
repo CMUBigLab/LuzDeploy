@@ -12,14 +12,21 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		supply: {
 			_onEnter: function(task) {
 				var text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (GHC 5th floor entrance). Tell me when you are 'there'.";
-				bot.sendMessage(task.get('volunteer_fbid'), {text});
+				bot.sendMessage(
+					task.get('volunteer_fbid'),
+					{text}
+				);
 			},
 			"msg:there": "pickup",
 		},
 		pickup: {
 			_onEnter: function(task) {
 				var text = "Great! Now grab as many beacons as you are willing to place. Tell me how many you take.";
-				bot.sendMessage(task.get('volunteer_fbid'), {text});
+				console.log(task.get('volunteer_fbid'),task.get('volunteerFbid'));
+				bot.sendMessage(
+					task.get('volunteer_fbid'),
+					{text}
+				);
 			},
 			"*": function(task, number) {
 				var n = parseInt(number, 10);
@@ -39,7 +46,10 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		},
 		which: {
 			_onEnter: function(task) {
-				bot.sendMessage(task.get('volunteer_fbid'), {text: `What is the number on the back of one of the beacons?`});
+				bot.sendMessage(
+					task.get('volunteer_fbid'),
+					{text: `What is the number on the back of one of the beacons?`}
+				);
 			},
 			"*": function(task, number) {
 				var id = parseInt(number, 10);
