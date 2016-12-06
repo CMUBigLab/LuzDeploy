@@ -15,7 +15,7 @@ module.exports.buttonMessage = function(text, buttons) {
 module.exports.quickReplyMessage = function(text, quickReplies) {
 	var message = {
 		text: text,
-		quick_replies: quickReplies.map(q => {content_type: "text", title: q, payload: q}),
-	}
-	return message;1
+		quick_replies: quickReplies.map(q => ({content_type: "text", title: q, payload: q})),
+	};
+	return message;
 }
