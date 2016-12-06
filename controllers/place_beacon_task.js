@@ -28,6 +28,8 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				);
 			},
 			"*": function(task, number) {
+				// chop off msg: prefix
+				number = number.slice(4);
 				var n = parseInt(number, 10);
 				if (isNaN(n)) {
 					bot.sendMessage(

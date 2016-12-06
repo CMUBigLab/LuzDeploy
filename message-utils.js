@@ -17,5 +17,5 @@ module.exports.quickReplyMessage = function(text, quickReplies) {
 		text: text,
 		quick_replies: quickReplies,
 	}
-	return message;
+	return message;1
 }
