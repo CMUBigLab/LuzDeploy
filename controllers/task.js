@@ -66,7 +66,12 @@ var TaskFsm = new machina.BehavioralFsm({
 		.then(() => this.handle(task, 'start'));
 	},
 	userMessage: function(task, message) {
-		this.handle(task, 'msg:' + message);
+		var n = parseInt(message, 10);
+		if (!isNaN(n)) {
+			this.handle(task, 'number', n);
+		} else {
+			this.handle(task, 'msg:' + message);
+		}
 	},
 	webhook: function(task, message) {
 		this.handle(task, 'webhook:' + message);

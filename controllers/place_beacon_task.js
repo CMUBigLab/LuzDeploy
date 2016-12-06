@@ -27,17 +27,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					msgUtil.quickReplyMessage(text, ['1','3','5','10'])
 				);
 			},
-			"*": function(task, number) {
-				// chop off msg: prefix
-				number = number.slice(4);
-				var n = parseInt(number, 10);
-				if (isNaN(n)) {
-					bot.sendMessage(
-						task.get('volunteerFbid'),
-						{text: `Hm, I couldn't figure out how many beacons you have from '${number}'. Try a number.`}
-					);
-					return;
-				}
+			number: function(task, n) {
 				task.context = {
 					initialBeacons: n,
 					numBeacons: n,
@@ -78,16 +68,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					{text: `What is the number on the back of one of the beacons?`}
 				);
 			},
-			"*": function(task, number) {
-				number = number.slice(4);
-				var id = parseInt(number, 10);
-				if (isNaN(id)) {
-					bot.sendMessage(
-						task.get('volunteerFbid'),
-						{text: `'${number}' doens't look like a beacon id. Try a number.`}
-					);
-					return;
-				}
+			number: function(task, id) {
 				// TODO: double check if it seems like that beacon doesn't exist or is already placed.
 				task.context.currentBeacon = id;
 				this.transition(task, "place");
@@ -104,7 +85,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 			"msg:done": function(task) {
 				BeaconSlot
 				.forge({id: task.context.currentSlot})
-				.save({beaconId: task.context.currentBeacon}, {patch: true});
+				.save({beacon_id: task.context.currentBeacon}, {patch: true});
 				task.context.currentBeacon = null;
 				task.context.currentSlot = null;
 				task.context.numBeacons--;
