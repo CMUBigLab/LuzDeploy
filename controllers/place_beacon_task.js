@@ -113,7 +113,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 						task.get('volunteerFbid'),
 						{text: "Thanks, let's place another!"}
 					)
-					this.transition(task, "which");
+					this.transition(task, "go");
 				}
 			}
 		}
