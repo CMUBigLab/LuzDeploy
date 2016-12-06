@@ -41,16 +41,33 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				task.context = {
 					initialBeacons: n,
 					numBeacons: n,
-					slots: BeaconSlot.getNSlots(n),
 					currentSlot: null,
 					currentBeacon: null,
 				}
+				BeaconSlot.getNSlots(n).then(function(slots) {
+					task.context.slots = slots;
+				});
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					{text: `Great, you have ${task.context.numBeacons} beacons to place.`}
 				);
-				this.transition(task, "which");
+				this.transition(task, "go");
 			},
+		},
+		go: {
+			_onEnter: function(task) {
+				task.context.currentSlot = task.context.slots.pop(1);
+				var buttons = [{
+					"type":"web_url", 
+					"title": "Open Map", 
+					"url": `http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
+				}];
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					{text: `Please go to the location marked on the map below. Tell me when you are 'there'.`}
+				);
+			},
+			"msg:there": "which",
 		},
 		which: {
 			_onEnter: function(task) {
@@ -71,27 +88,12 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				}
 				// TODO: double check if it seems like that beacon doesn't exist or is already placed.
 				task.context.currentBeacon = id;
-				this.transition(task, "go");
+				this.transition(task, "place");
 			}
-		},
-		go: {
-			_onEnter: function(task) {
-				task.context.currentSlot = task.context.slots.pop(1);
-				var buttons = [{
-					"type":"web_url", 
-					"title": "Open Map", 
-					"url": `http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
-				}];
-				bot.sendMessage(
-					task.get('volunteerFbid'),
-					{text: `Please go to the location marked on the map below. Tell me when you are 'there'.`}
-				);
-			},
-			"msg:there": "place",
 		},
 		place: {
 			_onEnter: function(task) {
-				var text = "Place the beacon on the wall (you can double check using the map), and try to make it look neat. Tell me when you are 'done'.";
+				var text = "Place beacon on the wall (you can double check using the map), and try to make it look neat. Tell me when you are 'done'.";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					{text}
