@@ -21,11 +21,9 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		},
 		pickup: {
 			_onEnter: function(task) {
-				console.log(task);
 				var text = "Great! Now grab as many beacons as you are willing to place. Tell me how many you take.";
-				console.log(task.get('volunteer_fbid'),task.get('volunteerFbid'));
 				bot.sendMessage(
-					task.get('volunteer_fbid'),
+					task.get('volunteerFbid'),
 					{text}
 				);
 			},
@@ -33,7 +31,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var n = parseInt(number, 10);
 				if (isNaN(n)) {
 					bot.sendMessage(
-						task.get('volunteer_fbid'),
+						task.get('volunteerFbid'),
 						{text: `Hm, I couldn't figure out how many beacons you have from '${number}'. Try a number.`}
 					);
 					return;
@@ -48,7 +46,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		which: {
 			_onEnter: function(task) {
 				bot.sendMessage(
-					task.get('volunteer_fbid'),
+					task.get('volunteerFbid'),
 					{text: `What is the number on the back of one of the beacons?`}
 				);
 			},
@@ -56,7 +54,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var id = parseInt(number, 10);
 				if (isNaN(id)) {
 					bot.sendMessage(
-						task.get('volunteer_fbid'),
+						task.get('volunteerFbid'),
 						{text: `${number} doens't look like a beacon id. Try a number.`}
 					);
 					return;
@@ -75,7 +73,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					"url": `http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
 				}];
 				bot.sendMessage(
-					task.get('volunteer_fbid'),
+					task.get('volunteerFbid'),
 					{text: `Please go to the location marked on the map below. Tell me when you are 'there'.`}
 				);
 			},
@@ -85,7 +83,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 			_onEnter: function(task) {
 				var text = "Place the beacon on the wall (you can double check using the map), and try to make it look neat. Tell me when you are 'done'.";
 				bot.sendMessage(
-					task.get('volunteer_fbid'),
+					task.get('volunteerFbid'),
 					{text}
 				)
 			},
@@ -97,7 +95,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					this.handle(task, "complete");
 				} else {
 					bot.sendMessage(
-						task.get('volunteer_fbid'),
+						task.get('volunteerFbid'),
 						{text: "Thanks, let's place another!"}
 					)
 					this.transition(task, "which");
