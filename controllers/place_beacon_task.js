@@ -38,10 +38,13 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					);
 					return;
 				}
-				task.context.initialBeacons = n;
-				task.context.numBeacons = n;
-				task.context.slots = BeaconSlot.getNSlots(n);
-				task.context.beacons = [];
+				task.context = {
+					initialBeacons: n,
+					numBeacons: n,
+					slots: BeaconSlot.getNSlots(n),
+					currentSlot: null,
+					currentBeacon: null,
+				}
 				this.transition(task, "which");
 			},
 		},
