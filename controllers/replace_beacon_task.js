@@ -66,7 +66,9 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 					msgUtil.quickReplyMessage(text, ['done'])
 				)
 			},
-			"msg:done": "complete"
+			"msg:done": function(task) {
+				this.handle(task, "complete");
+			},
 		},
 		replace: {
 			_onEnter: function(task) {
@@ -77,7 +79,9 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 				)
 				// record beacon's status as MIA, look for it.
 			},
-			"msg:done": "complete"
+			"msg:done": function(task) {
+				this.handle(task, "complete");
+			},
 		}
 	}
 });
