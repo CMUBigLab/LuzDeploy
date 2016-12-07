@@ -7,10 +7,11 @@ var _ = require('lodash');
 
 var SweepTaskFsm = require('./sweep_task');
 var PlaceBeaconFsm = require('./place_beacon_task');
-
+var ReplaceBeaconFsm = require('./replace_beacon_task');
 var taskControllers = {
 	sweep_edge: new SweepTaskFsm(),
 	place_beacon: new PlaceBeaconFsm(),
+	replace_beacon: new ReplaceBeaconFsm(),
 }
 
 function rejectTask(task) {
