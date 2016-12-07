@@ -22,7 +22,7 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 		pickup: {
 			_onEnter: function(task) {
 				var params = task.get('instructionParams');
-				var text = "Great! Please take a replacement for beacon number ${params.beacon}. Let me know when you are 'ready'.";
+				var text = `Great! Please take a replacement for beacon number ${params.beacon}. Let me know when you are 'ready'.`;
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.quickReplyMessage(text, ['ready'])
