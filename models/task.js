@@ -88,6 +88,9 @@ const Task = bookshelf.model('BaseModel').extend({
   },
   loadState: function() {
     var state = this.get('taskState');
+    if (!state) {
+      return;
+    }
     if (state.context) {
       this.context = state.context;
       delete state.context;
