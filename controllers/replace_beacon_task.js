@@ -16,6 +16,9 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 					task.get('volunteer_fbid'),
 					msgUtil.quickReplyMessage(text, ['there'])
 				);
+				var params = task.get('instructionParams');
+				BeaconSlot.where('beacon_id', params.beacon).fetch()
+				.then(slot => task.context = ({currentSlot: slot.id});
 			},
 			"msg:there": "pickup",
 		},
@@ -45,7 +48,20 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 					msgUtil.buttonMessage(text, buttons)
 				);
 			},
-			"msg:there": "old_beacon",
+			"msg:there": "which",
+		},
+		which: {
+			_onEnter: function(task) {
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					{text: `What is the number on the back of the replacement beacon?`}
+				);
+			},
+			number: function(task, id) {
+				// TODO: double check if it seems like that beacon doesn't exist or is already placed.
+				task.context.currentBeacon = id;
+				this.transition(task, "old_beacon");
+			}
 		},
 		old_beacon: {
 			_onEnter: function(task) {
@@ -81,6 +97,10 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 				// record beacon's status as MIA, look for it.
 			},
 			"msg:done": function(task) {
+				BeaconSlot
+				.forge({id: task.context.currentSlot})
+				.save({beaconId: task.context.currentBeacon}, {patch: true})
+				.then(console.log);
 				this.handle(task, "complete");
 			},
 		}
