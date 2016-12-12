@@ -16,16 +16,12 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 					task.get('volunteer_fbid'),
 					msgUtil.quickReplyMessage(text, ['there'])
 				);
-				var params = task.get('instructionParams');
-				BeaconSlot.where('beacon_id', params.beacon).fetch()
-				.then(slot => task.context = ({currentSlot: slot.id});
 			},
 			"msg:there": "pickup",
 		},
 		pickup: {
 			_onEnter: function(task) {
-				var params = task.get('instructionParams');
-				var text = `Great! Please take a replacement for beacon number ${params.beacon}. Let me know when you are 'ready'.`;
+				var text = "Great! Please take a replacement beacon. Let me know when you are 'ready'.";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.quickReplyMessage(text, ['ready'])
@@ -59,7 +55,7 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 			},
 			number: function(task, id) {
 				// TODO: double check if it seems like that beacon doesn't exist or is already placed.
-				task.context.currentBeacon = id;
+				task.context = {currentBeacon: id};
 				this.transition(task, "old_beacon");
 			}
 		},
@@ -97,8 +93,9 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 				// record beacon's status as MIA, look for it.
 			},
 			"msg:done": function(task) {
+				var params = task.get('instructionParams');
 				BeaconSlot
-				.forge({id: task.context.currentSlot})
+				.forge({id: params.slot})
 				.save({beaconId: task.context.currentBeacon}, {patch: true})
 				.then(console.log);
 				this.handle(task, "complete");
