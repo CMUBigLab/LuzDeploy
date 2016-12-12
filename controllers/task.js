@@ -99,7 +99,7 @@ TaskFsm.on('taskComplete', function(task, vol) {
 							return vol.getNewTask()
 							.then(function(newTask) {
 								if (!newTask) {
-									return vol.sendMessage({text: 'There are no tasks available right now.'})
+									return vol.sendMessage({text: 'Thanks! There are no tasks available right now.'})
 								} else {
 									TaskFsm.assign(newTask, vol)
 									.then(function() {
@@ -108,10 +108,10 @@ TaskFsm.on('taskComplete', function(task, vol) {
 								}
 							})
 						} else {
-							vol.sendMessage({text: "There are more tasks available! Say 'ask' to get another."});
+							vol.sendMessage({text: "Thanks! There are more tasks available! Say 'ask' to get another."});
 						}
 					} else {
-						vol.sendMessage({text: "No more tasks available right now."})
+						vol.sendMessage({text: "Thanks! There are no more tasks available right now."})
 					}
 				});
 			}
