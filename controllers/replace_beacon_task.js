@@ -11,7 +11,7 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 	states: {
 		supply: {
 			_onEnter: function(task) {
-				var text = `One of our beacons needs to be replaced because it isn't working. Please got to the pickup location at NSH 4522. Tell me when you are 'there'.`;
+				var text = `One of our beacons needs to be replaced because it isn't working. Please go to the pickup location at NSH 4522. Tell me when you are 'there'.`;
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
 					msgUtil.quickReplyMessage(text, ['there'])
