@@ -5,13 +5,22 @@ let msgUtil = require('../message-utils');
 
 var BeaconSlot = require('../models/beacon-slot');
 
-var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
-	namespace: "place_beacons",
+var VerifyBeaconTaskFsm = machina.BehavioralFsm.extend({
+	namespace: "verify_beacon",
 	initialState: "supply",
 	states: {
 		supply: {
 			_onEnter: function(task) {
-				var text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (Gates 5th floor entrance). Tell me when you are 'there'.";
+				var params = task.get('instructionParams');
+				BeaconSlot.where('beacon_id', params.beacon).fetch()
+				.then(slot_id => task.context = ({currentSlot: id});
+				var text = "In this task, we need you to double check that a beacon was placed correctly. Please go to the location marked on the map below. Let me know when you are there.";
+				var buttons = [{
+					"type":"web_url", 
+					"title": "Open Map", 
+					"webview_height_ratio": "tall",
+					"url": `http://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
+				}];
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
 					msgUtil.quickReplyMessage(text, ['there'])

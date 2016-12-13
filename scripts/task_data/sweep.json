@@ -1,3 +1,14 @@
 {"task":"sweep_edge", "list": [
-	{"edge": 68, "beacons": "1-13,87-89,189-192", "start":68, "end":2}
+	{"edge": 16, "beacons": "119,121,122", "start":19, "end":20},
+	{"edge": 72, "beacons": "120,123", "start":75, "end":77},
+	{"edge": 69, "beacons": "377-380", "start":19, "end":74},
+	{"edge": 74, "beacons": "356-361", "start":77, "end":79},
+	{"edge": 75, "beacons": "362-366", "start":79, "end":81},
+	{"edge": 76, "beacons": "367", "start":79, "end":80},
+	{"edge": 78, "beacons": "368-370", "start":78, "end":80},
+	{"edge": 73, "beacons": "371-375", "start":76, "end":78},
+	{"edge": 71, "beacons": "376", "start":75, "end":76},
+	{"edge": 195, "beacons": "381,788-791,793", "start":74, "end":183},
+	{"edge": 198, "beacons": "799-802", "start":81, "end":185},
+	{"edge": 199, "beacons": "792,794-798", "start":183, "end":185}
 ]}
