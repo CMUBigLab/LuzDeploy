@@ -108,7 +108,10 @@ TaskFsm.on('taskComplete', function(task, vol) {
 								}
 							})
 						} else {
-							vol.sendMessage({text: "Thanks! There are more tasks available! Say 'ask' to get another."});
+							var text = "Thanks! There are more tasks available! Say 'ask' to get another.";
+							vol.sendMessage(
+								msgUtil.quickReplyMessage(text, ['ask'])
+							);
 						}
 					} else {
 						vol.sendMessage({text: "Thanks! There are no more tasks available right now."})
