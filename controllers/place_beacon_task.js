@@ -66,7 +66,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 			_onEnter: function(task) {
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					{text: `What is the number on the back of one of the beacons?`}
+					{text: `What is the number on the back of one of the beacons you have?`}
 				);
 			},
 			number: function(task, id) {
