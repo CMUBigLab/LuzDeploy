@@ -87,19 +87,20 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				BeaconSlot
 				.forge({id: task.context.currentSlot})
 				.save({beaconId: task.context.currentBeacon}, {patch: true})
-				.then(console.log).catch(console.log);
-				task.context.currentBeacon = null;
-				task.context.currentSlot = null;
-				task.context.numBeacons--;
-				if (task.context.numBeacons == 0) {
-					this.handle(task, "complete");
-				} else {
-					bot.sendMessage(
-						task.get('volunteerFbid'),
-						{text: "Thanks, let's place another!"}
-					)
-					this.transition(task, "go");
-				}
+				.then(function() {
+					task.context.currentBeacon = null;
+					task.context.currentSlot = null;
+					task.context.numBeacons--;
+					if (task.context.numBeacons == 0) {
+						this.handle(task, "complete");
+					} else {
+						bot.sendMessage(
+							task.get('volunteerFbid'),
+							{text: "Thanks, let's place another!"}
+						)
+						this.transition(task, "go");
+					}
+				}).catch(console.log);
 			}
 		}
 	}
