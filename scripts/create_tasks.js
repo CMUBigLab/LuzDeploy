@@ -11,7 +11,6 @@ var readFile = Promise.promisify(fs.readFile)
 readDir('./task_data/').then(files =>
 	Promise.map(files, name => {
 		return readFile(`./task_data/${name}`, 'utf8')
-		//.bind({a: "1"})
 		.then(c => JSON.parse(c))
 		.bind({a: "1"})
 		.then(function(data) {
