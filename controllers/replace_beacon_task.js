@@ -36,6 +36,7 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 					"type":"web_url", 
 					"title": "Open Map",
 					"webview_height_ratio": "tall",
+					"messenger_extensions": true,
 					"url": `https://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${params.slot}`
 				}];
 				var text = "Please go to the location marked on the map below. Tell me when you are 'there'.";
