@@ -11,6 +11,7 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 	states: {
 		supply: {
 			_onEnter: function(task) {
+				task.context = {};
 				var text = `One of our beacons needs to be replaced because it isn't working. Please go to the pickup location at NSH 4522. Tell me when you are 'there'.`;
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
@@ -45,7 +46,24 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 					msgUtil.buttonMessage(text, buttons)
 				);
 			},
-			"msg:there": "which",
+			"msg:there": "old_beacon",
+		},
+		old_beacon: {
+			_onEnter: function(task) {
+				var text = "Is there an existing beacon at this location?";
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					msgUtil.quickReplyMessage(text, ['yes','no'])
+				)
+			},
+			"msg:yes": function(task) {
+				task.context.return = true;
+				this.transition(this, "which");
+			},
+			"msg:no": function(task) {
+				task.context.return = false;
+				this.transition(this, "which");
+			}
 		},
 		which: {
 			_onEnter: function(task) {
@@ -56,20 +74,9 @@ var ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
 			},
 			number: function(task, id) {
 				// TODO: double check if it seems like that beacon doesn't exist or is already placed.
-				task.context = {currentBeacon: id};
-				this.transition(task, "old_beacon");
+				task.context.currentBeacon = id;
+				task.context.return ? this.transition(task, "replace_return") : this.transition(task, "replace");
 			}
-		},
-		old_beacon: {
-			_onEnter: function(task) {
-				var text = "Is there an existing beacon at this location?";
-				bot.sendMessage(
-					task.get('volunteerFbid'),
-					msgUtil.quickReplyMessage(text, ['yes','no'])
-				)
-			},
-			"msg:yes": "replace_return",
-			"msg:no": "replace",
 		},
 		replace_return: {
 			_onEnter: function(task) {
