@@ -12,8 +12,8 @@ const errors = require('./errors')
 // just talk to the real bot without all of this other nonsense
 
 process.on('unhandledRejection', function(error, promise) {
-	console.error("UNHANDLED REJECTION", error.stack)
-	Admin.sendError(error).catch(err => console.log(`admin logging error ${err}`))
+	console.error("UNHANDLED REJECTION", error.stack);
+	Admin.sendError(error).catch(err => console.log(`admin logging error ${err}`));
 })
 
 function expressErrorHandler(err, req, res, next) {

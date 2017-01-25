@@ -4,6 +4,7 @@ var bot = require('../bot');
 let msgUtil = require('../message-utils');
 
 var BeaconSlot = require('../models/beacon-slot');
+var Beacon = require('../models/beacon');
 
 var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 	namespace: "place_beacons",

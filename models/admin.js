@@ -15,7 +15,7 @@ const Admin = bookshelf.model('BaseModel').extend({
 }, {
 	sendError: function(error) {
 		return this.fetchAll().then(admins => {
-			admins.forEach(a => a.sendMessage({text: error.stack}))
+			admins.forEach(a => a.sendMessage({text: error.stack.slice(0, 640)}))
 		})
 	}
 })
