@@ -26,12 +26,12 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		return this.tasks()
 		.query({where:{completed: false, volunteer_fbid: null, disabled: false}})
 		.fetch({withRelated: ['dependencies']})
-		.then(tasks => {
-			return Promise.filter(
-				tasks.models,
-				t => t.hasOutstandingDependancies().then(r => !r)
-				)
-		})
+		// .then(tasks => {
+		// 	return Promise.filter(
+		// 		tasks.models,
+		// 		t => t.hasOutstandingDependancies().then(r => !r)
+		// 		)
+		// })
 	},
 	doesAnyoneNeedHelp: function(mentor) {
 		return this.tasks()
