@@ -108,7 +108,9 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 			return Task.forge({
 				deploymentId: 1,
 				templateType: "replace_beacon",
-				slot: slot
+				instructionParams: {
+					slot: slot
+				}
 			}).save(null, {method: 'insert'});
 		});
 	});
