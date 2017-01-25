@@ -92,8 +92,14 @@ router.post('/tasks', bodyParser.json(), function(req, res, next) {
 router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req, res, next) {
 	console.log("got sweep data", req.body);
 	let now = Date.now();
-	let missing = req.body.missing ? req.body.missing.split(",").map(Number) : [];
-	let present = req.body.present ? req.body.present.split(",").map(Number) : [];
+	let missing = [];
+	let present = [];
+	if (req.body.missing) {
+		missing = req.body.missing.split(",").map(Number);
+	}
+	if (req.body.present) {
+		present = req.body.present.split(",").map(Number);
+	}
 	let a = Beacon.collection().query('where', 'id', 'in', missing).fetch()
 	.then(function(beacons) {
 		console.log(beacons);
@@ -115,7 +121,7 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	});
 	let b = Beacon.collection().query('where', 'id', 'in', present).fetch()
 	.then(function(beacons) {
-		if (beacon) {
+		if (beacons) {
 			return Promise.map(beacons, function(beacon) {
 				return beacon.save({
 					lastSeen: now,
