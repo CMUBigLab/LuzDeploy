@@ -55,6 +55,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			if (task) {
 				return task
 			} else {
+				console.log("filter place", deployment);
 				// otherwise, get normal task, looking for pre-assigned things
 				return deployment.getTaskPool()
 				.filter((task) => {
@@ -71,6 +72,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 					}
 				})
 				.then(pool => {
+					console.log("pool", pool);
 					//pool = _.filter(pool, t => t.allowedToTake(this))
 					const preAssigned = _.find(pool, p => {
 						return p.get('volunteerFbid') == this.get('fbid')
