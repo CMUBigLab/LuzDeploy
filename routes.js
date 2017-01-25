@@ -100,7 +100,7 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	if (req.body.present) {
 		present = req.body.present.split(",").map(Number);
 	}
-	let a = Beacon
+	let a = Beacon.collection()
 	.query('where', 'id', 'in', missing)
 	.update({lastSwept: now, exists: false})
 	.then(function(beacons) {
@@ -112,7 +112,7 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 			}).save(null, {method: 'insert'});
 		});
 	});
-	let b = Beacon
+	let b = Beacon.collection()
 	.query('where', 'id', 'in', present)
 	.update({lastSeen: now, lastSwept: now, exists: true});
 
