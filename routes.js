@@ -1,16 +1,19 @@
 var express = require('express');
-const _ = require('lodash')
-var bodyParser = require('body-parser')
+const _ = require('lodash');
+var bodyParser = require('body-parser');
 
-var bookshelf = require('./bookshelf')
-const bot = require('./bot')
-const errors = require('./errors')
-const handlers = require('./handlers')
+var bookshelf = require('./bookshelf');
+const bot = require('./bot');
+const errors = require('./errors');
+const handlers = require('./handlers');
 
-const TaskTemplate = require('./models/task-template')
-const Volunteer = require('./models/volunteer')
-const Task = require('./models/task')
-const Admin = require('./models/admin')
+const TaskTemplate = require('./models/task-template');
+const Volunteer = require('./models/volunteer');
+const Task = require('./models/task');
+const Admin = require('./models/admin');
+const Beacon = require('./models/beacon');
+
+const Promise = require('bluebird');
 
 var router = express.Router();
 
@@ -83,6 +86,39 @@ router.post('/tasks', bodyParser.json(), function(req, res, next) {
 		res.status(201).send(results.map(r => r.serialize()))
 	})
 	.catch(next)
+})
+
+// Upload sweep data
+router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req, res, next) {
+	let now = Date.now();
+	let missing = req.body.missing.split(",").map(parseInt);
+	let present = req.body.present.split(",").map(parseInt);
+	Beacon.collection().query('where', 'id', 'in', missing).fetch()
+	.then(function(beacons) {
+		Promise.map(beacons, function(beacon) {
+			return beacon.save({
+				lastSwept: now,
+				exists: false
+			}, {method: "update"})
+			.then(function(beacon) {
+				return Task.forge({
+					deploymentId: 1,
+					templateType: "replace_beacon",
+					slot: beacon.get('slot')
+				}).save(null, {method: 'insert'});
+			})
+		});
+	});
+	Beacon.collection().query('where', 'id', 'in', present).fetch()
+	.then(function(beacons) {
+		Promise.map(beacons, function(beacon) {
+			return beacon.save({
+				lastSeen: now,
+				lastSwept: now,
+				exists: true
+			}, {method: "update"});
+		});
+	});
 })
 
 module.exports = router
