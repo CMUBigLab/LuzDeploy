@@ -25,7 +25,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 	getTaskPool: function() {
 		return this.tasks()
 		.query({where:{completed: false, volunteer_fbid: null, disabled: false}})
-		.fetch({withRelated: ['dependencies']})
+		.fetch()
 		// .then(tasks => {
 		// 	return Promise.filter(
 		// 		tasks.models,
