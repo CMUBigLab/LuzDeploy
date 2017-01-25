@@ -96,6 +96,7 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	let present = req.body.present ? req.body.present.split(",").map(Number) : [];
 	let a = Beacon.collection().query('where', 'id', 'in', missing).fetch()
 	.then(function(beacons) {
+		console.log(beacons);
 		if (beacons) {
 			return Promise.map(beacons, function(beacon) {
 				return beacon.save({
