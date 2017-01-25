@@ -100,20 +100,20 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	if (req.body.present) {
 		present = req.body.present.split(",").map(Number);
 	}
-	let a = Beacon.collection()
-	.query('where', 'id', 'in', missing)
-	.update({lastSwept: now, exists: false})
-	.then(function(beacons) {
-		return Promise.map(beacons, function(beacon) {
+	let a = Beacon.collection().query()
+	.whereIn('id', missing)
+	.update({lastSwept: now, exists: false}, 'slot')
+	.then(function(slots) {
+		return Promise.map(slots, function(slot) {
 			return Task.forge({
 				deploymentId: 1,
 				templateType: "replace_beacon",
-				slot: beacon.get('slot')
+				slot: slot
 			}).save(null, {method: 'insert'});
 		});
 	});
-	let b = Beacon.collection()
-	.query('where', 'id', 'in', present)
+	let b = Beacon.collection().query()
+	.whereIn('id', present)
 	.update({lastSeen: now, lastSwept: now, exists: true});
 
 	Promise.join(a,b)
