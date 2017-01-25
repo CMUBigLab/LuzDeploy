@@ -100,15 +100,13 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	if (req.body.present) {
 		present = req.body.present.split(",").map(Number);
 	}
-	let a = Beacon.collection().query('where', 'id', 'in', missing).fetch()
+	let a = Beacon
+	.query('where', 'id', 'in', missing)
+	.update({lastSwept: now, exists: false})
 	.then(function(beacons) {
-		console.log(beacons);
-		if (beacons) {
-			return Promise.map(beacons, function(beacon) {
-				return beacon.save({
-					lastSwept: now,
-					exists: false
-				}, {method: "update"})
+		return Promise.all(
+			beacons.map(function(beacon) {
+				return beacon.save(
 				.then(function(beacon) {
 					return Task.forge({
 						deploymentId: 1,
@@ -119,18 +117,10 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 			});
 		}
 	});
-	let b = Beacon.collection().query('where', 'id', 'in', present).fetch()
-	.then(function(beacons) {
-		if (beacons) {
-			return Promise.map(beacons, function(beacon) {
-				return beacon.save({
-					lastSeen: now,
-					lastSwept: now,
-					exists: true
-				}, {method: "update"});
-			});
-		}
-	});
+	let b = Beacon
+	.query('where', 'id', 'in', present)
+	.update({lastSeen: now, lastSwept: now, exists: true});
+
 	Promise.join(a,b)
 	.then(function() {
 		res.sendStatus(200);
