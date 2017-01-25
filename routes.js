@@ -91,7 +91,7 @@ router.post('/tasks', bodyParser.json(), function(req, res, next) {
 // Upload sweep data
 router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req, res, next) {
 	console.log("got sweep data", req.body);
-	let now = bookshelf.knex.now();
+	let now = bookshelf.knex.fn.now();
 	let missing = [];
 	let present = [];
 	if (req.body.missing) {
