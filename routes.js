@@ -104,15 +104,13 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	.query('where', 'id', 'in', missing)
 	.update({lastSwept: now, exists: false})
 	.then(function(beacons) {
-		return Promise.all(
-			beacons.map(function(beacon) {
-				return Task.forge({
-					deploymentId: 1,
-					templateType: "replace_beacon",
-					slot: beacon.get('slot')
-				}).save(null, {method: 'insert'})
-			});
-		);
+		return Promise.map(beacons, function(beacon) {
+			return Task.forge({
+				deploymentId: 1,
+				templateType: "replace_beacon",
+				slot: beacon.get('slot')
+			}).save(null, {method: 'insert'});
+		});
 	});
 	let b = Beacon
 	.query('where', 'id', 'in', present)
