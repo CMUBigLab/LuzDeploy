@@ -91,7 +91,7 @@ router.post('/tasks', bodyParser.json(), function(req, res, next) {
 // Upload sweep data
 router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req, res, next) {
 	console.log("got sweep data", req.body);
-	let now = Date.now();
+	let now = new Date().getTime() / 1000;
 	let missing = [];
 	let present = [];
 	if (req.body.missing) {
