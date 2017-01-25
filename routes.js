@@ -125,7 +125,8 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 			});
 		}
 	});
-	Promise.all([a,b]).then(function() {
+	Promise.join(a,b)
+	.then(function() {
 		res.sendStatus(200);
 	}).catch(function(err) {
 		console.log(err);
