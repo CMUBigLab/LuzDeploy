@@ -93,9 +93,9 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	let now = Date.now();
 	let missing = req.body.missing.split(",").map(parseInt);
 	let present = req.body.present.split(",").map(parseInt);
-	Beacon.collection().query('where', 'id', 'in', missing).fetch()
+	let a = Beacon.collection().query('where', 'id', 'in', missing).fetch()
 	.then(function(beacons) {
-		Promise.map(beacons, function(beacon) {
+		return Promise.map(beacons, function(beacon) {
 			return beacon.save({
 				lastSwept: now,
 				exists: false
@@ -109,9 +109,9 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 			})
 		});
 	});
-	Beacon.collection().query('where', 'id', 'in', present).fetch()
+	let b = Beacon.collection().query('where', 'id', 'in', present).fetch()
 	.then(function(beacons) {
-		Promise.map(beacons, function(beacon) {
+		return Promise.map(beacons, function(beacon) {
 			return beacon.save({
 				lastSeen: now,
 				lastSwept: now,
@@ -119,6 +119,9 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 			}, {method: "update"});
 		});
 	});
+	Promise.all([a,b]).then(function() {
+		res.sendStatus(200);
+	})
 })
 
 module.exports = router
