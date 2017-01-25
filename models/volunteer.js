@@ -55,7 +55,6 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			if (task) {
 				return task
 			} else {
-				console.log("filter place", deployment);
 				// otherwise, get normal task, looking for pre-assigned things
 				return deployment.getTaskPool()
 				.filter((task) => {
