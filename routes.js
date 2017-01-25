@@ -96,33 +96,40 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 	let present = req.body.present ? req.body.present.split(",").map(Number) : [];
 	let a = Beacon.collection().query('where', 'id', 'in', missing).fetch()
 	.then(function(beacons) {
-		return Promise.map(beacons, function(beacon) {
-			return beacon.save({
-				lastSwept: now,
-				exists: false
-			}, {method: "update"})
-			.then(function(beacon) {
-				return Task.forge({
-					deploymentId: 1,
-					templateType: "replace_beacon",
-					slot: beacon.get('slot')
-				}).save(null, {method: 'insert'});
-			})
-		});
+		if (beacons) {
+			return Promise.map(beacons, function(beacon) {
+				return beacon.save({
+					lastSwept: now,
+					exists: false
+				}, {method: "update"})
+				.then(function(beacon) {
+					return Task.forge({
+						deploymentId: 1,
+						templateType: "replace_beacon",
+						slot: beacon.get('slot')
+					}).save(null, {method: 'insert'});
+				})
+			});
+		}
 	});
 	let b = Beacon.collection().query('where', 'id', 'in', present).fetch()
 	.then(function(beacons) {
-		return Promise.map(beacons, function(beacon) {
-			return beacon.save({
-				lastSeen: now,
-				lastSwept: now,
-				exists: true
-			}, {method: "update"});
-		});
+		if (beacon) {
+			return Promise.map(beacons, function(beacon) {
+				return beacon.save({
+					lastSeen: now,
+					lastSwept: now,
+					exists: true
+				}, {method: "update"});
+			});
+		}
 	});
 	Promise.all([a,b]).then(function() {
 		res.sendStatus(200);
-	});
+	}).catch(function(err) {
+		console.log(err);
+		res.sendStatus(500);
+	})
 })
 
 module.exports = router
