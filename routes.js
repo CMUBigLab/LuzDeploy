@@ -101,7 +101,7 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 		present = req.body.present.split(",").map(Number);
 	}
 	let a = Beacon.collection().query()
-	.whereIn('id', missing)
+	.whereIn('minor_id', missing)
 	.update({last_swept: now, exists: false}, 'slot')
 	.then(function(slots) {
 		return Promise.map(slots, function(slot) {
@@ -115,7 +115,7 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 		});
 	});
 	let b = Beacon.collection().query()
-	.whereIn('id', present)
+	.whereIn('minor_id', present)
 	.update({last_seen: now, last_swept: now, exists: true});
 
 	Promise.join(a,b)

@@ -8,7 +8,7 @@ require('./base-model')
 var BeaconSlot = bookshelf.model('BaseModel').extend({
 	tableName: 'beacon_slots',
 	beacon: function() {
-		return this.hasOne(bookshelf.model('Beacon'));
+		return this.hasOne(bookshelf.model('Beacon'), 'slot');
 	},
 }, {
 	getNSlots: function(n) {
