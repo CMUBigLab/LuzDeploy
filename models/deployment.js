@@ -30,14 +30,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 			return pool.sortBy(function(task) {
 				return [task.get('templateType'), Number(task.get('instructionParams').edge)];
 			});
-		})
-		.then(tasks => tasks.models);
-		// .then(tasks => {
-		// 	return Promise.filter(
-		// 		tasks.models,
-		// 		t => t.hasOutstandingDependancies().then(r => !r)
-		// 		)
-		// })
+		});
 	},
 	doesAnyoneNeedHelp: function(mentor) {
 		return this.tasks()
