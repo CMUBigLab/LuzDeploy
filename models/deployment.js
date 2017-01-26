@@ -26,7 +26,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		return this.tasks()
 		.query({where:{completed: false, volunteer_fbid: null, disabled: false}})
 		.fetch()
-		.tap(function(pool) {
+		.then(function(pool) {
 			return pool.sortBy(function(task) {
 				return [task.get('templateType'), task.get('instructionParams').edge];
 			});
