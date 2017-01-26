@@ -20,7 +20,7 @@ function getRanges(array) {
 
 BeaconSlot.collection()
 .query('where','beacon_id', 'is not', null)
-.fetch()
+.fetch({withRelated: 'beacon'})
 .then(function(slots) {
 	var edges = slots.groupBy('edge');
 	return Promise.map(Object.keys(edges), function(edge) {
@@ -32,7 +32,10 @@ BeaconSlot.collection()
 				edge: edge,
 				start: beaconSlots[0].get('startNode'),
 				end: beaconSlots[0].get('endNode'),
-				beacons: getRanges(beaconSlots.map(b => b.id).sort()),
+				beacons: getRanges(
+					beaconSlots.map(s => s.related('beacon').get('minorId'))
+					.sort()
+				),
 			}
 		}).save();
 	})
