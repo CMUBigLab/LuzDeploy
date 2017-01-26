@@ -57,21 +57,8 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 			} else {
 				// otherwise, get normal task, looking for pre-assigned things
 				return deployment.getTaskPool()
-				.filter((task) => {
-					if (task.get('templateType') == 'verify_beacon'){
-						return task.getPlaceTask().then(placeTask => {
-							if (!placeTask) {
-								return true;
-							} else {
-								return placeTask.get('volunteerFbid') != this.get('fbid')
-							}
-						})
-					} else {
-						return true;
-					}
-				})
 				.then(pool => {
-					console.log(pool);
+					console.log('pool', pool);
 					//pool = _.filter(pool, t => t.allowedToTake(this))
 					const preAssigned = _.find(pool, p => {
 						return p.get('volunteerFbid') == this.get('fbid')
