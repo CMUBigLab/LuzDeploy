@@ -27,6 +27,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		.query({where:{completed: false, volunteer_fbid: null, disabled: false}})
 		.fetch()
 		.tap(pool => pool.sortBy(['template_type', function(task) {
+			console.log('task type', task.get('templateType'));
 			if (task.get('templateType') == 'sweep_edge') {
 				console.log(task.get('instructionParams'), task.get('instructionParams').edge);
 				return task.get('instructionParams').edge;
