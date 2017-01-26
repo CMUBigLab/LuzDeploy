@@ -28,7 +28,7 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		.fetch()
 		.then(function(pool) {
 			return pool.sortBy(function(task) {
-				return [task.get('templateType'), task.get('instructionParams').edge];
+				return [task.get('templateType'), Number(task.get('instructionParams').edge)];
 			});
 		})
 		.tap(function(pool) {
