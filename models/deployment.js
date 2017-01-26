@@ -31,9 +31,6 @@ const Deployment = bookshelf.model('BaseModel').extend({
 				return [task.get('templateType'), Number(task.get('instructionParams').edge)];
 			});
 		})
-		.tap(function(pool) {
-			console.log(pool.map(t => t.get('instructionParams').edge))
-		})
 		.then(tasks => tasks.models);
 		// .then(tasks => {
 		// 	return Promise.filter(
