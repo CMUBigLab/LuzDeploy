@@ -12,10 +12,10 @@ var BeaconSlot = bookshelf.model('BaseModel').extend({
 	},
 }, {
 	getNSlots: function(n) {
-		return this.collection().query({where: {beacon_id: null}}).fetch()
+		return this.collection().query({where: {beacon_id: null, in_progress: false}}).fetch()
 		.then(function(slots) {
 			// TODO: Be smarter about finding clusters of beacons
-			return slots.sortBy('floor').slice(0, n);
+			return slots.sortBy(['floor', 'id']).slice(0, n);
 		});
 	}
 });

@@ -4,7 +4,8 @@ var bot = require('../bot');
 let msgUtil = require('../message-utils');
 
 var BeaconSlot = require('../models/beacon-slot');
-var Beacon = require('../models/beacon');
+
+var Promise = require('bluebird');
 
 var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 	namespace: "place_beacons",
@@ -38,6 +39,9 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var self = this;
 				BeaconSlot.getNSlots(n).then(function(slots) {
 					task.context.slots = slots.map(s => s.get('id'));
+					return Promise.map(slot, function(slot) {
+						return slot.save({in_progress: true});
+					});
 					self.transition(task, "go");
 				});
 				bot.sendMessage(

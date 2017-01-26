@@ -70,6 +70,7 @@ const Volunteer = bookshelf.model('BaseModel').extend({
 						return true;
 					}
 				})
+				.tap(pool => _.sortBy(pool, ['template_type', 'instruction_params']))
 				.then(pool => {
 					//pool = _.filter(pool, t => t.allowedToTake(this))
 					const preAssigned = _.find(pool, p => {
