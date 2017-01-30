@@ -67,6 +67,7 @@ if (require.main === module) {
 			}
 
 			bot.getProfile(payload.sender.id, (err, profile) => {
+				console.log("message received", profile.first_name, profile.last_name);
 				if (err) console.log(err)
 				payload.sender.profile = profile
 				if (payload.message.attachments) {
