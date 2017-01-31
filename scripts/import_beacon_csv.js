@@ -14,18 +14,22 @@ var parser = parse({delimiter: ',', columns: true}, function(err, data){
 			floor: b.floor,
 			startNode: b.start,
 			endNode: b.end,
+			deploymentId: 3,
 		}).save(null, {method: 'insert'})
 		.then(function(slot) {
 			return Beacon.forge({
 				id: b.bid,
 				minorId: b.minor,
 				slot: slot.id,
+				deploymentId: 3,
 			}).save(null, {method: 'insert'})
 			.then(function(beacon) {
 				return slot.save({beaconId: beacon.id}, {method: 'update'});
 			})
-		}).catch(function(err) {
-			console.log(err);
+		}).then(() => process.exit())
+		.catch(err => { 
+			console.log(err)
+			process.exit(1)
 		});
 	});
 });

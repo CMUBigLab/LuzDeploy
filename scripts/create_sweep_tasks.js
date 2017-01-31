@@ -26,7 +26,7 @@ BeaconSlot.collection()
 	return Promise.map(Object.keys(edges), function(edge) {
 		var beaconSlots = edges[edge];
 		return Task.forge({
-			deploymentId: 1,
+			deploymentId: 3,
 			templateType: 'sweep_edge',
 			instructionParams: {
 				edge: edge,
@@ -39,4 +39,9 @@ BeaconSlot.collection()
 			}
 		}).save();
 	})
+})
+.then(() => process.exit())
+.catch(err => { 
+	console.log(err)
+	process.exit(1)
 });
