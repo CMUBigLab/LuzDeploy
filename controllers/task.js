@@ -20,7 +20,8 @@ function rejectTask(task) {
 		return vol.unassignTask()
 	})
 	.spread(function(vol, task) {
-		vol.sendMessage({text: "Task rejected. If you wish to continue, you can 'ask' for another."});
+		var text = "Task rejected. If you wish to continue, you can 'ask' for another.";
+		vol.sendMessage(msgUtil.quickReplyMessage(text, ["ask"]));
 	}).then(() => this.transition(task, 'unassigned'))
 }
 
