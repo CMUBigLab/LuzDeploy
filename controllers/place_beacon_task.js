@@ -155,7 +155,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 						)
 						this.transition(task, "go");
 					}
-				}).catch(console.log);
+				});
 			}
 		},
 		return: {
