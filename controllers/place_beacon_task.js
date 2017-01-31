@@ -40,10 +40,6 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var self = this;
 				BeaconSlot.getNSlots(n).then(function(slots) {
 					task.context.slots = slots.map(s => s.get('id'));
-					bot.sendMessage(
-						task.get('volunteerFbid'),
-						{text: `Great, you have ${task.context.numBeacons} beacons to place.`}
-					);
 					return Promise.map(slots, function(slot) {
 						return slot.save({in_progress: true});
 					});
@@ -62,10 +58,14 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					"messenger_extensions": true,
 					"url": `https://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
 				}];
-				var text = "Please go to the location marked on the map below. Tell me when you are 'there'.";
+				var text = `Great, you have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.buttonMessage(text, buttons)
+				);
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					msgUtil.quickReplyMessage("Tell me when you are 'there'!", ['there'])
 				);
 			},
 			"msg:there": "which",
