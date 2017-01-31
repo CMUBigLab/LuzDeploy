@@ -4,6 +4,7 @@ var bot = require('../bot');
 let msgUtil = require('../message-utils');
 
 var BeaconSlot = require('../models/beacon-slot');
+var Beacon = require('../models/beacon');
 
 var Promise = require('bluebird');
 
@@ -77,9 +78,17 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				);
 			},
 			number: function(task, id) {
-				// TODO: double check if it seems like that beacon doesn't exist or is already placed.
-				task.context.currentBeacon = id;
-				this.transition(task, "place");
+				var self = this;
+				Beacon.forge({id: id}).fetch({require: true})
+				.then(function(beacon) {
+					task.context.currentBeacon = id;
+					self.transition(task, "place");
+				})
+				.catch(Beacon.NotFoundError, function() {
+					bot.sendMessage(
+						task.get('volunteerFbid'),
+						{text: `Are you sure? I can't find that beacon. Please try again.`}
+					);
 			}
 		},
 		place: {
