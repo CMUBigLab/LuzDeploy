@@ -209,7 +209,8 @@ module.exports.dispatchPostback = (payload, reply) => {
 }
 
 function greetingMessage(payload, reply) {
-	reply({text: "Hi! If you want a new task, use the command 'ask'."})
+	var text = "Hi! If you want a new task, use the command 'ask'.";
+	reply(msgUtil.quickReplyMessage(text, ['ask']));
 }
 
 function leaveMessage(payload, reply) {
