@@ -62,12 +62,15 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var text = `You have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					msgUtil.buttonMessage(text, buttons)
+					msgUtil.buttonMessage(text, buttons),
+					function() {
+						bot.sendMessage(
+							task.get('volunteerFbid'),
+							msgUtil.quickReplyMessage("Tell me when you are 'there'!", ['there'])
+						);
+					}
 				);
-				bot.sendMessage(
-					task.get('volunteerFbid'),
-					msgUtil.quickReplyMessage("Tell me when you are 'there'!", ['there'])
-				);
+
 			},
 			"msg:there": "which",
 		},
