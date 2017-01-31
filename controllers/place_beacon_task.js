@@ -59,7 +59,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					"messenger_extensions": true,
 					"url": `https://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
 				}];
-				var text = `Great, you have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
+				var text = `You have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.buttonMessage(text, buttons)
