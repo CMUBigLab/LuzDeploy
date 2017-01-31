@@ -39,7 +39,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var self = this;
 				BeaconSlot.getNSlots(n).then(function(slots) {
 					task.context.slots = slots.map(s => s.get('id'));
-					return Promise.map(slot, function(slot) {
+					return Promise.map(slots, function(slot) {
 						return slot.save({in_progress: true});
 					});
 					self.transition(task, "go");
