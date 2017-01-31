@@ -127,6 +127,8 @@ TaskFsm.on('nohandler', function(event) {
 	.then(function(vol) {
 		if (event.inputType.startsWith('msg:')) {
 			vol.sendMessage({text: `Sorry, this task can't handle "${event.inputType.slice(4)}".`})
+		} else if (event.inputType == "number") {
+			vol.sendMessage({text: `Sorry, I don't know what to do with that number.`});
 		} else {
 			throw new Error(`no handler defined for ${event.inputType}`)
 		}
