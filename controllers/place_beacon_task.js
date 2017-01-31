@@ -41,6 +41,11 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var self = this;
 				BeaconSlot.getNSlots(n, task.get('deploymentId'))
 				.then(function(slots) {
+					if (slots.length != n) {
+						var text = `I could only find ${slots.length} places needing beacons. Please return any excess beacons.`
+						bot.sendMessage(task.get('volunteerFbid'), {text: text});
+						task.context.numBeacons = slots.length;
+					}
 					task.context.slots = slots.map(s => s.get('id'));
 					return Promise.map(slots, function(slot) {
 						return slot.save({in_progress: true});
