@@ -82,10 +82,9 @@ const Deployment = bookshelf.model('BaseModel').extend({
 		})
 	},
 	isComplete: function() {
-		return false;
-		//return this.tasks()
-		//.query({where: {completed: false}}).count()
-		//.then(count => count == 0)
+		return this.tasks()
+		.query({where: {completed: false}}).count()
+		.then(count => false) //(count == 0))
 	},
 	virtuals: {
 		isCasual: function() {
