@@ -136,6 +136,10 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				BeaconSlot
 				.forge({id: task.context.currentSlot})
 				.save({beaconId: task.context.currentBeacon}, {patch: true})
+				.then(function(slot) {
+					return Beacon.forge({id: task.context.currentBeacon})
+					.save({slot: task.context.currentSlot}, {patch: true})
+				})
 				.then(() => {
 					task.context.currentBeacon = null;
 					task.context.currentSlot = null;
