@@ -39,15 +39,15 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var self = this;
 				BeaconSlot.getNSlots(n).then(function(slots) {
 					task.context.slots = slots.map(s => s.get('id'));
+					bot.sendMessage(
+						task.get('volunteerFbid'),
+						{text: `Great, you have ${task.context.numBeacons} beacons to place.`}
+					);
+					self.transition(task, "go");
 					return Promise.map(slots, function(slot) {
 						return slot.save({in_progress: true});
 					});
-					self.transition(task, "go");
 				});
-				bot.sendMessage(
-					task.get('volunteerFbid'),
-					{text: `Great, you have ${task.context.numBeacons} beacons to place.`}
-				);
 			},
 		},
 		go: {
