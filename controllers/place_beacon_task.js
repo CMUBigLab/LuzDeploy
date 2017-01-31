@@ -36,6 +36,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					numBeacons: n,
 					currentSlot: null,
 					currentBeacon: null,
+					toReturn: [],
 				};
 				var self = this;
 				BeaconSlot.getNSlots(n).then(function(slots) {
@@ -81,8 +82,12 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var self = this;
 				Beacon.forge({id: id}).fetch({require: true})
 				.then(function(beacon) {
-					task.context.currentBeacon = id;
-					self.transition(task, "place");
+					if (beacon.get('slot') == null) {
+						task.context.currentBeacon = id;
+						self.transition(task, "place");
+					} else {
+						self.transition(task, "already_placed");
+					}
 				})
 				.catch(Beacon.NotFoundError, function() {
 					bot.sendMessage(
@@ -91,6 +96,30 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					);
 				});
 			}
+		},
+		already_placed: {
+			_onEnter: function(task) {
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					msgUtil.quickReplyMessage(`Are you sure? That beacon looks like it has already been placed.`, ["yes", "no"])
+				);
+			},
+			"msg:yes": function(task) {
+				task.context.toReturn.push(task.context.currentBeacon);
+				task.context.currentBeacon = null;
+				task.context.numBeacons--;
+				tasl.context.slots.pop(1);
+				if (task.context.numBeacons == 0) {
+					this.transition(task, "return");
+				} else {
+					bot.sendMessage(
+						task.get('volunteerFbid'),
+						{text: 'Later, please return that beacon to the supply station. For now we will plave another beacon.'}
+					);
+					this.transition(task, "which");
+				}
+			},
+			"msg:no": "which"
 		},
 		place: {
 			_onEnter: function(task) {
@@ -109,7 +138,11 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					task.context.currentSlot = null;
 					task.context.numBeacons--;
 					if (task.context.numBeacons == 0) {
-						this.handle(task, "complete");
+						if (task.context.toReturn.length > 0) {
+							this.transition(task, "return");
+						} else {
+							this.handle(task, "complete");
+						}
 					} else {
 						bot.sendMessage(
 							task.get('volunteerFbid'),
@@ -118,6 +151,17 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 						this.transition(task, "go");
 					}
 				}).catch(console.log);
+			}
+		},
+		return: {
+			_onEnter: function(task) {
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					msgUtil.quickReplyMessage("Please return your extra beacon(s) to NSH 4522. Let me know when you are 'done'.", ["done"])
+				);
+			},
+			"msg:done": function(task) {
+				this.handle(task, "complete");
 			}
 		}
 	}
