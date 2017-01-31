@@ -108,7 +108,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				task.context.toReturn.push(task.context.currentBeacon);
 				task.context.currentBeacon = null;
 				task.context.numBeacons--;
-				tasl.context.slots.pop(1);
+				task.context.slots.pop(1);
 				if (task.context.numBeacons == 0) {
 					this.transition(task, "return");
 				} else {
