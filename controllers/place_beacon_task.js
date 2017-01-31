@@ -39,7 +39,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					toReturn: [],
 				};
 				var self = this;
-				BeaconSlot.getNSlots(n, task.get('deployment_id'))
+				BeaconSlot.getNSlots(n, task.get('deploymentId'))
 				.then(function(slots) {
 					task.context.slots = slots.map(s => s.get('id'));
 					return Promise.map(slots, function(slot) {
