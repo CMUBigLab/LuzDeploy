@@ -74,10 +74,10 @@ const Deployment = bookshelf.model('BaseModel').extend({
 	},
 	finish: function() {
 		return this.volunteers().fetch().then(volunteers => {
-			volunteers.forEach((v) => {
-				v.sendMessage({text: "Thank you very much!\nYou just helped make CMU accessible."})
-				this.sendSurvey(v)
-			})
+			//volunteers.forEach((v) => {
+			//	v.sendMessage({text: "Thank you very much!\nYou just helped make CMU accessible."})
+			//	this.sendSurvey(v)
+			//})
 			return this.save({doneTime: new Date()})
 		})
 	},
