@@ -93,10 +93,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					}
 				})
 				.catch(Beacon.NotFoundError, function() {
-					bot.sendMessage(
-						task.get('volunteerFbid'),
-						{text: `Are you sure? I can't find that beacon. Please try again.`}
-					);
+						self.transition(task, "already_placed");
 				});
 			}
 		},
@@ -104,7 +101,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 			_onEnter: function(task) {
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					msgUtil.quickReplyMessage(`Are you sure? That beacon looks like it has already been placed.`, ["yes", "no"])
+					msgUtil.quickReplyMessage(`Are you sure? I can't find that beacon.`, ["yes", "no"])
 				);
 			},
 			"msg:yes": function(task) {
