@@ -13,6 +13,8 @@ const Task = require('./models/task');
 const Admin = require('./models/admin');
 const Beacon = require('./models/beacon');
 
+
+let msgUtils = require('./message-utils');
 const Promise = require('bluebird');
 
 var router = express.Router();
@@ -126,5 +128,37 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 		res.sendStatus(500);
 	})
 })
+
+router.post('/send-message', bodyParser.json(), function(req, res, next) {
+	let fbid = req.body.fbid;
+	let text = req.body.text;
+	let message = req.body.message;
+	let qrs = req.body.quick_replies;
+	let buttons = req.body.buttons;
+	let mass = req.body.mass;
+	let deploymentId = req.body.deployment_id;
+	if (qrs) {
+		message = msgUtils.quickReplyMessage(text, qrs);
+	} else if (buttons) {
+		message = msgUtils.buttonMessage(text, buttons);
+	}
+	if (mass === true) {
+		Deployment.forge({id: deploymentId}).volunteers()
+		.fetch(function(volunteers) {
+			volunteers.forEach(function(v) {
+				v.sendMessage(message);
+			});
+		}).then(function() {
+			res.sendStatus(200);
+		})
+		.catch(function(err) {
+			console.log(err)
+			res.sendStatus(500);
+		});
+	} else {
+		bot.sendMessage(fbid, message);
+		res.sendStatus(200);
+	}
+});
 
 module.exports = router
