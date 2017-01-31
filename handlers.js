@@ -560,7 +560,8 @@ function joinDeployment(payload, reply, args) {
 					first_name: payload.sender.profile.first_name,
 					last_name: payload.sender.profile.last_name
 				}, method).then(function(vol) {
-					reply({text: `Great! Welcome to the ${deployment.get('name')} deployment!`})
+					text = `Great! Welcome to the ${deployment.get('name')} deployment! Say 'ask' for a new task.`;
+					reply(msgUtil.quickReplyMessage(text, ["ask"]));
 					return 	vol.getNewTask()
 				})
 			})
