@@ -89,6 +89,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 						task.get('volunteerFbid'),
 						{text: `Are you sure? I can't find that beacon. Please try again.`}
 					);
+				});
 			}
 		},
 		place: {
