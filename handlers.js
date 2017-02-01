@@ -184,6 +184,7 @@ function getAdminAndVolunteer(payload) {
 		Admin.where({fbid: payload.sender.id}).fetch(),
 		Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']})
 	).then((admin, vol) => {
+		console.log(payload.sender.id, admin, vol)
 		if (admin) payload.sender.admin = admin;
 		if (vol) payload.sender.vol = vol;
 		return payload;
