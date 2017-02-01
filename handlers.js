@@ -117,8 +117,8 @@ function getVolTask(vol) {
 module.exports.dispatchMessage = (payload, reply) => {
 	getAdminAndVolunteer(payload)
 	.then((payload) => {
-		if (payload.sender.vol) {
-			const vol = payload.sender.vol;
+		if (payload.sender.volunteer) {
+			const vol = payload.sender.volunteer;
 			if (vol.get('deploymentId') === null) {
 				sendDeploymentMessage(payload.sender.id)
 				return
@@ -184,7 +184,7 @@ function getAdminAndVolunteer(payload) {
 		Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']}),
 		(admin, vol) => {
 			if (admin) payload.sender.admin = admin;
-			if (vol) payload.sender.vol = vol;
+			if (vol) payload.sender.volunteer = vol;
 			return payload;
 		}
 	);
