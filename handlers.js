@@ -501,7 +501,10 @@ function sendDeploymentMessage(fbid) {
 				title: d.get('name'), 
 				payload: JSON.stringify({
 				  type: "join_deployment",
-				  args: d.get('id'),
+				  args: {
+				  	id: d.get('id'),
+				  	new_ask: d.get('type') == 'eventBased'
+				  }
 				})
 			  }))
 			}
@@ -541,6 +544,8 @@ function assignTask(payload, reply, args) {
 
 function joinDeployment(payload, reply, args) {
 	const vol = payload.sender.volunteer;
+	let newTask = false;
+	if (args.new_task) newTask = args.newTask;
 	vol.currentTask().fetch()
 	.then((task) => {
 		if (task) {
@@ -549,35 +554,40 @@ function joinDeployment(payload, reply, args) {
 			return Promise.resolve();
 		}
 	})
-	.then(() => Deployment.where({id: args}).fetch())
+	.then(() => Deployment.where({id: args.id}).fetch())
 	.then((deployment) => {
 		if (!deployment) throw new Error(`invalid deployment id: ${deployId}`);
-		var text = `Great! Welcome to the ${deployment.get('name')} deployment! Say 'ask' for a new task.`;
+		var text = `Great! Welcome to the ${deployment.get('name')} deployment!`;
+		if (!newTask) text += `Say 'ask' for a new task.`;
 		reply(msgUtil.quickReplyMessage(text, ["ask"]));
 		return vol.save({deployment_id: deployment.get('id')}, {method: 'update'});
 	}).then(function(vol) {
-		return vol.getNewTask();
+		if (args.newTask) getAndAssignVolTask(vol);
+	});
+}
+
+function getAndAssignVolTask(vol) {
+	return vol.getNewTask().then(function(task) {
+		if (!task) {
+			return vol.sendMessage({text: 'There are no tasks available right now.'});
+		} else {
+			TaskController.assign(task, vol)
+			.then(function() {
+				TaskController.start(task);
+			});
+		}
 	});
 }
 
 function askMessage(payload, reply) {
 	// Get a task in the pool, and ask if he wants to do it.
 	const vol = payload.sender.volunteer
-	getVolTask(vol).then(function(task) {
+	return getVolTask(vol).then(function(task) {
 		if (task) {
 			reply({text: 'You already have a task! Finish that first.'});
 			return
 		} else {
-			vol.getNewTask().then(function(task) {
-				if (!task) {
-					return reply({text: 'There are no tasks available right now.'})
-				} else {
-					TaskController.assign(task, vol)
-					.then(function() {
-						TaskController.start(task);
-					});
-				}
-			})
+			return getAndAssignVolTask(vol);
 		}
 	});
 }
