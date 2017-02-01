@@ -544,29 +544,24 @@ function assignTask(payload, reply, args) {
 }
 
 function joinDeployment(payload, reply, args) {
-	Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']}).then((vol) => {
-		if (vol && vol.get('deploymentId')) {
-			reply({text: `You are already in a deployment (${vol.related('deployment').get('name')}). You must leave that first.`})
+	const vol = payload.sender.volunteer;
+	vol.currentTask().fetch()
+	.then((task) => {
+		if (task) {
+			return vol.unassignTask();
 		} else {
-			const deployId = args
-			Deployment.where({id: deployId}).fetch().then((deployment) => {
-				if (!deployment) throw new Error(`invalid deployment id: ${deployId}`)
-				let method = {method: 'insert'}
-				if (vol)
-					method = {method: 'update'}
-				new Volunteer().save({
-					fbid: payload.sender.id,
-					deployment_id: deployment.get('id'),
-					first_name: payload.sender.profile.first_name,
-					last_name: payload.sender.profile.last_name
-				}, method).then(function(vol) {
-					text = `Great! Welcome to the ${deployment.get('name')} deployment! Say 'ask' for a new task.`;
-					reply(msgUtil.quickReplyMessage(text, ["ask"]));
-					return 	vol.getNewTask()
-				})
-			})
+			return Promise.resolve();
 		}
 	})
+	.then(() => Deployment.where({id: args}).fetch())
+	.then((deployment) => {
+		if (!deployment) throw new Error(`invalid deployment id: ${deployId}`);
+		return vol.save({deployment_id: deployment.get('id')}, {method: 'update'});
+	}).then(function(vol) {
+		var text = `Great! Welcome to the ${deployment.get('name')} deployment! Say 'ask' for a new task.`;
+		reply(msgUtil.quickReplyMessage(text, ["ask"]));
+		return vol.getNewTask();
+	});
 }
 
 function askMessage(payload, reply) {
