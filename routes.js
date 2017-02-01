@@ -142,7 +142,7 @@ router.post('/send-message', bodyParser.json(), function(req, res, next) {
 	} else if (buttons) {
 		message = msgUtils.buttonMessage(text, buttons);
 	}
-	console.log(message);
+	console.log(message, text, buttons);
 	if (mass === true) {
 		Deployment.forge({id: deploymentId}).volunteers()
 		.fetch()
