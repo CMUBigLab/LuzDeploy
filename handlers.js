@@ -117,6 +117,7 @@ function getVolTask(vol) {
 module.exports.dispatchMessage = (payload, reply) => {
 	getAdminAndVolunteer(payload)
 	.then(() => {
+		console.log(payload.sender.vol)
 		if (payload.sender.vol) {
 			const vol = payload.sender.vol;
 			if (vol.get('deploymentId') === null) {
