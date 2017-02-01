@@ -144,10 +144,10 @@ router.post('/send-message', bodyParser.json(), function(req, res, next) {
 	}
 	if (mass === true) {
 		Deployment.forge({id: deploymentId}).volunteers()
-		.fetch(function(volunteers) {
-			volunteers.forEach(function(v) {
-				v.sendMessage(message);
-			});
+		.fetch()
+		.then(function(volunteers) {
+			console.log("sending message to volunteers:", volunteers.length);
+			volunteers.forEach(v => v.sendMessage(message));
 		}).then(function() {
 			res.sendStatus(200);
 		})
