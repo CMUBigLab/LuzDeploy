@@ -11,6 +11,8 @@ const bot = require('./bot')
 const _ = require('lodash')
 const config = require('./config')
 let msgUtil = require('./message-utils')
+const Promise = require('bluebird');
+
 
 const messageHandlers = {
 	'hello': {
@@ -113,17 +115,10 @@ function getVolTask(vol) {
 }
 
 module.exports.dispatchMessage = (payload, reply) => {
-	Admin.where({fbid: payload.sender.id}).fetch()
-	.then(admin => {
-		if (admin) {
-			payload.sender.admin = admin
-		}
-		return Volunteer.where({fbid: payload.sender.id})
-		.fetch({withRelated: ['deployment']})
-	})
-	.then(vol => {
-		if (vol) {
-			payload.sender.volunteer = vol
+	getAdminAndVolunteer(payload)
+	.then(() => {
+		if (payload.sender.vol) {
+			const vol = payload.sender.vol;
 			if (vol.get('deploymentId') === null) {
 				sendDeploymentMessage(payload.sender.id)
 				return
@@ -134,13 +129,14 @@ module.exports.dispatchMessage = (payload, reply) => {
 			onboardVolunteer(payload, reply)
 			return
 		}
+		// Is this needed?
 		if (!(payload.sender.admin || payload.sender.volunteer)) {
 			return
 		}
+
 		const values = payload.message.text.toLowerCase().split(' ')
 		let command = values[0]
-		if (command in aliases)
-			command = aliases[command]
+		if (command in aliases) command = aliases[command];
 
 		if (command in messageHandlers) {
 			const commandHandler = messageHandlers[command]
@@ -182,30 +178,29 @@ module.exports.handleWebhook = (req) => {
 	})
 }
 
+function getAdminAndVolunteer(payload) {
+	return Promise.join(
+		Admin.where({fbid: payload.sender.id}).fetch(),
+		Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']})
+	).then((admin, vol) => {
+		if (admin) payload.sender.admin = admin;
+		if (vol) payload.sender.vol = vol;
+		return payload;
+	});
+}
 
 module.exports.dispatchPostback = (payload, reply) => {
-	const postback = JSON.parse(payload.postback.payload)
-	if (postback.type in postbackHandlers) {
-		const found = postbackHandlers[postback.type]
-		payload.postback.payload = postback
-		if (found.adminRequired) {
-			Admin.where({fbid: payload.sender.id}).fetch()
-			.then((admin) => {
-				payload.sender.admin = admin
-				found.handler(payload, reply, payload.postback.payload.args)
-			})
-		} else if (found.volRequired) {
-			Volunteer.where({fbid: payload.sender.id}).fetch()
-			.then(vol => {
-				payload.sender.volunteer = vol
-				found.handler(payload, reply, payload.postback.payload.args)
-			})
-		} else {
+	getAdminAndVolunteer(payload)
+	.then(() => {
+		const postback = JSON.parse(payload.postback.payload)
+		if (postback.type in postbackHandlers) {
+			const found = postbackHandlers[postback.type]
+			payload.postback.payload = postback
 			found.handler(payload, reply, payload.postback.payload.args)
+		} else {
+			throw new Error(`invalid postback: ${payload.postback.payload}`);
 		}
-	} else {
-		throw new Error(`invalid postback: ${payload.postback.payload}`)
-	}
+	});
 }
 
 function greetingMessage(payload, reply) {
