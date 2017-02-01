@@ -117,7 +117,6 @@ function getVolTask(vol) {
 module.exports.dispatchMessage = (payload, reply) => {
 	getAdminAndVolunteer(payload)
 	.then((payload) => {
-		console.log(payload.sender.vol);
 		if (payload.sender.vol) {
 			const vol = payload.sender.vol;
 			if (vol.get('deploymentId') === null) {
@@ -182,13 +181,13 @@ module.exports.handleWebhook = (req) => {
 function getAdminAndVolunteer(payload) {
 	return Promise.join(
 		Admin.where({fbid: payload.sender.id}).fetch(),
-		Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']})
-	).then((admin, vol) => {
-		console.log(payload.sender.id, admin, vol)
-		if (admin) payload.sender.admin = admin;
-		if (vol) payload.sender.vol = vol;
-		return payload;
-	});
+		Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ['deployment']}),
+		(admin, vol) => {
+			if (admin) payload.sender.admin = admin;
+			if (vol) payload.sender.vol = vol;
+			return payload;
+		}
+	);
 }
 
 module.exports.dispatchPostback = (payload, reply) => {
