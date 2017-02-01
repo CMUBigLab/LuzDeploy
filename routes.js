@@ -12,7 +12,7 @@ const Volunteer = require('./models/volunteer');
 const Task = require('./models/task');
 const Admin = require('./models/admin');
 const Beacon = require('./models/beacon');
-
+const Deployment = require('./models/deployment');
 
 let msgUtils = require('./message-utils');
 const Promise = require('bluebird');
