@@ -552,10 +552,10 @@ function joinDeployment(payload, reply, args) {
 	.then(() => Deployment.where({id: args}).fetch())
 	.then((deployment) => {
 		if (!deployment) throw new Error(`invalid deployment id: ${deployId}`);
-		return vol.save({deployment_id: deployment.get('id')}, {method: 'update'});
-	}).then(function(vol) {
 		var text = `Great! Welcome to the ${deployment.get('name')} deployment! Say 'ask' for a new task.`;
 		reply(msgUtil.quickReplyMessage(text, ["ask"]));
+		return vol.save({deployment_id: deployment.get('id')}, {method: 'update'});
+	}).then(function(vol) {
 		return vol.getNewTask();
 	});
 }
