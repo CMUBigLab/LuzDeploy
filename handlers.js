@@ -559,7 +559,7 @@ function joinDeployment(payload, reply, args) {
 	.then((deployment) => {
 		if (!deployment) throw new Error(`invalid deployment id: ${deployId}`);
 		var text = `Great! Welcome to the ${deployment.get('name')} deployment!`;
-		if (!newTask) text += `Say 'ask' for a new task.`;
+		if (!newTask) text += ` Say 'ask' for a new task.`;
 		reply(msgUtil.quickReplyMessage(text, ["ask"]));
 		return vol.save({deployment_id: deployment.get('id')}, {method: 'update'});
 	}).then(function(vol) {
