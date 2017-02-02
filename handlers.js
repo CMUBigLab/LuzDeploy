@@ -545,6 +545,7 @@ function assignTask(payload, reply, args) {
 function joinDeployment(payload, reply, args) {
 	const vol = payload.sender.volunteer;
 	let newTask = false;
+	console.log(args);
 	if (args.new_task) newTask = args.newTask;
 	vol.currentTask().fetch()
 	.then((task) => {
