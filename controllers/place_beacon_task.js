@@ -14,7 +14,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 	states: {
 		supply: {
 			_onEnter: function(task) {
-				var text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (NSH 4522). Tell me when you are 'there'.";
+				var text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (across from Gates Cafe register). Tell me when you are 'there'.";
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
 					msgUtil.quickReplyMessage(text, ['there'])
@@ -24,7 +24,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		},
 		pickup: {
 			_onEnter: function(task) {
-				var text = "Great! Now grab as many beacons as you are willing to place. Tell me how many you take (you can press a button or type a number).";
+				var text = "Great! To open the lockbox, type the code 020217, then #, then turn the switch. Now grab as many beacons as you are willing to place. Please close and lock the box. Tell me how many you took (you can press a button or type a number).";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.quickReplyMessage(text, ['1','3','5','10'])
@@ -167,7 +167,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 			_onEnter: function(task) {
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					msgUtil.quickReplyMessage("Please return your extra beacon(s) to NSH 4522. Let me know when you are 'done'.", ["done"])
+					msgUtil.quickReplyMessage("Please return your extra beacon(s) to the Supply Station (across from Gates Cafe register). Let me know when you are 'done'.", ["done"])
 				);
 			},
 			"msg:done": function(task) {
