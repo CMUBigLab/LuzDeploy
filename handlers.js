@@ -567,7 +567,9 @@ function joinDeployment(payload, reply, args) {
 }
 
 function getAndAssignVolTask(vol) {
-	return vol.getNewTask().then(function(task) {
+	return vol.getNewTask()
+	.then(function(task) {
+		console.log("task", task);
 		if (!task) {
 			return vol.sendMessage({text: 'There are no tasks available right now.'});
 		} else {
