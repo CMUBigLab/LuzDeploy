@@ -560,16 +560,15 @@ function joinDeployment(payload, reply, args) {
 		var text = `Great! Welcome to the ${deployment.get('name')} deployment!`;
 		if (!newTask) text += ` Say 'ask' for a new task.`;
 		reply(msgUtil.quickReplyMessage(text, ["ask"]));
-		return vol.save({deployment_id: deployment.get('id')}, {method: 'update'});
+		return vol.save({deployment_id: deployment.get('id')});
 	}).then(function(vol) {
-		if (args.newTask) getAndAssignVolTask(vol);
+		if (newTask) getAndAssignVolTask(vol);
 	});
 }
 
 function getAndAssignVolTask(vol) {
 	return vol.getNewTask()
 	.then(function(task) {
-		console.log("task", task);
 		if (!task) {
 			return vol.sendMessage({text: 'There are no tasks available right now.'});
 		} else {
