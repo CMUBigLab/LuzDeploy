@@ -57,6 +57,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				BeaconSlot.getNSlots(n, task.get('deploymentId'))
 				.then(function(slots) {
 					if (slots.length != n) {
+						// TODO: handle case when slots.length == 0
 						var text = `I could only find ${slots.length} places needing beacons. Please return any excess beacons.`
 						bot.sendMessage(task.get('volunteerFbid'), {text: text});
 						task.context.numBeacons = slots.length;
@@ -123,10 +124,18 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 						task.context.currentBeacon = beacon.get('id');
 						self.transition(task, "place");
 					} else {
+						bot.sendMessage(
+							task.get('volunteerFbid'),
+							{text: "Hm, that beacon number is already used elsewhere. We won't use that one."}
+						);
 						self.beaconToReturn(task);
 					}
 				})
 				.catch(Beacon.NotFoundError, function() {
+					bot.sendMessage(
+						task.get('volunteerFbid'),
+						{text: "Hm, I can't find a record for that beacon. We won't use that one."}
+					);
 					self.beaconToReturn(task);
 				});
 			},
