@@ -11,6 +11,21 @@ var Promise = require('bluebird');
 var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 	namespace: "place_beacons",
 	initialState: "supply",
+	beaconToReturn: function(task) {
+		task.context.toReturn.push(task.context.currentBeaconNumber);
+		task.context.currentBeacon = null;
+		task.context.numBeacons--;
+		task.context.slots.pop(1);
+		if (task.context.numBeacons == 0) {
+			this.transition(task, "return");
+		} else {
+			bot.sendMessage(
+				task.get('volunteerFbid'),
+				{text: 'Later, please return that beacon to the supply station. For now we will plave another beacon.'}
+			);
+			this.transition(task, "which");
+		}
+	},
 	states: {
 		supply: {
 			_onEnter: function(task) {
@@ -88,44 +103,36 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				);
 			},
 			number: function(task, id) {
-				var self = this;
-				Beacon.forge({id: id}).fetch({require: true})
-				.then(function(beacon) {
-					if (beacon.get('slot') == null) {
-						task.context.currentBeacon = id;
-						self.transition(task, "place");
-					} else {
-						self.transition(task, "already_placed");
-					}
-				})
-				.catch(Beacon.NotFoundError, function() {
-						self.transition(task, "already_placed");
-				});
+				task.context.currentBeaconNumber = id;
+				this.transition(task, "confirm_which");
 			}
 		},
-		already_placed: {
+		confirm_which: {
 			_onEnter: function(task) {
+				var text = `The beacon number is ${task.context.currentBeaconNumber}, correct?`;
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					msgUtil.quickReplyMessage(`Are you sure? I can't find that beacon.`, ["yes", "no"])
+					msgUtil.quickReplyMessage(text, ["yes", "no"]);
 				);
 			},
 			"msg:yes": function(task) {
-				task.context.toReturn.push(task.context.currentBeacon);
-				task.context.currentBeacon = null;
-				task.context.numBeacons--;
-				task.context.slots.pop(1);
-				if (task.context.numBeacons == 0) {
-					this.transition(task, "return");
-				} else {
-					bot.sendMessage(
-						task.get('volunteerFbid'),
-						{text: 'Later, please return that beacon to the supply station. For now we will plave another beacon.'}
-					);
-					this.transition(task, "which");
-				}
+				var self = this;
+				Beacon.forge({id: task.context.currentBeaconNumber}).fetch({require: true})
+				.then(function(beacon) {
+					if (beacon.get('slot') == null) {
+						task.context.currentBeacon = beacon.get('id');
+						self.transition(task, "place");
+					} else {
+						self.beaconToReturn(task);
+					}
+				})
+				.catch(Beacon.NotFoundError, function() {
+					self.beaconToReturn(task);
+				});
 			},
-			"msg:no": "which"
+			"msg:no": function(task) {
+				this.transition(task, "which");
+			}
 		},
 		place: {
 			_onEnter: function(task) {
