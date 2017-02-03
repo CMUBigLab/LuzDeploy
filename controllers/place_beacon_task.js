@@ -112,7 +112,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				var text = `The beacon number is ${task.context.currentBeaconNumber}, correct?`;
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					msgUtil.quickReplyMessage(text, ["yes", "no"]);
+					msgUtil.quickReplyMessage(text, ["yes", "no"])
 				);
 			},
 			"msg:yes": function(task) {
