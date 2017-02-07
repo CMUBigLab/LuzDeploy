@@ -145,7 +145,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		},
 		place: {
 			_onEnter: function(task) {
-				var text = "Place the beacon on the wall (you can double check using the map), and try to make it look neat. Tell me when you are 'done'.";
+				var text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures. Tell me when you are 'done'.";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.quickReplyMessage(text, ['done'])
