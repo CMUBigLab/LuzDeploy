@@ -145,11 +145,24 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 		},
 		place: {
 			_onEnter: function(task) {
-				var text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures. Tell me when you are 'done'.";
+				var buttons = [{
+					"type":"web_url",
+					"title": "Open Map",
+					"webview_height_ratio": "tall",
+					"messenger_extensions": true,
+					"url": `https://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
+				}];
+				var text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures.";
 				bot.sendMessage(
 					task.get('volunteerFbid'),
-					msgUtil.quickReplyMessage(text, ['done'])
-				)
+					msgUtil.buttonMessage(text, buttons),
+					function() {
+						bot.sendMessage(
+							task.get('volunteerFbid'),
+							msgUtil.quickReplyMessage("Tell me when you are 'done'!", ['done'])
+						);
+					}
+				);
 			},
 			"msg:done": function(task) {
 				BeaconSlot
