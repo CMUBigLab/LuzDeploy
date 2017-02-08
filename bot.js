@@ -1,7 +1,7 @@
 const Bot = require('messenger-bot')
 const http = require('http')
 const express = require('express')
-
+const path = require('path');
 const cli = require('./cli')
 const handlers = require('./handlers')
 const routes = require('./routes')
@@ -105,7 +105,7 @@ if (require.main === module) {
 
 		bot.startListening = function() {
 			var app = express()
-			app.use('public', express.static('public'));
+			app.use(express.static(path.join(process.env.PWD, 'public')));
 			app.use(routes)
 			app.use(expressErrorHandler)
 			app.use(bot.middleware())
