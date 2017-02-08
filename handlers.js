@@ -551,22 +551,23 @@ function joinDeployment(payload, reply, args) {
 		Deployment.where({id: args.id}).fetch(),
 		function(task, deployment) {
 			if (!deployment) throw new Error(`invalid deployment id: ${args.id}`);
+			var promise = null;
 			if (task) {
-				return vol.unassignTask().then(() => deployment);
+				promise = vol.unassignTask();
 			} else {
-				return deployment;
+				promise = Promise.resolve();
 			}
+			promise.then(function() {
+				return vol.save({deployment_id: deployment.get('id')});
+			}).then(function() {
+				var text = `Great! Welcome to the ${deployment.get('name')} deployment!`;
+				if (!newTask) text += ` Say 'ask' for a new task.`;
+				reply(msgUtil.quickReplyMessage(text, ["ask"]));
+			}).then(function(vol) {
+				if (newTask) getAndAssignVolTask(vol);
+			});
 		}
-	).tap(function(deployment) {
-		return vol.save({deployment_id: deployment.get('id')})
-	})
-	.then(function(deployment) {
-		var text = `Great! Welcome to the ${deployment.get('name')} deployment!`;
-		if (!newTask) text += ` Say 'ask' for a new task.`;
-		reply(msgUtil.quickReplyMessage(text, ["ask"]));
-	}).then(function(vol) {
-		if (newTask) getAndAssignVolTask(vol);
-	});
+	);
 }
 
 function getAndAssignVolTask(vol) {
