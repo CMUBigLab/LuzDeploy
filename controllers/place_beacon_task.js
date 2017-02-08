@@ -85,7 +85,8 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				bot.sendMessage(
 					task.get('volunteerFbid'),
 					msgUtil.buttonMessage(text, buttons),
-					function() {
+					function(err) {
+						if (err) console.log(err);
 						bot.sendMessage(
 							task.get('volunteerFbid'),
 							msgUtil.quickReplyMessage("Tell me when you are 'there'!", ['there'])
