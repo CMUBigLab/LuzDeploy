@@ -105,7 +105,7 @@ if (require.main === module) {
 
 		bot.startListening = function() {
 			var app = express()
-			app.use(express.static(process.env.PWD + '/static'));
+			app.use('public', express.static('public'));
 			app.use(routes)
 			app.use(expressErrorHandler)
 			app.use(bot.middleware())
