@@ -563,7 +563,7 @@ function joinDeployment(payload, reply, args) {
 				var text = `Great! Welcome to the ${deployment.get('name')} deployment!`;
 				if (!newTask) text += ` Say 'ask' for a new task.`;
 				reply(msgUtil.quickReplyMessage(text, ["ask"]));
-			}).then(function(vol) {
+			}).then(function() {
 				if (newTask) getAndAssignVolTask(vol);
 			});
 		}
