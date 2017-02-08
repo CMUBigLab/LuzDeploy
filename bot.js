@@ -8,6 +8,8 @@ const routes = require('./routes')
 const Admin = require('./models/admin')
 const errors = require('./errors')
 
+process.env.PWD = process.cwd()
+
 // TODO(cgleason): this file is a mess. Interactive mode should actually
 // just talk to the real bot without all of this other nonsense
 
@@ -103,7 +105,7 @@ if (require.main === module) {
 
 		bot.startListening = function() {
 			var app = express()
-			app.use(express.static(__dirname + '/static'))
+			app.use(express.static(process.env.PWD + '/static'));
 			app.use(routes)
 			app.use(expressErrorHandler)
 			app.use(bot.middleware())
