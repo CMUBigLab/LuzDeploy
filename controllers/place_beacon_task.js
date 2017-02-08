@@ -1,5 +1,5 @@
 var machina = require('machina');
-
+var config = require('../config');
 var bot = require('../bot');
 let msgUtil = require('../message-utils');
 
@@ -79,7 +79,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					"title": "Open Map", 
 					"webview_height_ratio": "tall",
 					"messenger_extensions": true,
-					"url": `https://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
+					"url": `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.context.currentSlot}`
 				}];
 				var text = `You have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
 				bot.sendMessage(
@@ -150,7 +150,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 					"title": "Open Map",
 					"webview_height_ratio": "tall",
 					"messenger_extensions": true,
-					"url": `https://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${task.context.currentSlot}`
+					"url": `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.context.currentSlot}`
 				}];
 				var text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures.";
 				bot.sendMessage(

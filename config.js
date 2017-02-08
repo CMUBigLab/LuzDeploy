@@ -14,6 +14,6 @@ module.exports = {
 		connection: process.env.DATABASE_URL,
 		debug: process.env.DEBUG
 	},
-	BASE_URL: `http://${process.env.HEROKU_APP_NAME}.herokuapp.com`,
+	BASE_URL: `https://${process.env.HEROKU_APP_NAME}.herokuapp.com`,
 	THREAD_URI: `fb-messenger://user/${threadId}`
 }

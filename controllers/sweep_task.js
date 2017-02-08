@@ -1,4 +1,5 @@
 var machina = require('machina');
+var config = require('../config');
 
 var bot = require('../bot');
 let msgUtil = require('../message-utils');
