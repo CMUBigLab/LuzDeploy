@@ -95,7 +95,39 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				);
 
 			},
-			"msg:there": "which",
+			"msg:there": "confirm_empty",
+		},
+		confirm_empty: {
+			_onEnter: function(task) {
+				text = "Is there already a beacon placed on the wall there?";
+				bot.sendMessage(
+					task.get('volunteerFbid'),
+					msgUtil.quickReplyMessage(text, ["no", "yes"])
+				);
+			},
+			"msg:yes": function(task) {
+				var self = this;
+				BeaconSlot.forge({id: task.context.currentSlot})
+				.save({status: "occupied"}, {patch: true})
+				.then(function(slot) {
+					BeaconSlot.getNSlots(1, task.get('deploymentId'))
+				}).then(function(slots) {
+					if (slots.length == 0) {
+						var text = `I couldn't find any other spots that need beacons. Please return any excess beacons later.`
+						bot.sendMessage(task.get('volunteerFbid'), {text: text});
+						task.context.numBeacons -= 1;
+						return;
+					}
+					task.context.toReturn.push(-1);
+					task.context.slots.push(slots[0]);
+					return slots[0].save({in_progress: true});
+				}).then(function(slot) {
+					self.transition(task, "go");
+				});
+			},
+			"msg:no": function(task) {
+				this.transition(task, "which");
+			}
 		},
 		which: {
 			_onEnter: function(task) {
