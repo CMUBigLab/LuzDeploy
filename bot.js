@@ -55,7 +55,8 @@ if (require.main === module) {
 				return
 			}
 			if (payload.message.is_echo) {
-				let msg = payload.message.text
+				let msg = payload.message.text;
+				console.log("echo received:", msg);
 				if (msg && msg.startsWith('bot:')) {
 					if (msg.slice(4) == "on") {
 						delete ignoring[payload.recipient.id]
