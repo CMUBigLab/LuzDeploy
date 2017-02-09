@@ -110,7 +110,7 @@ var PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
 				BeaconSlot.forge({id: task.context.currentSlot})
 				.save({status: "occupied"}, {patch: true})
 				.then(function(slot) {
-					BeaconSlot.getNSlots(1, task.get('deploymentId'))
+					return BeaconSlot.getNSlots(1, task.get('deploymentId'))
 				}).then(function(slots) {
 					if (slots.length == 0) {
 						var text = `I couldn't find any other spots that need beacons. Please return any excess beacons later.`
