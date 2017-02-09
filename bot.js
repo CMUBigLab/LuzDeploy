@@ -49,23 +49,24 @@ if (require.main === module) {
 
 		let ignoring = {}
 
+		bot.on('echo', (payload, reply) => {
+			let msg = payload.message.text;
+			console.log("echo received:", msg);
+			if (msg && msg.startsWith('bot:')) {
+				if (msg.slice(4) == "on") {
+					delete ignoring[payload.recipient.id];
+				} else if (msg.slice(4) == "off") {
+					ignoring[payload.recipient.id] = true;
+				} else {
+					console.log(`invalid command ${msg}`);
+				}
+			}
+			return;
+		});
+
 		bot.on('message', (payload, reply) => {
 			if (ignoring[payload.sender.id]) {
 				console.log(`ignoring message from ${payload.sender.id}`)
-				return
-			}
-			if (payload.message.is_echo) {
-				let msg = payload.message.text;
-				console.log("echo received:", msg);
-				if (msg && msg.startsWith('bot:')) {
-					if (msg.slice(4) == "on") {
-						delete ignoring[payload.recipient.id]
-					} else if (msg.slice(4) == "off") {
-						ignoring[payload.recipient.id] = true
-					} else {
-						console.log(`invalid command ${msg}`)
-					}
-				}
 				return
 			}
 
