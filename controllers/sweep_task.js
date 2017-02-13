@@ -18,7 +18,7 @@ var SweepTaskFsm = machina.BehavioralFsm.extend({
  					"title": "Open NavCog", 
 					"webview_height_ratio": "compact",
 					"messenger_extensions": true,
- 					"url": `https://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&edge=${params.edge}&beaconlist=${params.beacons}&wid=${task.get('volunteer_fbid')}&start=${params.start}&end=${params.end}&next=${config.THREAD_URI}`
+ 					"url": `https://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&edge=${params.edge}&beaconlist=${params.beacons}&wid=${task.get('volunteer_fbid')}&start=${params.start}&end=${params.end}&next=${config.THREAD_URI}&base=${config.BASE_URL}`
  				}];
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
