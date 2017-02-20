@@ -134,7 +134,9 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 // Upload fingerprint data
 router.post('/fingerprint-data', bodyParser.json(), function(req, res, next) {
 	console.log("got fingerprint data", req.body);
-	Promise.map(Object.keys(req.body), function(point) {
+	Promise.map(req.body, function(fingerprint) {
+		if (fingerprint.sample.length <= 0) return;
+		var point = fingerprint.location;
 		return FingerprintPoint.forge({
 			floor: point.floor,
 			lon: point.long,
@@ -151,7 +153,7 @@ router.post('/fingerprint-data', bodyParser.json(), function(req, res, next) {
 				return fingerprintPoint;
 			}
 		}).then(function(fingerprintPoint) {
-			var sample = req.body[point];
+			var sample = fingerprint.sample
 			return FingerprintSample.forge({
 				fingerprintId: fingerprintPoint.get('id'),
 				data: sample.toJSON()
