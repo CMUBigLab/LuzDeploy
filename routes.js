@@ -155,7 +155,7 @@ router.post('/fingerprint-data', bodyParser.json(), function(req, res, next) {
 		}).then(function(fingerprintPoint) {
 			return FingerprintSample.forge({
 				fingerprintId: fingerprintPoint.get('id'),
-				data: fingerprint.sample
+				data: JSON.stringify(fingerprint.sample)
 			}).save();
 		}).then(function() {
 			res.sendStatus(200);
