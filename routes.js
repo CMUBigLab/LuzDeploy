@@ -13,6 +13,8 @@ const Task = require('./models/task');
 const Admin = require('./models/admin');
 const Beacon = require('./models/beacon');
 const Deployment = require('./models/deployment');
+const FingerprintPoint = require('./models/fingerprint-point');
+const FingerprintSample = require('./models/fingerprint-sample');
 
 let msgUtils = require('./message-utils');
 const Promise = require('bluebird');
@@ -127,6 +129,40 @@ router.post('/sweep-data', bodyParser.urlencoded({extended: true}), function(req
 		console.log(err);
 		res.sendStatus(500);
 	})
+})
+
+// Upload fingerprint data
+router.post('/fingerprint-data', bodyParser.json(), function(req, res, next) {
+	console.log("got fingerprint data", req.body);
+	Promise.map(Object.keys(req.body), function(point) {
+		return FingerprintPoint.forge({
+			floor: point.floor,
+			lon: point.long,
+			lat: point.lat
+		}).fetch()
+		.then(function(fingerprintPoint) {
+			if fignerprintPoint == null {
+				return FingerprintPoint.forge({
+					floor: point.floor,
+					lon: point.long,
+					lat: point.lat
+				}).save();
+			} else {
+				return fingerprintPoint;
+			}
+		}).then(function(fingerprintPoint) {
+			var sample = req.body[point];
+			return FingerprintSample.forge({
+				fingerprintId: fingerprintPoint.get('id'),
+				data: sample.toJSON()
+			}).save();
+		}).then(function() {
+			res.sendStatus(200);
+		}).catch(function(err) {
+			console.log(err);
+			res.sendStatus(500);
+		});
+	});
 })
 
 router.post('/send-message', bodyParser.json(), function(req, res, next) {
