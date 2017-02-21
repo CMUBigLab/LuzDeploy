@@ -436,6 +436,12 @@ function initMapEvent() {
 			_map.setCenter(focus);
 
 			renderBeacon(beacon, true);
+		} else if (layer = location.search.match(/layer=([^&]*)/)) {
+			var lat = location.search.match(/lat=([^&]*)/);
+			var long = location.search.match(/long=([^&]*)/);
+			$editor.trigger("layerChange", _layers[layer]);
+			focus = new google.maps.LatLng(lat, long);
+			_map.setCenter(focus);
 		}
 
 		renderLayer(_currentLayer);
