@@ -104,7 +104,7 @@ function getVolTask(vol) {
 		if (!task) {
 			return null;
 		} else {
-			if (task.get('templateType') == 'sweep_edge' || task.get('templateType') == 'place_beacons' || task.get('templateType') == 'replace_beacon') {
+			if (task.get('templateType') == 'fingerprint' || task.get('templateType') == 'sweep_edge' || task.get('templateType') == 'place_beacons' || task.get('templateType') == 'replace_beacon') {
 				task.loadState();
 				return task;
 			} else {

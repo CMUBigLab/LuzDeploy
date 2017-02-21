@@ -11,15 +11,15 @@ var SweepTaskFsm = machina.BehavioralFsm.extend({
 	states: {
 		goto: {
 			_onEnter: function(task) {
-				var text = "We need you to help us check which beacons are not working in the building. Please open NavCog below and follow the instructions. Let me know when you are 'done'!";
+				var text = "We need you to help us check which beacons are not working in the building. Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
 				var params = task.get('instructionParams');
 				var buttons = [{
- 					"type":"web_url", 
- 					"title": "Open NavCog", 
+					"type":"web_url",
+					"title": "Open LuzDeploy",
 					"webview_height_ratio": "compact",
 					"messenger_extensions": true,
- 					"url": `https://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&edge=${params.edge}&beaconlist=${params.beacons}&wid=${task.get('volunteer_fbid')}&start=${params.start}&end=${params.end}&next=${config.THREAD_URI}&base=${config.BASE_URL}`
- 				}];
+					"url": `https://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&edge=${params.edge}&beaconlist=${params.beacons}&wid=${task.get('volunteer_fbid')}&start=${params.start}&end=${params.end}&next=${config.THREAD_URI}&base=${config.BASE_URL}`
+				}];
 				bot.sendMessage(
 					task.get('volunteer_fbid'),
 					msgUtil.buttonMessage(text, buttons)
