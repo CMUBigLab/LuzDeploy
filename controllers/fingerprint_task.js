@@ -13,6 +13,7 @@ var FingerprintTaskFsm = machina.BehavioralFsm.extend({
 	states: {
 		load_points: {
 			_onEnter: function(task) {
+				var self = this;
 				FingerprintPoint.getPointsForSampling(
 					task.get('deployment_id'),
 					3
@@ -25,8 +26,8 @@ var FingerprintTaskFsm = machina.BehavioralFsm.extend({
 						}))
 					}
 				}).then(function() {
-					this.transition(task, "goto");
-				})
+					self.transition(task, "goto");
+				});
 			}
 		},
 		goto: {
