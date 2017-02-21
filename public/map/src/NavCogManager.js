@@ -442,6 +442,12 @@ function initMapEvent() {
 			$editor.trigger("layerChange", _layers[layer]);
 			focus = new google.maps.LatLng(lat, long);
 			_map.setCenter(focus);
+			_curmarker = new google.maps.Marker({
+				position: focus,
+				initposition: focus,
+				title:"Sample Location"
+			});
+			_curmarker.setMap(_map);
 		}
 
 		renderLayer(_currentLayer);
