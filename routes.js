@@ -139,14 +139,14 @@ router.post('/fingerprint-data', bodyParser.json(), function(req, res, next) {
 		var point = fingerprint.location;
 		return FingerprintPoint.forge({
 			floor: point.floor,
-			lon: point.long,
+			long: point.long,
 			lat: point.lat
 		}).fetch()
 		.then(function(fingerprintPoint) {
 			if (fingerprintPoint == null) {
 				return FingerprintPoint.forge({
 					floor: point.floor,
-					lon: point.long,
+					long: point.long,
 					lat: point.lat
 				}).save();
 			} else {
