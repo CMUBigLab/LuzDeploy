@@ -437,9 +437,12 @@ function initMapEvent() {
 
 			renderBeacon(beacon, true);
 		} else if (layer = location.search.match(/layer=([^&]*)/)) {
-			var lat = location.search.match(/lat=([^&]*)/);
-			var long = location.search.match(/long=([^&]*)/);
-			$editor.trigger("layerChange", _layers[layer]);
+			var layerId = parseInt(layer[1]);
+			var latString = location.search.match(/lat=([^&]*)/);
+			var lat = parseFloat(latString[1]);
+			var longString = location.search.match(/long=([^&]*)/);
+			var long = parseFloat(longString[1]);
+			$editor.trigger("layerChange", _layers[layerId]);
 			focus = new google.maps.LatLng(lat, long);
 			_map.setCenter(focus);
 			_curmarker = new google.maps.Marker({
