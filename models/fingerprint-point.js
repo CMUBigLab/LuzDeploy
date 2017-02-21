@@ -12,7 +12,7 @@ const FingerprintPoint = bookshelf.model('BaseModel').extend({
 }, {
 	getPointsForSampling: function(deploymentId, limit) {
 		limit = limit || 1;
-		this.fetchAll({withRelated: ['samples']})
+		return this.fetchAll({withRelated: ['samples']})
 		.then(function(points) {
 			return points.sortBy(function(p) {
 				return p.related('samples').length;
