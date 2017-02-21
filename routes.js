@@ -157,12 +157,12 @@ router.post('/fingerprint-data', bodyParser.json(), function(req, res, next) {
 				fingerprintId: fingerprintPoint.get('id'),
 				data: JSON.stringify(fingerprint.sample)
 			}).save();
-		}).then(function() {
-			res.sendStatus(200);
-		}).catch(function(err) {
-			console.log(err);
-			res.sendStatus(500);
 		});
+	}).then(function() {
+		res.sendStatus(200);
+	}).catch(function(err) {
+		console.log(err);
+		res.sendStatus(500);
 	});
 })
 
