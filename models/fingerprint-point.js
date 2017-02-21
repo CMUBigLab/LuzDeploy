@@ -7,7 +7,7 @@ require('./base-model')
 const FingerprintPoint = bookshelf.model('BaseModel').extend({
 	tableName: 'fingerprint_point',
 	samples: function() {
-		this.hasMany(bookshelf.model('FingerprintSample'), 'fingerprint_id');
+		return this.hasMany(bookshelf.model('FingerprintSample'), 'fingerprint_id');
 	}
 }, {
 	getPointsForSampling: function(deploymentId, limit) {
