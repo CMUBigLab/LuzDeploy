@@ -32,7 +32,7 @@ var FingerprintTaskFsm = machina.BehavioralFsm.extend({
 		},
 		goto: {
 			_onEnter: function(task) {
-				var text = "We need you to help us check which beacons are not working in the building. Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
+				var text = "We need you to help us sample beacon data in the building. Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
 				var locations = task.context.points.map(p => `${p.floor},${p.lat},${p.long}`).join(';');
 				var buttons = [{
  					"type":"web_url", 
