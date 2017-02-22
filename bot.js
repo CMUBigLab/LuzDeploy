@@ -8,6 +8,8 @@ const routes = require('./routes')
 const Admin = require('./models/admin')
 const errors = require('./errors')
 
+var Volunteer = require('./models/volunteer');
+
 process.env.PWD = process.cwd()
 
 // TODO(cgleason): this file is a mess. Interactive mode should actually
@@ -61,10 +63,15 @@ if (require.main === module) {
 					console.log(`invalid command ${msg}`);
 				}
 			}
-			return;
+
+			Volunteer.forge({fbid: payload.recipient.id})
+			.save({'lastMessaged': Date.now()}, {patch: true});
 		});
 
 		bot.on('message', (payload, reply) => {
+			Volunteer.forge({fbid: payload.recipient.id})
+			.save({'lastResponse': Date.now()}, {patch: true});
+
 			if (ignoring[payload.sender.id]) {
 				console.log(`ignoring message from ${payload.sender.id}`)
 				return
@@ -84,7 +91,7 @@ if (require.main === module) {
 					handlers.dispatchMessage(payload, reply);
 					return
 				}
-			})
+			});
 		})
 
 		bot.on('postback',  (payload, reply) => {
