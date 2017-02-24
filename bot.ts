@@ -53,7 +53,6 @@ export class Bot {
         }
         this.getProfile(payload.message.is_echo ? payload.recipient.id : payload.sender.id)
         .then((profile): any => {
-            logger.info("message received", profile.first_name, profile.last_name);
             (payload as WebhookPayloadFields).sender.profile = profile;
             if (payload.message && payload.message.is_echo) {
                 return this.handleEcho(payload);
@@ -91,6 +90,7 @@ export class Bot {
     }
 
     handleMessage(payload: FBTypes.WebhookPayloadFields) {
+        logger.info("message received:", payload);
         // Keep track of last time we received anything from this user
         new Volunteer({ fbid: payload.sender.id })
         .save(
