@@ -1,6 +1,7 @@
 import fb from "facebook-send-api";
 import * as FBTypes from "facebook-sendapi-types";
 import * as logger from "winston";
+import * as moment from "moment";
 
 import * as handlers from "./handlers";
 
@@ -62,7 +63,7 @@ export class Bot {
 
         // keep track of last time we sent anything to this user
         return new Volunteer({ fbid: payload.recipient.id })
-        .save({ "lastMessaged": Date.now() }, { patch: true })
+        .save({ "lastMessaged": moment().format("YYYY-MM-DD HH:mm:ss") }, { patch: true })
         .then(() => {
             let msg = payload.message.text;
             if (msg && msg.startsWith("bot:")) {
@@ -80,7 +81,7 @@ export class Bot {
     handleMessage(payload: FBTypes.MessengerPayload) {
         // Keep track of last time we received anything from this user
         new Volunteer({ fbid: payload.recipient.id })
-        .save({ "lastResponse": Date.now() }, { patch: true })
+        .save({ "lastResponse": moment().format("YYYY-MM-DD HH:mm:ss") }, { patch: true })
         .then(() => {
             const reply = this.sendMessage.bind(this, payload.recipient.id);
             handlers.dispatchMessage(payload, reply);
