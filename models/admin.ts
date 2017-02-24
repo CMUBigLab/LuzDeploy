@@ -25,6 +25,7 @@ export class Admin extends bookshelf.Model<Admin> {
     }
 
     sendMessage(message: FBTypes.MessengerMessage) {
+        console.log(bot);
         return bot.sendMessage(this.get("fbid"), message);
     }
 }
