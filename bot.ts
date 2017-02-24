@@ -29,10 +29,9 @@ export class Bot {
         }
         console.log("sending message", fbid, message);
         return this.FBPlatform.sendMessageToFB(fbid, message)
-        .then((resp) => {
+        .tap((resp) => {
             console.log(resp);
-        })
-        .catch(errors.StatusCodeError, (reason) => {
+        }).catch(errors.StatusCodeError, (reason) => {
             logger.error(
                 "Error while trying to send Facebook message via Send API.",
                 reason.response.body
