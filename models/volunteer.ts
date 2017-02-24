@@ -18,6 +18,11 @@ export class Volunteer extends bookshelf.Model<Volunteer> {
     deployment() {
         return this.belongsTo(Deployment);
     }
+
+    constructor(params: any = {}) {
+        super(params);
+    }
+
     assignTask(task) {
         return Promise.all([
             this.save({currentTask: task.id}, {patch: true}),

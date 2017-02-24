@@ -2,7 +2,7 @@ const machina = require("machina");
 import * as Promise from "bluebird";
 import * as _ from "lodash";
 
-import * as bot from "../bot";
+import {bot} from "../app";
 import * as msgUtil from "../message-utils";
 import {Task} from "../models/task";
 import {Volunteer} from "../models/volunteer";
