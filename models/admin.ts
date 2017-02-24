@@ -3,7 +3,6 @@ import * as logger from "winston";
 
 import bookshelf = require("../bookshelf");
 import {bot} from "../app";
-console.log(bot);
 import {Deployment} from "./deployment";
 
 export class Admin extends bookshelf.Model<Admin> {
@@ -11,12 +10,9 @@ export class Admin extends bookshelf.Model<Admin> {
     get idAttribute() { return "fbid"; }
 
     static sendError(error: Error) {
-        return this.fetchAll().then(admins => {
-            console.log("admins in sendError", admins);
-            admins.forEach((a: Admin) => {
-                console.log("admin", a)
-                a.sendMessage({text: error.stack.slice(0, 640)})
-            });
+        return this.fetchAll()
+        .then(admins => {
+            admins.forEach((a: Admin) => a.sendMessage({text: error.stack.slice(0, 640)}));
         });
     }
 
@@ -25,7 +21,6 @@ export class Admin extends bookshelf.Model<Admin> {
     }
 
     sendMessage(message: FBTypes.MessengerMessage) {
-        console.log(bot);
         return bot.sendMessage(this.get("fbid"), message);
     }
 }
