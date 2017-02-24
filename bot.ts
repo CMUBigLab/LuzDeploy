@@ -90,15 +90,14 @@ export class Bot {
         });
     }
 
-    handleMessage(payload: FBTypes.MessengerPayload) {
+    handleMessage(payload: FBTypes.WebhookPayloadFields) {
         // Keep track of last time we received anything from this user
-        console.log(payload);
-        new Volunteer({ fbid: payload.recipient.id })
+        new Volunteer({ fbid: payload.sender.id })
         .save(
             { "lastResponse": moment().format("YYYY-MM-DD HH:mm:ss") },
             { patch: true, require: false }
         ).then(() => {
-            const reply = this.sendMessage.bind(this, payload.recipient.id);
+            const reply = this.sendMessage.bind(this, payload.sender.id);
             handlers.dispatchMessage(payload, reply);
         });
     }
