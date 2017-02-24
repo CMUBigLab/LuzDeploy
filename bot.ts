@@ -27,9 +27,10 @@ export class Bot {
         if (typeof fbid === "number") {
             fbid = String(fbid);
         }
+        console.log(message);
         return this.FBPlatform.sendMessageToFB(fbid, message)
         .catch((reason) => {
-            console.log(reason, reason.response);
+            console.log(reason);
             logger.error("Error while trying to send Facebook message via Send API.", reason.response);
         });
     }
