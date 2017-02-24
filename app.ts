@@ -14,11 +14,12 @@ import * as routes from "./routes";
 import * as handlers from "./handlers";
 
 import {Bot} from "./bot";
+export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);
+
 import {Admin} from "./models/admin";
 import {Volunteer} from "./models/volunteer";
 
 const app = express();
-export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);
 
 function expressErrorHandler(err: Error, req: express.Request, res: express.Response,
 next: express.NextFunction) {
@@ -44,8 +45,8 @@ process.env.PWD = process.cwd();
 
 process.on("unhandledRejection", function (error: Error, promise: Promise<any>) {
     logger.error("UNHANDLED REJECTION", error.stack);
-    Admin.sendError(error);
-    //.catch(err => logger.error(`admin logging error ${err}`));
+    Admin.sendError(error)
+    .catch(err => logger.error(`admin logging error ${err}`));
 });
 
 app.use(express.static(path.join(process.env.PWD, "public")));
