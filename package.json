@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/bookshelf": "^0.8.35",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "bookshelf": "^0.10.0",
