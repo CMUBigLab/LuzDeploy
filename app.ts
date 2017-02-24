@@ -14,13 +14,12 @@ import * as routes from "./routes";
 import * as handlers from "./handlers";
 
 import {Bot} from "./bot";
-export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);
-
 
 import {Admin} from "./models/admin";
 import {Volunteer} from "./models/volunteer";
 
 const app = express();
+export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);
 
 function expressErrorHandler(err: Error, req: express.Request, res: express.Response,
 next: express.NextFunction) {
