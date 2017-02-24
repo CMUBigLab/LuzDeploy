@@ -14,7 +14,7 @@ import * as routes from "./routes";
 import * as handlers from "./handlers";
 
 import {Bot} from "./bot";
-import {Admin} from "./models/Admin";
+import {Admin} from "./models/admin";
 import {Volunteer} from "./models/volunteer";
 
 const app = express();
