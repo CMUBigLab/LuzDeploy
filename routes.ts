@@ -4,9 +4,9 @@ import * as bodyParser from "body-parser";
 import * as Promise from "bluebird";
 
 import bookshelf = require("./bookshelf");
-import bot = require("./bot");
-import handlers = require("./handlers");
-import msgUtils = require("./message-utils");
+import {bot} from "./bot";
+import * as handlers from "./handlers";
+import * as msgUtils from "./message-utils";
 import * as errors from "./errors";
 
 const TaskTemplate = require("./models/task-template");

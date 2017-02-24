@@ -3,7 +3,7 @@ import Promise = require("bluebird");
 import * as fb from "facebook-send-api";
 import * as FBTypes from "facebook-sendapi-types";
 
-import bot = require("./bot");
+import {bot} from "./bot";
 import * as config from "./config";
 import msgUtil = require("./message-utils");
 

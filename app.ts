@@ -7,7 +7,7 @@ import * as FBTypes from "facebook-sendapi-types";
 import * as Promise from "bluebird";
 import * as _ from "lodash";
 import * as bodyParser from "body-parser";
-import bot = require("./bot");
+import {bot} from "./bot";
 
 import * as errors from "./errors";
 import * as routes from "./routes";

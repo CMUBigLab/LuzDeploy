@@ -2,7 +2,7 @@ let machina = require("machina");
 import * as Promise from "bluebird";
 
 import * as config from "../config";
-import bot = require("../bot");
+import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 
 import {BeaconSlot} from "../models/beacon-slot";

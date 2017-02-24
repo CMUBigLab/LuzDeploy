@@ -2,7 +2,7 @@ import * as FBTypes from "facebook-sendapi-types";
 import * as logger from "winston";
 
 import bookshelf = require("../bookshelf");
-import bot = require("../bot");
+import {bot} from "../bot";
 import {Deployment} from "./deployment";
 
 export class Admin extends bookshelf.Model<Admin> {

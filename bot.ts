@@ -104,4 +104,4 @@ class Bot {
     }
 }
 
-export = new Bot(process.env.PAGE_ACCESS_TOKEN);
+export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);

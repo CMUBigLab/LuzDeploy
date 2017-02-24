@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as Promise from "bluebird";
 import * as moment from "moment";
 
-import bot = require("../bot");
+import {bot} from "../bot";
 import * as handlers from "../handlers";
 import bookshelf = require("../bookshelf");
 import * as msgUtil from "../message-utils";
