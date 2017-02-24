@@ -153,6 +153,7 @@ export class Volunteer extends bookshelf.Model<Volunteer> {
         });
     }
     sendMessage(message) {
+        console.log("bot", bot);
         bot.sendMessage(this.get("fbid"), message);
     }
     name() {
