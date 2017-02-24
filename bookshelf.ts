@@ -7,6 +7,5 @@ import * as config from "./config";
 pg.defaults.ssl = true;
 
 const bs = bookshelf(knex(config.DB_CONFIG));
-bs.plugin("registry");
-bs.plugin("virtuals");
+bs.plugin(["bookshelf-camelcase"]);
 export = bs;

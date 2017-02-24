@@ -17,6 +17,7 @@
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "bookshelf": "^0.10.0",
+    "bookshelf-camelcase": "^1.1.4",
     "commander": "^2.9.0",
     "csv": "^1.1.0",
     "dustjs-linkedin": "^2.7.3",
