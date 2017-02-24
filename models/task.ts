@@ -70,7 +70,6 @@ export class Task extends bookshelf.Model<Task> {
       .then(d => (d.length > 0));
   }
   getPlaceTask() {
-    const Task = bookshelf.model("Task");
     return new Task({
       deploymentId: this.get("deploymentId"),
       templateType: "place_beacon",

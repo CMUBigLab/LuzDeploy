@@ -138,7 +138,6 @@ export class Volunteer extends bookshelf.Model<Volunteer> {
             } else {
                 throw new Error("This task does not support mentorship yet.");
             }
-            const Task = bookshelf.model("Task");
             return new Task({
                 templateType: "mentor",
                 instructionParams: params,
