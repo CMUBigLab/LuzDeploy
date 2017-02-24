@@ -61,7 +61,7 @@ export class Bot {
         logger.info("echo received:", payload);
 
         // keep track of last time we sent anything to this user
-        return Volunteer.forge({ fbid: payload.recipient.id })
+        return new Volunteer({ fbid: payload.recipient.id })
         .save({ "lastMessaged": Date.now() }, { patch: true })
         .then(() => {
             let msg = payload.message.text;
@@ -79,7 +79,7 @@ export class Bot {
 
     handleMessage(payload: FBTypes.MessengerPayload) {
         // Keep track of last time we received anything from this user
-        Volunteer.forge({ fbid: payload.recipient.id })
+        new Volunteer({ fbid: payload.recipient.id })
         .save({ "lastResponse": Date.now() }, { patch: true })
         .then(() => {
             const reply = this.sendMessage.bind(this, payload.recipient.id);

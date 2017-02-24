@@ -221,7 +221,7 @@ function leaveMessage(payload, reply) {
 }
 
 function startDeployment(payload, reply, args) {
-    return Deployment.forge({id: args[0]}).fetch()
+    return new Deployment({id: args[0]}).fetch()
     .then(deployment => {
         if (deployment.get("active")) {
             reply({text: "already started"});
@@ -251,7 +251,7 @@ function massMessage(payload, reply, args) {
         reply({text: "need message!"});
         return;
     }
-    return Deployment.forge({id: args[0]}).fetch()
+    return new Deployment({id: args[0]}).fetch()
     .then(deployment => {
         return deployment.volunteers().fetch()
         .then(volunteers => {
@@ -265,7 +265,7 @@ function massMessage(payload, reply, args) {
 
 
 function sendSurvey(payload, reply, args) {
-    return Deployment.forge({id: args[0]}).fetch()
+    return new Deployment({id: args[0]}).fetch()
     .then(deployment => {
         return deployment.volunteers().fetch()
         .then(volunteers => {
@@ -369,7 +369,7 @@ function mentorMessage(payload, reply) {
 
 function cancelMentor(payload, reply, args) {
     const mentee = payload.sender.volunteer;
-    return Task.forge({id: args.taskId}).fetch()
+    return new Task({id: args.taskId}).fetch()
     .then(task => {
         if (!task) {
             return reply({text: "Hmm, that task was not found."});

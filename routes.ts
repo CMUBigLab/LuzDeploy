@@ -106,7 +106,7 @@ router.post("/sweep-data", bodyParser.urlencoded({extended: true}), function(req
     .update({last_swept: now, exists: false}, "slot")
     .then(function(slots) {
         return Promise.map(slots, function(slot) {
-            return Task.forge({
+            return new Task({
                 deploymentId: 1,
                 templateType: "replace_beacon",
                 instructionParams: {
@@ -149,14 +149,14 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
     Promise.map(fingerprints, function(fingerprint) {
         if (fingerprint.sample.length <= 0) return;
         let point = fingerprint.location;
-        return FingerprintPoint.forge({
+        return new FingerprintPoint({
             floor: point.floor,
             long: point.long,
             lat: point.lat
         }).fetch()
         .then(function(fingerprintPoint) {
             if (fingerprintPoint == null) {
-                return FingerprintPoint.forge({
+                return new FingerprintPoint({
                     floor: point.floor,
                     long: point.long,
                     lat: point.lat
@@ -165,7 +165,7 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
                 return fingerprintPoint;
             }
         }).then(function(fingerprintPoint) {
-            return FingerprintSample.forge({
+            return new FingerprintSample({
                 fingerprintId: fingerprintPoint.get("id"),
                 data: JSON.stringify(fingerprint.sample)
             }).save();
@@ -192,7 +192,7 @@ router.post("/send-message", bodyParser.json(), function(req, res, next) {
         message = msgUtils.buttonMessage(text, buttons);
     }
     if (mass === true) {
-        Deployment.forge({id: deploymentId}).volunteers()
+        new Deployment({id: deploymentId}).volunteers()
         .fetch()
         .then(function(volunteers) {
             console.log("sending message to volunteers:", volunteers.length);
