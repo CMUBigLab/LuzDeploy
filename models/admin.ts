@@ -3,7 +3,7 @@ import * as logger from "winston";
 
 import bookshelf = require("../bookshelf");
 import {bot} from "../app";
-
+console.log(bot);
 import {Deployment} from "./deployment";
 
 export class Admin extends bookshelf.Model<Admin> {

@@ -64,6 +64,6 @@ app.get("/_status", (req: express.Request, res: express.Response) => {
     res.send({status: "ok"});
 });
 app.use(expressErrorHandler);
-let server = app.listen(process.env.PORT || 3000, () => {
+const server = app.listen(process.env.PORT || 3000, () => {
     logger.info(`Echo bot server running at port ${server.address().port}.`);
 });
