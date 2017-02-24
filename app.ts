@@ -7,11 +7,11 @@ import * as FBTypes from "facebook-sendapi-types";
 import * as rawbody from "raw-body";
 import * as Promise from "bluebird";
 import * as _ from "lodash";
+import * as bodyParser from "body-parser";
 
 import * as errors from "./errors";
 import * as routes from "./routes";
 import * as handlers from "./handlers";
-import signatureCheck from "./signature";
 
 import {Bot} from "./bot";
 const Admin = require("./models/admin");
@@ -33,23 +33,10 @@ next: express.NextFunction) {
 }
 
 // source: https://github.com/fyndme/facebook-send-api/issues/1
-function facebookWebhookHandler(err: Error, req: express.Request, res: express.Response,
-next: express.NextFunction) {
-     Promise.resolve()
-    .then(() => rawbody(req))
-    .then((buf: Buffer) => {
-      const sig = signatureCheck(buf);
-      const body = JSON.parse(buf.toString("utf8"));
-      req.body = body;
-    })
-    .then(() => {
+function facebookWebhookHandler(req: express.Request, res: express.Response, next) {
       const callback = req.body as FBTypes.WebhookCallback;
       const events = _.flatten(callback.entry.map(anEntry => anEntry.messaging));
       events.forEach(event => bot.handleEvent(event));
-  })
-  .catch((err: Error) => {
-    logger.error(err.message);
-  });
 }
 
 process.env.PWD = process.cwd();
@@ -69,7 +56,7 @@ app.get("/fb-webhook", (req: express.Request, res: express.Response) => {
 
     return res.end("Error, wrong validation token")
   });
-app.post("/fb-webhook", facebookWebhookHandler);
+app.post("/fb-webhook", bodyParser.json(), facebookWebhookHandler);
 app.get("/_status", (req: express.Request, res: express.Response) => {
     res.send({status: "ok"});
 });
