@@ -12,7 +12,7 @@ export class Admin extends bookshelf.Model<Admin> {
 
     static sendError(error) {
         return this.fetchAll().then(admins => {
-            admins.forEach(a => (a as Admin).sendMessage({text: error.stack.slice(0, 640)}));
+            admins.forEach((a: Admin) => a.sendMessage({text: error.stack.slice(0, 640)}));
         });
     }
 
