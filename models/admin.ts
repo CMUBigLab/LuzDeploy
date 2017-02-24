@@ -1,4 +1,5 @@
 import * as FBTypes from "facebook-sendapi-types";
+import * as logger from "winston";
 
 import bookshelf = require("../bookshelf");
 import {bot} from "../app";
@@ -11,6 +12,7 @@ export class Admin extends bookshelf.Model<Admin> {
 
     static sendError(error: Error) {
         return this.fetchAll().then(admins => {
+            logger.debug("admins in sendError", admins);
             admins.forEach((a: Admin) => a.sendMessage({text: error.stack.slice(0, 640)}));
         });
     }
