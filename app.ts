@@ -69,7 +69,7 @@ app.get("/webhook", (req: express.Request, res: express.Response) => {
 
     return res.end("Error, wrong validation token")
   });
-app.post("/webhook", facebookWebhookHandler);
+app.post("/fb-webhook", facebookWebhookHandler);
 app.get("/_status", (req: express.Request, res: express.Response) => {
     res.send({status: "ok"});
 });
