@@ -26,7 +26,10 @@ export class Bot {
         if (typeof fbid === "number") {
             fbid = String(fbid);
         }
-        return this.FBPlatform.sendMessageToFB(fbid, message);
+        return this.FBPlatform.sendMessageToFB(fbid, message)
+        .catch((err: Error) => {
+            logger.error("Error while trying to send Facebook message via Send API.", err);
+        });
     }
 
     getProfile(fbid: string) {
