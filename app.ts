@@ -15,7 +15,7 @@ import * as handlers from "./handlers";
 
 import {Bot} from "./bot";
 export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);
-
+console.log(bot);
 import {Admin} from "./models/admin";
 import {Volunteer} from "./models/volunteer";
 
