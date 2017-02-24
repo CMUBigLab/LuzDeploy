@@ -63,8 +63,10 @@ export class Bot {
 
         // keep track of last time we sent anything to this user
         return new Volunteer({ fbid: payload.recipient.id })
-        .save({ "lastMessaged": moment().format("YYYY-MM-DD HH:mm:ss") }, { patch: true })
-        .then(() => {
+        .save(
+            { "lastMessaged": moment().format("YYYY-MM-DD HH:mm:ss") },
+            { patch: true, require: false }
+        ).then(() => {
             let msg = payload.message.text;
             if (msg && msg.startsWith("bot:")) {
                 if (msg.slice(4) === "on") {
@@ -81,8 +83,10 @@ export class Bot {
     handleMessage(payload: FBTypes.MessengerPayload) {
         // Keep track of last time we received anything from this user
         new Volunteer({ fbid: payload.recipient.id })
-        .save({ "lastResponse": moment().format("YYYY-MM-DD HH:mm:ss") }, { patch: true })
-        .then(() => {
+        .save(
+            { "lastResponse": moment().format("YYYY-MM-DD HH:mm:ss") },
+            { patch: true, require: false }
+        ).then(() => {
             const reply = this.sendMessage.bind(this, payload.recipient.id);
             handlers.dispatchMessage(payload, reply);
         });
