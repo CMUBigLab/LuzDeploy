@@ -61,8 +61,19 @@ process.on("unhandledRejection", function (error: Error, promise: Promise<any>) 
 
 app.use(express.static(path.join(process.env.PWD, "public")));
 app.use(routes.router);
+app.get("/webhook", (req: express.Request, res: express.Response) => {
+
+    if (req.query["hub.verify_token"] === process.env.VERIFY_TOKEN) {
+      return res.send(req.query["hub.challenge"])
+    }
+
+    return res.end("Error, wrong validation token")
+  });
+app.post("/webhook", facebookWebhookHandler);
+app.get("/_status", (req: express.Request, res: express.Response) => {
+    res.send({status: "ok"});
+});
 app.use(expressErrorHandler);
-app.use("/webhook", facebookWebhookHandler);
 let server = app.listen(process.env.PORT || 3000, () => {
     logger.info(`Echo bot server running at port ${server.address().port}.`);
 });
