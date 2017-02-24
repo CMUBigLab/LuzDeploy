@@ -4,7 +4,7 @@ import * as bodyParser from "body-parser";
 import * as Promise from "bluebird";
 
 import bookshelf = require("./bookshelf");
-import {bot} from "./app";
+import bot = require("./bot");
 import handlers = require("./handlers");
 import msgUtils = require("./message-utils");
 import * as errors from "./errors";

@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as Promise from "bluebird";
 import * as moment from "moment";
 
-import * as app from "../app";
+import bot = require("../bot");
 import * as handlers from "../handlers";
 import bookshelf = require("../bookshelf");
 import * as msgUtil from "../message-utils";
@@ -153,7 +153,7 @@ export class Volunteer extends bookshelf.Model<Volunteer> {
         });
     }
     sendMessage(message) {
-        app.bot.sendMessage(this.get("fbid"), message);
+        bot.sendMessage(this.get("fbid"), message);
     }
     name() {
         return `${this.get("firstName")} ${this.get("lastName")}`;

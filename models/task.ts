@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as Promise from "bluebird";
 import * as request from "request-promise";
 
-import {bot} from "../app";
+import bot = require("../bot");
 import bookshelf = require("../bookshelf");
 import {Deployment} from "./deployment";
 import {Volunteer} from "./volunteer";
