@@ -92,6 +92,7 @@ export class Bot {
 
     handleMessage(payload: FBTypes.MessengerPayload) {
         // Keep track of last time we received anything from this user
+        console.log(payload);
         new Volunteer({ fbid: payload.recipient.id })
         .save(
             { "lastResponse": moment().format("YYYY-MM-DD HH:mm:ss") },
