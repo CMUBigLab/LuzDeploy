@@ -2,6 +2,7 @@ import fb from "facebook-send-api";
 import * as FBTypes from "facebook-sendapi-types";
 import * as logger from "winston";
 import * as moment from "moment";
+import * as request from "request";
 
 import * as handlers from "./handlers";
 
@@ -27,8 +28,8 @@ export class Bot {
             fbid = String(fbid);
         }
         return this.FBPlatform.sendMessageToFB(fbid, message)
-        .catch((err: Error) => {
-            logger.error("Error while trying to send Facebook message via Send API.", err);
+        .catch(request.StatusCodeError, (reason) => {
+            logger.error("Error while trying to send Facebook message via Send API.", reason.response);
         });
     }
 
