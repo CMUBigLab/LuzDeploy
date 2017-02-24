@@ -14,8 +14,8 @@ import * as routes from "./routes";
 import * as handlers from "./handlers";
 
 import {Bot} from "./bot";
-const Admin = require("./models/admin");
-const Volunteer = require("./models/volunteer");
+import {Admin} from "./models/Admin";
+import {Volunteer} from "./models/volunteer";
 
 const app = express();
 export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);
