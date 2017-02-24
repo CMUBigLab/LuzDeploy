@@ -2,3 +2,5 @@ node_modules/
 *.dump
 .DS_Store
 *~
+annouce-msg.json
+typings/
