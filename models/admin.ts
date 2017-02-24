@@ -6,9 +6,6 @@ import {Deployment} from "./deployment";
 export class Admin extends bookshelf.Model<Admin> {
     get tableName() { return "admins"; }
     get idAttribute() { return "fbid"; }
-    constructor(params: any) {
-        super(params);
-    }
 
     static sendError(error) {
         return this.fetchAll().then(admins => {

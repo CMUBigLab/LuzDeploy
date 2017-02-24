@@ -41,7 +41,7 @@ export class Bot {
             return;
         }
         this.getProfile(payload.sender.id)
-        .then((profile) => {
+        .then((profile): any => {
             logger.info("message received", profile.first_name, profile.last_name);
             (payload as WebhookPayloadFields).sender.profile = profile;
             if (payload.message && payload.message.is_echo) {

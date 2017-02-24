@@ -153,7 +153,8 @@ export function dispatchMessage(payload, reply) {
     });
 };
 export function handleWebhook(req) {
-    return Volunteer.where({fbid: req.body.wid})
+    return new Volunteer()
+    .where({fbid: req.body.wid})
     .fetch({withRelated: ["deployment"]})
     .then(vol => {
         if (vol) {
@@ -173,8 +174,8 @@ export function handleWebhook(req) {
 
 function getAdminAndVolunteer(payload) {
     return Promise.join(
-        Admin.where({fbid: payload.sender.id}).fetch(),
-        Volunteer.where({fbid: payload.sender.id}).fetch({withRelated: ["deployment"]}),
+        new Admin().where({fbid: payload.sender.id}).fetch(),
+        new Volunteer().where({fbid: payload.sender.id}).fetch({withRelated: ["deployment"]}),
         (admin, vol) => {
             if (admin) payload.sender.admin = admin;
             if (vol) payload.sender.volunteer = vol;
@@ -384,7 +385,7 @@ function cancelMentor(payload, reply, args) {
                     .then(() => {
                         vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`});
                         return vol.getNewTask()
-                        .then(function(task) {
+                        .then(function(task: Task) {
                             let controller = taskControllers[task.get("type")];
                             return controller.start(task);
                         });
@@ -419,7 +420,7 @@ function onboardVolunteer(payload, reply) {
 }
 
 export function sendDeploymentMessage(fbid) {
-  Deployment.collection().query("where", "active", "=", true).fetch()
+  Deployment.collection().query({"active": true}).fetch()
   .then(function(deployments) {
     if (deployments.length === 0) {
         const message = {
@@ -478,7 +479,7 @@ function joinDeployment(payload, reply, args) {
     if (args.new_task) newTask = args.new_task;
     Promise.join(
         vol.currentTask().fetch(),
-        Deployment.where({id: args.id}).fetch(),
+        new Deployment().where({id: args.id}).fetch(),
         function(task, deployment) {
             if (!deployment) throw new Error(`invalid deployment id: ${args.id}`);
             let promise = null;
