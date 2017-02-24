@@ -4,7 +4,7 @@ import * as logger from "winston";
 
 import * as handlers from "./handlers";
 
-const Volunteer = require("./models/volunteer");
+import {Volunteer} from "./models/volunteer";
 
 interface WebhookPayloadFields extends FBTypes.WebhookPayloadFields {
     sender: {

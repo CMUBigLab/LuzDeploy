@@ -11,7 +11,7 @@ import {SweepTaskFsm} from "./sweep_task";
 import {PlaceBeaconsTaskFsm} from "./place_beacon_task";
 import {ReplaceBeaconTaskFsm} from "./replace_beacon_task";
 import {FingerprintTaskFsm} from "./fingerprint_task";
-const taskControllers = {
+export const taskControllers = {
     sweep_edge: new SweepTaskFsm(),
     place_beacons: new PlaceBeaconsTaskFsm(),
     replace_beacon: new ReplaceBeaconTaskFsm(),
@@ -28,7 +28,7 @@ function rejectTask(task: Task) {
     }).then(() => this.transition(task, "unassigned"));
 }
 
-const TaskFsm = new machina.BehavioralFsm({
+export const TaskFsm = new machina.BehavioralFsm({
     namespace: "task",
     initialState: "unassigned",
     states: {
@@ -138,5 +138,3 @@ TaskFsm.on("nohandler", function(event) {
         }
     });
 });
-
-export default TaskFsm;

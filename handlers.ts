@@ -7,11 +7,11 @@ import {bot} from "./app";
 import * as config from "./config";
 import msgUtil = require("./message-utils");
 
-const Deployment = require("./models/deployment");
-const Volunteer = require("./models/volunteer");
-const Admin = require("./models/admin");
-const Task = require("./models/task");
-const TaskController = require("./controllers/task");
+import {Deployment} from "./models/deployment";
+import {Volunteer} from "./models/volunteer";
+import {Admin} from "./models/admin";
+import {Task} from "./models/task";
+import {TaskFsm, taskControllers} from "./controllers/task";
 
 const messageHandlers = {
     "hello": {
@@ -144,7 +144,7 @@ export function dispatchMessage(payload, reply) {
         } else if (payload.sender.volunteer && payload.sender.volunteer.get("currentTask")) {
             getVolTask(payload.sender.volunteer)
             .then(function(task) {
-                TaskController.userMessage(task, command);
+                TaskFsm.userMessage(task, command);
             });
         } else {
             let cmds = _.keys(messageHandlers);
@@ -164,7 +164,7 @@ export function handleWebhook(req) {
     })
     .then(function(task) {
         if (task) {
-            return TaskController.webhook(task, req.body.message);
+            return TaskFsm.webhook(task, req.body.message);
         } else {
             throw new Error("Could not find active task.");
         }
@@ -385,7 +385,7 @@ function cancelMentor(payload, reply, args) {
                         vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`});
                         return vol.getNewTask()
                         .then(function(task) {
-                            let controller = TaskController.taskControllers[task.get("type")];
+                            let controller = taskControllers[task.get("type")];
                             return controller.start(task);
                         });
                     });
@@ -506,9 +506,9 @@ function getAndAssignVolTask(vol) {
         if (!task) {
             return vol.sendMessage({text: "There are no tasks available right now."});
         } else {
-            TaskController.assign(task, vol)
+            TaskFsm.assign(task, vol)
             .then(function() {
-                TaskController.start(task);
+                TaskFsm.start(task);
             });
         }
     });
@@ -536,7 +536,7 @@ function acceptTask(payload, reply, args) {
             reply({text: "You don't have a task."});
             return;
         }
-        let controller = TaskController.taskControllers[task.get("type")];
+        let controller = taskControllers[task.get("type")];
         return controller.start(task);
     });
 }
