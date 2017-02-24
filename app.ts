@@ -37,6 +37,7 @@ function facebookWebhookHandler(req: express.Request, res: express.Response, nex
       const callback = req.body as FBTypes.WebhookCallback;
       const events = _.flatten(callback.entry.map(anEntry => anEntry.messaging));
       events.forEach(event => bot.handleEvent(event));
+      res.send("OK");
 }
 
 process.env.PWD = process.cwd();
