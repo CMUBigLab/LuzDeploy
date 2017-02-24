@@ -24,6 +24,14 @@ interface WebhookPayloadFields extends FBTypes.WebhookPayloadFields {
     };
 }
 
+function sendAdminError(error: Error) {
+    Admin.fetchAll()
+        .then(admins => {
+            admins.forEach((a: Admin) => a.sendMessage({text: error.stack.slice(0, 640)}));
+        }).catch(err => logger.error(`admin logging error ${err}`));
+
+}
+
 export class Bot {
     FBPlatform: fb;
     ignoring: {[fbid: string]: boolean} = {};
@@ -122,7 +130,7 @@ function expressErrorHandler(err: Error, req: express.Request, res: express.Resp
 next: express.NextFunction) {
     // log error
     logger.error(err.message);
-    Admin.sendError(err);
+    sendAdminError(err);
     if (err instanceof errors.BadRequestError) {
         res.status(400).send({ error: err.message });
     } else {
@@ -142,8 +150,7 @@ process.env.PWD = process.cwd();
 
 process.on("unhandledRejection", function (error: Error, promise: Promise<any>) {
     logger.error("UNHANDLED REJECTION", error.stack);
-    Admin.sendError(error)
-    .catch(err => logger.error(`admin logging error ${err}`));
+    sendAdminError(error);
 });
 
 app.use(express.static(path.join(process.env.PWD, "public")));

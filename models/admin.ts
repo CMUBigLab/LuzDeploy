@@ -9,13 +9,6 @@ export class Admin extends bookshelf.Model<Admin> {
     get tableName() { return "admins"; }
     get idAttribute() { return "fbid"; }
 
-    static sendError(error: Error) {
-        return this.fetchAll()
-        .then(admins => {
-            admins.forEach((a: Admin) => a.sendMessage({text: error.stack.slice(0, 640)}));
-        });
-    }
-
     deployments() {
         return this.belongsToMany(Deployment);
     }
