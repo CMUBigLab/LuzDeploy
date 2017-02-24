@@ -29,6 +29,7 @@ export class Bot {
         }
         return this.FBPlatform.sendMessageToFB(fbid, message)
         .catch(request.StatusCodeError, (reason) => {
+            console.log(reason);
             logger.error("Error while trying to send Facebook message via Send API.", reason.response);
         });
     }
