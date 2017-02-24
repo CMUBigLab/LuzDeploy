@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/winston": "^2.2.0",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "bookshelf": "^0.10.0",
@@ -35,9 +34,11 @@
     "sqlite3": "^3.1.4",
     "ts-node": "^2.1.0",
     "typescript": "^2.3.0-dev.20170222",
-    "underscore.string": "^3.3.4"
+    "underscore.string": "^3.3.4",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
+    "@types/winston": "^2.2.0",
     "@types/bluebird": "^3.0.37",
     "@types/bookshelf": "^0.8.35",
     "@types/commander": "^2.3.31",
