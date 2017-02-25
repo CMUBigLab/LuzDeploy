@@ -1,4 +1,5 @@
 let machina = require("machina");
+import * as FBTypes from "facebook-sendapi-types";
 
 import * as config from "../config";
 import {bot} from "../bot";
@@ -34,15 +35,16 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
         go: {
             _onEnter: function(task) {
                 let params = task.get("instructionParams");
-                    // TODO: fix
-                    // "webview_height_ratio": "tall",
-                    // "messenger_extensions": true,
                 const url = `https://hulop.qolt.cs.cmu.edu/mapeditor/?advanced&hidden&beacon=${params.slot}`;
                 const text = "Please go to the location marked on the map below. Tell me when you are 'there'.";
-                bot.FBPlatform.createButtonMessage(task.get("volunteerFbid"))
-                .text(text)
-                .webButton("Open Map", url)
-                .send();
+                const buttons = [{
+                    type: "web_url",
+                    title: "Open Map",
+                    url: url,
+                    webview_height_ratio: "tall",
+                    messenger_extensions: true,
+                }] as Array<FBTypes.MessengerButton>;
+                bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons);
             },
             "msg:there": "old_beacon",
         },

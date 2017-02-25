@@ -1,5 +1,6 @@
 let machina = require("machina");
 import * as Promise from "bluebird";
+import * as FBTypes from "facebook-sendapi-types";
 
 import * as config from "../config";
 import {bot} from "../bot";
@@ -74,15 +75,19 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         go: {
             _onEnter: function(task) {
                 task.context.currentSlot = task.context.slots.pop(1);
-                // TODO: fix
-                // "webview_height_ratio": "tall",
-                //   "messenger_extensions": true,
+
                 const url = `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.context.currentSlot}`
                 const text = `You have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
-                bot.FBPlatform.createButtonMessage(task.get("volunteerFbid"))
-                .text(text)
-                .webButton("Open Map", url)
-                .send()
+                const buttons = [
+                    {
+                        "type": "web_url",
+                        "title": "Open Map",
+                        "url": url,
+                        "webview_height_ratio": "tall",
+                        "messenger_extensions": true,
+                    }
+                ] as Array<FBTypes.MessengerButton>;
+                bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons)
                 .then(() => {
                     bot.sendMessage(
                         task.get("volunteerFbid"),
@@ -175,14 +180,16 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         },
         place: {
             _onEnter: function(task) {
-                // TODO: fix messenger extensions, etc.
-                // "webview_height_ratio": "tall",
-                // "messenger_extensions": true,
                 const url = `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.context.currentSlot}`;
-                let text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures.";
-                bot.FBPlatform.createButtonMessage(task.get("volunteerFbid"))
-                .webButton("Open Map", url)
-                .send()
+                const text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures.";
+                const buttons = [{
+                    type: "web_url",
+                    title: "Open Map",
+                    url: url,
+                    webview_height_ratio: "tall",
+                    messenger_extensions: true,
+                }] as Array<FBTypes.MessengerButton>;
+                bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons)
                 .then(() => {
                     bot.sendMessage(
                         task.get("volunteerFbid"),

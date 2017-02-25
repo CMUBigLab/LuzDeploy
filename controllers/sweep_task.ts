@@ -1,4 +1,5 @@
 let machina = require("machina");
+import * as FBTypes from "facebook-sendapi-types";
 
 import * as config from "../config";
 import {bot} from "../bot";
@@ -10,16 +11,17 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
     states: {
         goto: {
             _onEnter: function(task) {
-                let text = "We need you to help us check which beacons are not working in the building. Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
-                let params = task.get("instructionParams");
-                // TODO: fix
-                // "webview_height_ratio": "compact",
-                // "messenger_extensions": true,
+                const text = "We need you to help us check which beacons are not working in the building. Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
+                const params = task.get("instructionParams");
                 const url = `https://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&edge=${params.edge}&beaconlist=${params.beacons}&wid=${task.get("volunteer_fbid")}&start=${params.start}&end=${params.end}&next=${config.THREAD_URI}&base=${config.BASE_URL}`;
-                bot.FBPlatform.createButtonMessage(task.get("volunteer_fbid"))
-                .text(text)
-                .webButton("Open LuzDeploy", url)
-                .send();
+                const buttons = [{
+                    type: "web_url",
+                    title: "Open LuzDeploy",
+                    url: url,
+                    webview_height_ratio: "compact",
+                    messenger_extensions: true,
+                }] as Array<FBTypes.MessengerButton>;
+                bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons);
             },
             "msg:done": function(task) {
                 this.handle(task, "complete");

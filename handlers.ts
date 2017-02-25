@@ -428,20 +428,20 @@ export function sendDeploymentMessage(fbid) {
         };
         return bot.sendMessage(fbid, message);
     } else {
-        const response = bot.FBPlatform.createButtonMessage(fbid)
-        .title("Which deployment would you like to join?");
-        deployments.forEach(d => {
-            const payload = JSON.stringify({
+        const text = "Which deployment would you like to join?";
+        const buttons = deployments.map(d => ({
+            type: "postback",
+            title: d.get("name"),
+            payload: JSON.stringify({
                 type: "join_deployment",
                 args: {
                     id: d.get("id"),
                     new_ask: d.get("type") === "eventBased"
                 }
-            });
-            response.postbackButton(d.get("name"), payload);
-        });
-
-        return response.send();
+            }),
+            })
+        ) as Array<FBTypes.MessengerButton>;
+        bot.FBPlatform.sendButtonMessage(fbid, text, buttons);
     }
   });
 }
