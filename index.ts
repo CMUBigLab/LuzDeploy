@@ -67,6 +67,18 @@ app.get("/_status", (req: express.Request, res: express.Response) => {
     res.send({status: "ok"});
 });
 app.use(expressErrorHandler);
-const server = app.listen(process.env.PORT || 3000, () => {
-    logger.info(`Echo bot server running at port ${server.address().port}.`);
-});
+
+export let server;
+
+export function startListening(port: number = (process.env.PORT || 3000), callback?) {
+    server = app.listen(port, () => {
+        logger.info(`Echo bot server running at port ${server.address().port}.`);
+        if (callback) {
+            callback(server);
+        }
+    });
+}
+
+if (require.main === module) {
+    startListening();
+}
