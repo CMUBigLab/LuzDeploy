@@ -1,12 +1,12 @@
-import _ = require("lodash");
-import Promise = require("bluebird");
+import * as _ from "lodash";
+import * as express from "express";
+import * as Promise from "bluebird";
 import * as fb from "facebook-send-api";
 import * as FBTypes from "facebook-sendapi-types";
 
-import {bot} from "./bot";
+import {bot, WebhookPayloadFields, ReplyFunc} from "./bot";
 import * as config from "./config";
 import msgUtil = require("./message-utils");
-
 import {Deployment} from "./models/deployment";
 import {Volunteer} from "./models/volunteer";
 import {Admin} from "./models/admin";
@@ -92,8 +92,9 @@ const aliases = {
     "h": "help"
 };
 
-function getVolTask(vol) {
-    return vol.related("currentTask").fetch()
+function getVolTask(vol: Volunteer) {
+    return (vol.related<Task>("currentTask") as Task)
+    .fetch()
     .then(function(task) {
         if (!task) {
             return null;
@@ -108,7 +109,7 @@ function getVolTask(vol) {
     });
 }
 
-export function dispatchMessage(payload, reply) {
+export function dispatchMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
     getAdminAndVolunteer(payload)
     .then((payload) => {
         if (payload.sender.volunteer) {
@@ -127,9 +128,9 @@ export function dispatchMessage(payload, reply) {
         if (!(payload.sender.admin || payload.sender.volunteer)) {
             return;
         }
-
-        const values = payload.message.text.toLowerCase().split(" ");
-        let command = values[0];
+        const message = payload.message as FBTypes.MessengerMessage;
+        const values = message.text.toLowerCase().split(" ");
+        let command: string = values[0];
         if (command in aliases) command = aliases[command];
 
         if (command in messageHandlers) {
@@ -147,12 +148,13 @@ export function dispatchMessage(payload, reply) {
                 TaskFsm.userMessage(task, command);
             });
         } else {
-            let cmds = _.keys(messageHandlers);
+            const cmds = _.keys(messageHandlers);
             reply({text: `I don't know how to interpret '${command}'. Try 'ask' for a new task or 'help' for more info.`});
         }
     });
 };
-export function handleWebhook(req) {
+
+export function handleWebhook(req: express.Request) {
     return new Volunteer()
     .where({fbid: req.body.wid})
     .fetch({withRelated: ["deployment"]})
@@ -172,7 +174,7 @@ export function handleWebhook(req) {
     });
 };
 
-function getAdminAndVolunteer(payload) {
+function getAdminAndVolunteer(payload: WebhookPayloadFields) {
     return Promise.join(
         new Admin().where({fbid: payload.sender.id}).fetch(),
         new Volunteer().where({fbid: payload.sender.id}).fetch({withRelated: ["deployment"]}),
@@ -184,14 +186,14 @@ function getAdminAndVolunteer(payload) {
     );
 }
 
-export function dispatchPostback(payload, reply) {
+export function dispatchPostback(payload: WebhookPayloadFields, reply: ReplyFunc) {
     getAdminAndVolunteer(payload)
     .then((payload) => {
         const postback = JSON.parse(payload.postback.payload);
         if (postback.type in postbackHandlers) {
             const found = postbackHandlers[postback.type];
             payload.postback.payload = postback;
-            found.handler(payload, reply, payload.postback.payload.args);
+            found.handler(payload, reply, postback.args);
         } else {
             throw new Error(`invalid postback: ${payload.postback.payload}`);
         }
@@ -298,7 +300,7 @@ function taskScore(payload, reply, args) {
     });
 }
 
-function helpMessage(payload, reply) {
+function helpMessage(payload, reply: ReplyFunc) {
     const vol = payload.sender.volunteer;
     let buttons = [{
         type: "postback",
@@ -315,11 +317,9 @@ function helpMessage(payload, reply) {
             type: "send_mentor",
             args: {}
         })
-    }];
-    return reply(msgUtil.buttonMessage(
-        "Here is a list of commands you can say to me! Press 'Send Mentor' to have another volunteer come help you.",
-        buttons
-    ));
+    }] as Array<FBTypes.MessengerButton>;
+    const text = "Here is a list of commands you can say to me! Press 'Send Mentor' to have another volunteer come help you.";
+    return bot.FBPlatform.sendButtonMessage(vol.get("fbid"), text, buttons);
 }
 
 function listCommands(payload, reply) {
@@ -368,7 +368,7 @@ function mentorMessage(payload, reply) {
     });
 }
 
-function cancelMentor(payload, reply, args) {
+function cancelMentor(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
     const mentee = payload.sender.volunteer;
     return new Task({id: args.taskId}).fetch()
     .then(task => {
@@ -401,22 +401,11 @@ function cancelMentor(payload, reply, args) {
     });
 }
 
-function onboardVolunteer(payload, reply) {
-  const response = {
-    "attachment": {
-      "type": "template",
-        "payload": {
-          "template_type": "button",
-              "text": `Hi! ${payload.sender.profile.first_name}, I am the LuzDeploy bot. To continue you must complete the following consent form.`,
-              "buttons": [{
-                type: "web_url",
-                title: "Open Consent Form",
-                url: `${config.BASE_URL}/consent.html?fbid=${payload.sender.id}`
-              }]
-            }
-          }
-      };
-      reply(response);
+function onboardVolunteer(payload: WebhookPayloadFields, reply: ReplyFunc) {
+    const text = `Hi! ${payload.sender.profile.first_name}, I am the LuzDeploy bot. To continue you must complete the following consent form.`;
+    const url = `${config.BASE_URL}/consent.html?fbid=${payload.sender.id}`;
+    const buttons = [bot.FBPlatform.createWebButton("Open Consent Form", url)];
+    return bot.FBPlatform.sendButtonMessage(payload.sender.id, text, buttons);
 }
 
 export function sendDeploymentMessage(fbid) {
@@ -429,7 +418,7 @@ export function sendDeploymentMessage(fbid) {
         return bot.sendMessage(fbid, message);
     } else {
         const text = "Which deployment would you like to join?";
-        const buttons = deployments.map(d => ({
+        const buttons = deployments.map((d: Deployment) => ({
             type: "postback",
             title: d.get("name"),
             payload: JSON.stringify({

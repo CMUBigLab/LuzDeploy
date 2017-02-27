@@ -6,10 +6,12 @@ import * as moment from "moment";
 import * as rpErrors from "request-promise/errors";
 import * as logger from "winston";
 
-interface WebhookPayloadFields extends FBTypes.WebhookPayloadFields {
+export interface WebhookPayloadFields extends FBTypes.WebhookPayloadFields {
     sender: {
         id: string;
         profile?: FBTypes.FacebookUser;
+        admin?: any,
+        volunteer?: any
     };
 }
 
@@ -103,5 +105,8 @@ class Bot {
         handlers.dispatchPostback(payload, reply);
     }
 }
+
+export type ReplyFunc = (message: FBTypes.MessengerMessage) => Promise<FBTypes.MessengerResponse>;
+
 
 export const bot = new Bot(process.env.PAGE_ACCESS_TOKEN);
