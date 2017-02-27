@@ -1,5 +1,4 @@
 import * as Promise from "bluebird";
-import * as logger from "winston";
 import * as moment from "moment";
 
 import {DATE_FORMAT} from "../config";
@@ -11,8 +10,7 @@ import { Deployment } from "../models/deployment";
 const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on table?
 
 // Remind volunteers that there are more tasks available.
-export function remindVolunteersOfTasksAvailable() {
-    logger.info("running remind volunteers of tasks job");
+export function remindVolunteersOfTasksAvailable(): Promise<any> {
     const twelveHoursAgo = moment().subtract(12, "hours");
     const getVolunteers = Volunteer.where<Volunteer>("current_task", null)
     .where("deployment_id", DEPLOYMENT_ID)
@@ -26,7 +24,7 @@ export function remindVolunteersOfTasksAvailable() {
         deployment_id: DEPLOYMENT_ID
     }).count();
 
-    Promise.join(getVolunteers, getTaskCount, (volunteers, taskCount) => {
+    return Promise.join(getVolunteers, getTaskCount, (volunteers, taskCount) => {
         if (taskCount > 0) {
             return Promise.all(volunteers.map((volunteer) => {
                 const text = "Good morning! I have some tasks to do today. If you have time, please 'ask' me for one!";
@@ -34,7 +32,7 @@ export function remindVolunteersOfTasksAvailable() {
                 return bot.FBPlatform.sendQuickReplies(volunteer.get("fbid"), text, [quickReply]);
             }));
         }
-    }).then(() => logger.info("Finished reminding volunteers of tasks"));
+    });
 }
 
 
