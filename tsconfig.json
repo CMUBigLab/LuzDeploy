@@ -5,12 +5,17 @@
         "skipLibCheck": true,
         "noImplicitAny": false,
         "sourceMap": false,
-        "outDir": "dist"
+        "outDir": "dist",
+        "lib": [
+            "es2017",
+            "dom"
+        ]
     },
     "exclude": [
         "node_modules"
     ],
     "files": [
-        "index.ts"
+        "index.ts",
+        "scheduled_jobs/index.ts"
     ]
 }

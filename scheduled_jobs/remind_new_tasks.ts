@@ -1,20 +1,14 @@
-import {scheduleJob, RecurrenceRule, Range} from "node-schedule";
-import * as moment from "moment";
 import * as Promise from "bluebird";
 import * as logger from "winston";
+import * as moment from "moment";
 
-import {bot} from "./bot";
-import {Volunteer} from "./models/volunteer";
-import {Task} from "./models/task";
-import { Deployment } from "./models/deployment";
-import { DATE_FORMAT } from "./config";
+import {DATE_FORMAT} from "../config";
+import {bot} from "../bot";
+import {Volunteer} from "../models/volunteer";
+import {Task} from "../models/task";
+import { Deployment } from "../models/deployment";
 
 const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on table?
-
-const weekdays10AM = new RecurrenceRule();
-weekdays10AM.dayOfWeek = [new Range(1, 5)]; // Monday through Friday
-weekdays10AM.hour = 10; // 10 AM
-weekdays10AM.minute = 0; // 0 minutes after 10 AM
 
 // Remind volunteers that there are more tasks available.
 export function remindVolunteersOfTasksAvailable() {
@@ -43,6 +37,4 @@ export function remindVolunteersOfTasksAvailable() {
     }).then(() => logger.info("Finished reminding volunteers of tasks"));
 }
 
-export function setupJobs() {
-    scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
-}
+

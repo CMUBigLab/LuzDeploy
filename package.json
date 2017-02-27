@@ -16,7 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/bookshelf": "^0.8.35",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "bookshelf": "^0.10.0",
@@ -30,6 +29,7 @@
     "machina": "github:colegleason/machina.js",
     "messenger-bot": "^2.3.0",
     "moment": "^2.17.1",
+    "moment-timezone": "^0.5.11",
     "node-schedule": "^1.2.0",
     "open": "0.0.5",
     "pg": "^6.0.1",
@@ -43,6 +43,8 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
+    "@types/bookshelf": "^0.8.35",
+    "@types/moment-timezone": "^0.2.34",
     "@types/bluebird": "^3.0.37",
     "@types/bookshelf": "^0.8.35",
     "@types/chai": "^3.4.35",

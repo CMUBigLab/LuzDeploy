@@ -11,3 +11,4 @@ export const BASE_URL = `https://${process.env.HEROKU_APP_NAME}.herokuapp.com`;
 export const THREAD_URI = `fb-messenger://user/${threadId}`;
 
 export const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
+export const TIME_ZONE = "America/New_York";

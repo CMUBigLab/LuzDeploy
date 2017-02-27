@@ -9,7 +9,6 @@ import * as _ from "lodash";
 import * as bodyParser from "body-parser";
 
 import {bot} from "./bot";
-import * as cron from "./cron";
 import * as errors from "./errors";
 import * as routes from "./routes";
 import * as handlers from "./handlers";
@@ -82,6 +81,4 @@ export function startListening(port: number = (process.env.PORT || 3000), callba
 
 if (require.main === module) {
     startListening();
-    // TODO: must integrate with Heroku scheduler, probably better anyways
-    // cron.setupJobs();
 }
