@@ -84,7 +84,14 @@ const aliases = {
     "h": "help"
 };
 
-function getTaskForVolunteer(vol: Volunteer) {
+/**
+ * Returns the current task for a volunteer, if one exists. It will load the task state from the DB
+ * first.
+ *
+ * @param {Volunteer} vol The volunteer to fetch a task for.
+ * @returns {Promise<Task>} The current task for that volunteer.
+ */
+function getTaskForVolunteer(vol: Volunteer): Promise<Task> {
     return (vol.related<Task>("currentTask") as Task) // cast as I know it won't be a collection
     .fetch()
     .tap((task) => {
@@ -159,13 +166,23 @@ export function handleWebhook(req: express.Request) {
     });
 };
 
-function getAdminAndVolunteer(payload: WebhookPayloadFields) {
+/**
+ * Get the admin and/or volunteer models for the FBID of the message sender. It will add
+ * references to these models on the payload.sender.admin and payload.sender.volunteer keys.
+ * These keys will be null if they do not exist.
+ *
+ * @param {WebhookPayloadFields} payload The message payload received.
+ * @returns {Promise<WebhookPayloadFields>} The modified payload with references to the admin and
+ * volunteer.
+ */
+function getAdminAndVolunteer(payload: WebhookPayloadFields): Promise<WebhookPayloadFields> {
+    const query = {fbid: payload.sender.id};
     return Promise.join(
-        new Admin().where({fbid: payload.sender.id}).fetch(),
-        new Volunteer().where({fbid: payload.sender.id}).fetch({withRelated: ["deployment"]}),
+        new Admin().where(query).fetch(),
+        new Volunteer().where(query).fetch({withRelated: ["deployment"]}),
         (admin, vol) => {
-            if (admin) payload.sender.admin = admin;
-            if (vol) payload.sender.volunteer = vol;
+            payload.sender.admin = admin;
+            payload.sender.volunteer = vol;
             return payload;
         }
     );

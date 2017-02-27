@@ -6,3 +6,4 @@ annouce-msg.json
 typings/
 *.sqlite3
 dist/
+*.log
