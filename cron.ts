@@ -18,6 +18,7 @@ weekdays10AM.hour = [23, 0]; // 10 AM
 
 // Remind volunteers that there are more tasks available.
 export function remindVolunteersOfTasksAvailable() {
+    logger.info("running remind volunteers of tasks job", {time: moment().format(DATE_FORMAT)});
     const twelveHoursAgo = moment().subtract(12, "hours");
     const getVolunteers = Volunteer.where<Volunteer>("current_task", null)
     .where("deployment_id", DEPLOYMENT_ID)
@@ -39,7 +40,10 @@ export function remindVolunteersOfTasksAvailable() {
                 return bot.FBPlatform.sendQuickReplies(volunteer.get("fbid"), text, [quickReply]);
             }));
         }
-    }).then(() => logger.info(`Finished reminder job at ${moment().format(DATE_FORMAT)}`))
+    }).then(() => logger.info(
+        "Finished reminding volunteers of tasks", 
+        {time: moment().format(DATE_FORMAT)}
+    ));
 }
 
 scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
