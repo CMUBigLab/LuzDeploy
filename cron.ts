@@ -30,7 +30,7 @@ export function remindVolunteersOfTasksAvailable() {
 
     const getTaskCount = Task.where<Task>({
         completed: false,
-        assigned_volunteer: null,
+        volunteer_fbid: null,
         deployment_id: DEPLOYMENT_ID
     }).count();
 
