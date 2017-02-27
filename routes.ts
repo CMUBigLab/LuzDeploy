@@ -9,14 +9,14 @@ import * as handlers from "./handlers";
 import * as msgUtils from "./message-utils";
 import * as errors from "./errors";
 
-const TaskTemplate = require("./models/task-template");
-const Volunteer = require("./models/volunteer");
-const Task = require("./models/task");
-const Admin = require("./models/admin");
-const Beacon = require("./models/beacon");
-const Deployment = require("./models/deployment");
-const FingerprintPoint = require("./models/fingerprint-point");
-const FingerprintSample = require("./models/fingerprint-sample");
+import {TaskTemplate} from "./models/task-template";
+import {Volunteer} from "./models/volunteer";
+import {Task} from "./models/task";
+import {Admin} from "./models/admin";
+import {Beacon} from "./models/beacon";
+import {Deployment} from "./models/deployment";
+import {FingerprintPoint} from "./models/fingerprint-point";
+import {FingerprintSample} from "./models/fingerprint-sample";
 
 export const router = express.Router();
 
@@ -54,9 +54,9 @@ router.post("/webhook", bodyParser.urlencoded({extended: true}), function(req, r
 
 // Batch add tasks.
 router.post("/tasks", bodyParser.json(), function(req, res, next) {
-    let templates = _.uniq(_.map(req.body, "template_type"));
+    let templates = _.uniq<string>(_.map<any, string>(req.body, "template_type"));
     TaskTemplate.collection()
-    .query("where", "type", "in", templates)
+    .query({whereIn: {type: templates}})
     .fetch()
     .then(function(models) {
         return models.reduce((acc, t) => {
@@ -65,7 +65,7 @@ router.post("/tasks", bodyParser.json(), function(req, res, next) {
         }, {});
     })
     .then(function(templates) {
-        let ps = req.body.map(function(task) {
+        let ps = req.body.map((task) => {
             if (!(task.template_type in templates)) {
                 throw new errors.BadRequestError(`No template named ${task.template_type}`);
             }
@@ -84,7 +84,7 @@ router.post("/tasks", bodyParser.json(), function(req, res, next) {
         return Promise.all(ps);
     })
     .then(results => {
-        res.status(201).send(results.map(r => r.serialize()));
+        res.status(201).send(results.map((r: Task) => r.serialize()));
     })
     .catch(next);
 });
@@ -128,7 +128,7 @@ router.post("/sweep-data", bodyParser.urlencoded({extended: true}), function(req
     });
 });
 
-interface FingerprintSample {
+interface FingerprintSampleStruct {
     bid: Number;
     rssi: Number;
 }
@@ -139,7 +139,7 @@ interface Fingerprint {
         long: Number,
         floor: Number
     };
-    sample: FingerprintSample[];
+    sample: FingerprintSampleStruct[];
 }
 
 // Upload fingerprint data
@@ -179,13 +179,13 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
 });
 
 router.post("/send-message", bodyParser.json(), function(req, res, next) {
-    let fbid = req.body.fbid;
-    let text = req.body.text;
+    let fbid: number = req.body.fbid;
+    let text: string = req.body.text;
     let message = req.body.message;
-    let qrs = req.body.quick_replies;
+    let qrs: string[] = req.body.quick_replies;
     let buttons = req.body.buttons;
-    let mass = req.body.mass;
-    let deploymentId = req.body.deployment_id;
+    let mass: boolean = req.body.mass;
+    let deploymentId: number = req.body.deployment_id;
     if (qrs) {
         message = msgUtils.quickReplyMessage(text, qrs);
     } else if (buttons) {
