@@ -12,9 +12,9 @@ import { DATE_FORMAT } from "./config";
 const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on table?
 
 const weekdays10AM = new RecurrenceRule();
-weekdays10AM.dayOfWeek = [new Range(1, 5)]; // Monday through Friday
-weekdays10AM.hour = 10; // 10 AM
-weekdays10AM.minute = 0; // 0 minutes after ts9AM
+weekdays10AM.dayOfWeek = [new Range(0, 5)]; // Monday through Friday
+weekdays10AM.hour = [23, 0]; // 10 AM
+//weekdays10AM.minute = 0; // 0 minutes after ts9AM
 
 // Remind volunteers that there are more tasks available.
 export function remindVolunteersOfTasksAvailable() {
