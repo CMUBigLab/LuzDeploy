@@ -25,7 +25,7 @@ export function remindVolunteersOfTasksAvailable() {
     const getVolunteers = Volunteer.where<Volunteer>("current_task", null)
     .where("deployment_id", DEPLOYMENT_ID)
     .where("last_messaged", "<", twelveHoursAgo.format(DATE_FORMAT))
-    .where("last_responed", "<", twelveHoursAgo.format(DATE_FORMAT))
+    .where("last_response", "<", twelveHoursAgo.format(DATE_FORMAT))
     .fetchAll();
 
     const getTaskCount = Task.where<Task>({
