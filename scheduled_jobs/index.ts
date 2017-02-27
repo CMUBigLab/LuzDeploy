@@ -4,6 +4,8 @@ import * as logger from "winston";
 import { TIME_ZONE } from "../config";
 import {remindVolunteersOfTasksAvailable} from "./remind_new_tasks";
 
+moment.locale("en");
+
 const jobSchedule = [{
     name: "remind users of new tasks",
     function: remindVolunteersOfTasksAvailable,
@@ -20,11 +22,11 @@ for (let job of jobSchedule) {
     const correctTime = now.isBetween(startTime, endTime);
     const correctDay = job.weekdays.includes(now.weekday());
     if (!correctDay) {
-        logger.info(`not correct day to run job: ${job.name}`);
+        logger.info(`not correct day (${now.weekday()}) to run job: ${job.name}`);
         continue;
     }
     if (!correctTime) {
-        logger.info(`not correct day to run job: ${job.name}`);
+        logger.info(`not correct time (${now.format(timeFormat)}) to run job: ${job.name}`);
         continue;
     }
 
