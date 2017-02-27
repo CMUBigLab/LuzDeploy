@@ -12,13 +12,15 @@ import { DATE_FORMAT } from "./config";
 const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on table?
 
 const weekdays10AM = new RecurrenceRule();
-weekdays10AM.dayOfWeek = [new Range(0, 5)]; // Monday through Friday
-weekdays10AM.hour = [23, 0]; // 10 AM
-//weekdays10AM.minute = 0; // 0 minutes after ts9AM
+weekdays10AM.dayOfWeek = [new Range(1, 5)]; // Monday through Friday
+weekdays10AM.hour = 10; // 10 AM
+weekdays10AM.minute = 0; // 0 minutes after 10 AM
+
+const everyMinute = new RecurrenceRule();
 
 // Remind volunteers that there are more tasks available.
 export function remindVolunteersOfTasksAvailable() {
-    logger.info("running remind volunteers of tasks job", {time: moment().format(DATE_FORMAT)});
+    logger.info("running remind volunteers of tasks job");
     const twelveHoursAgo = moment().subtract(12, "hours");
     const getVolunteers = Volunteer.where<Volunteer>("current_task", null)
     .where("deployment_id", DEPLOYMENT_ID)
@@ -40,12 +42,10 @@ export function remindVolunteersOfTasksAvailable() {
                 return bot.FBPlatform.sendQuickReplies(volunteer.get("fbid"), text, [quickReply]);
             }));
         }
-    }).then(() => logger.info(
-        "Finished reminding volunteers of tasks", 
-        {time: moment().format(DATE_FORMAT)}
-    ));
+    }).then(() => logger.info("Finished reminding volunteers of tasks"));
 }
 
 export function setupJobs() {
-    scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
+    scheduleJob(everyMinute, remindVolunteersOfTasksAvailable);
+    //scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
 }
