@@ -16,8 +16,6 @@ weekdays10AM.dayOfWeek = [new Range(1, 5)]; // Monday through Friday
 weekdays10AM.hour = 10; // 10 AM
 weekdays10AM.minute = 0; // 0 minutes after 10 AM
 
-const everyMinute = new RecurrenceRule();
-
 // Remind volunteers that there are more tasks available.
 export function remindVolunteersOfTasksAvailable() {
     logger.info("running remind volunteers of tasks job");
@@ -46,6 +44,5 @@ export function remindVolunteersOfTasksAvailable() {
 }
 
 export function setupJobs() {
-    scheduleJob(everyMinute, remindVolunteersOfTasksAvailable);
-    //scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
+    scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
 }

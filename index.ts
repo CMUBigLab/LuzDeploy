@@ -82,5 +82,6 @@ export function startListening(port: number = (process.env.PORT || 3000), callba
 
 if (require.main === module) {
     startListening();
-    cron.setupJobs();
+    // TODO: must integrate with Heroku scheduler, probably better anyways
+    // cron.setupJobs();
 }
