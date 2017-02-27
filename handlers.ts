@@ -3,6 +3,7 @@ import * as express from "express";
 import * as Promise from "bluebird";
 import * as fb from "facebook-send-api";
 import * as FBTypes from "facebook-sendapi-types";
+import * as logger from "winston";
 
 import {bot, WebhookPayloadFields, ReplyFunc} from "./bot";
 import * as config from "./config";
@@ -40,11 +41,6 @@ const messageHandlers = {
         adminRequired: true,
         description: "start a deployment"
     },
-    "sendsurvey": {
-        handler: sendSurvey,
-        adminRequired: true,
-        description: "send survey"
-    },
     "mass": {
         handler: massMessage,
         adminRequired: true,
@@ -73,10 +69,6 @@ const postbackHandlers = {
         handler: cancelMentor,
         volRequired: true,
     },
-    "task_score": {
-        handler: taskScore,
-        volRequired: true,
-    },
     "accept_task": {
         handler: acceptTask,
         volRequired: true,
@@ -92,19 +84,12 @@ const aliases = {
     "h": "help"
 };
 
-function getVolTask(vol: Volunteer) {
-    return (vol.related<Task>("currentTask") as Task)
+function getTaskForVolunteer(vol: Volunteer) {
+    return (vol.related<Task>("currentTask") as Task) // cast as I know it won't be a collection
     .fetch()
-    .then(function(task) {
-        if (!task) {
-            return null;
-        } else {
-            if (task.get("templateType") === "fingerprint" || task.get("templateType") === "sweep_edge" || task.get("templateType") === "place_beacons" || task.get("templateType") === "replace_beacon") {
-                task.loadState();
-                return task;
-            } else {
-                throw new Error("task fsm not implemented");
-            }
+    .tap((task) => {
+        if (task && taskControllers.hasOwnProperty(task.get("templateType"))) {
+            task.loadState();
         }
     });
 }
@@ -143,7 +128,7 @@ export function dispatchMessage(payload: WebhookPayloadFields, reply: ReplyFunc)
                 commandHandler.handler(payload, reply, values.slice(1));
             }
         } else if (payload.sender.volunteer && payload.sender.volunteer.get("currentTask")) {
-            getVolTask(payload.sender.volunteer)
+            getTaskForVolunteer(payload.sender.volunteer)
             .then(function(task) {
                 TaskFsm.userMessage(task, command);
             });
@@ -160,16 +145,16 @@ export function handleWebhook(req: express.Request) {
     .fetch({withRelated: ["deployment"]})
     .then(vol => {
         if (vol) {
-            return getVolTask(vol);
+            return getTaskForVolunteer(vol);
         } else {
             throw new Error(`Could not find volunteer with id ${req.body.wid}.`);
         }
     })
-    .then(function(task) {
+    .then((task) => {
         if (task) {
             return TaskFsm.webhook(task, req.body.message);
         } else {
-            throw new Error("Could not find active task.");
+            throw new Error(`handleWebhook: could not find active task for vol ${req.body.wid}`);
         }
     });
 };
@@ -263,40 +248,6 @@ function massMessage(payload, reply, args) {
             });
             reply({text: "sent"});
         });
-    });
-}
-
-
-function sendSurvey(payload, reply, args) {
-    return new Deployment({id: args[0]}).fetch()
-    .then(deployment => {
-        return deployment.volunteers().fetch()
-        .then(volunteers => {
-            volunteers.forEach(v => {
-                let buttons = [{
-                    type: "web_url",
-                    url: `https://docs.google.com/a/andrew.cmu.edu/forms/d/e/1FAIpQLSehyEKkp7nZFS01hbIWMVwAgEWo0sRjs8_NkJ46pku9CZMMIg/viewform?entry.403963864=${v.get("fbid")}`,
-                    title: "Open Form"
-                }];
-                let text = `Hi ${v.get("firstName")}! We need to check up on some older beacons. Do you have time in the next few days to help us for a few minutes? If you do, and have an iOS device, please let us know using this form!`;
-                return v.sendMessage(msgUtil.buttonMessage(text, buttons));
-            });
-            reply({text: "sent"});
-        });
-    });
-}
-
-function taskScore(payload, reply, args) {
-    const vol = payload.sender.volunteer;
-    return vol.currentTask().fetch().then(task => {
-        if (!task || !task.get("startTime") || task.get("completed")) {
-            return reply({text: "You don't seem to have an active task. Did you forget to 'start' it?"});
-        } else {
-            return task.save({score: args.score}, {patch: true})
-            .then(function() {
-                reply({text: "Great, now just type 'done' to complete the task!"});
-            });
-        }
     });
 }
 
@@ -435,8 +386,6 @@ export function sendDeploymentMessage(fbid) {
   });
 }
 
-module.exports.sendDeploymentMessage = sendDeploymentMessage;
-
 function assignTask(payload, reply, args) {
     new Volunteer({fbid: args.volId}).fetch()
     .then(vol => {
@@ -507,7 +456,7 @@ function getAndAssignVolTask(vol) {
 function askMessage(payload, reply) {
     // Get a task in the pool, and ask if he wants to do it.
     const vol = payload.sender.volunteer;
-    return getVolTask(vol).then(function(task) {
+    return getTaskForVolunteer(vol).then(function(task) {
         if (task) {
             reply({text: "You already have a task! Finish that first."});
             return;
@@ -519,8 +468,7 @@ function askMessage(payload, reply) {
 
 
 function acceptTask(payload, reply, args) {
-    const vol = payload.sender.volunteer;
-    return getVolTask(vol)
+    return getTaskForVolunteer(payload.sender.volunteer)
     .then(task => {
         if (!task) {
             reply({text: "You don't have a task."});
