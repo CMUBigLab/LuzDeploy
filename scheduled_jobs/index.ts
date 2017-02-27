@@ -15,10 +15,10 @@ const jobSchedule = [{
 }];
 
 const now = moment().tz(TIME_ZONE);
-const timeFormat = "hh:mm";
+const timeFormat = "HH:mm";
 for (let job of jobSchedule) {
-    const startTime = moment(job.startTime, timeFormat);
-    const endTime = moment(job.endTime, timeFormat);
+    const startTime = moment.tz(job.startTime, timeFormat, TIME_ZONE);
+    const endTime = moment.tz(job.endTime, timeFormat, TIME_ZONE);
     const correctTime = now.isBetween(startTime, endTime);
     const correctDay = job.weekdays.includes(now.weekday());
     if (!correctDay) {
