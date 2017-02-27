@@ -46,4 +46,6 @@ export function remindVolunteersOfTasksAvailable() {
     ));
 }
 
-scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
+export function setupJobs() {
+    scheduleJob(weekdays10AM, remindVolunteersOfTasksAvailable);
+}
