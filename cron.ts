@@ -30,8 +30,8 @@ export function remindVolunteersOfTasksAvailable() {
 
     const getTaskCount = Task.where<Task>({
         completed: false,
-        assignedVolunteer: null,
-        deploymentId: DEPLOYMENT_ID
+        assigned_volunteer: null,
+        deployment_id: DEPLOYMENT_ID
     }).count();
 
     Promise.join(getVolunteers, getTaskCount, (volunteers, taskCount) => {
