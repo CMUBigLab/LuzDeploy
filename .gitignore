@@ -4,3 +4,4 @@ node_modules/
 *~
 annouce-msg.json
 typings/
+*.sqlite3
