@@ -19,9 +19,16 @@ for (let job of jobSchedule) {
     const endTime = moment(job.endTime, timeFormat);
     const correctTime = now.isBetween(startTime, endTime);
     const correctDay = job.weekdays.includes(now.weekday());
-    if (correctDay && correctTime) {
-        logger.info(`running scheduled job: ${job.name}`);
-        job.function()
-        .then(() => logger.info(`Finished job: ${job.name}`));
+    if (!correctDay) {
+        logger.info(`not correct day to run job: ${job.name}`);
+        continue;
     }
+    if (!correctTime) {
+        logger.info(`not correct day to run job: ${job.name}`);
+        continue;
+    }
+
+    logger.info(`running scheduled job: ${job.name}`);
+    job.function()
+    .then(() => logger.info(`Finished job: ${job.name}`));
 }
