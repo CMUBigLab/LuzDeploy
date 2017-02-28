@@ -7,7 +7,7 @@ import {Volunteer} from "../models/volunteer";
 import {Task} from "../models/task";
 import { Deployment } from "../models/deployment";
 
-const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on table?
+const DEPLOYMENT_ID = 3; // TODO: should not hardcode this, should be set on table?
 
 // Remind volunteers that there are more tasks available.
 export function remindVolunteersOfTasksAvailable(): Promise<any> {
