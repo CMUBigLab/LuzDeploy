@@ -10,8 +10,8 @@ const jobSchedule = [{
     name: "remind users of new tasks",
     function: remindVolunteersOfTasksAvailable,
     weekdays: [1, 2, 3, 4, 5],
-    startTime: "12:30",
-    endTime: "12:35",
+    startTime: "12:50",
+    endTime: "12:55",
 }];
 
 const now = moment().tz(TIME_ZONE);
