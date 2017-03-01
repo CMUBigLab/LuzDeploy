@@ -377,7 +377,7 @@ function onboardVolunteer(payload: WebhookPayloadFields, reply: ReplyFunc) {
 }
 
 export function sendDeploymentMessage(fbid) {
-  Deployment.collection().query({"active": true}).fetch()
+  Deployment.where({"active": true}).fetch()
   .then(function(deployments) {
     if (deployments.length === 0) {
         const message = {
