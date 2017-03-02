@@ -1,5 +1,4 @@
 import * as handlers from "./handlers";
-import {Volunteer} from "./models/volunteer";
 import * as FBTypes from "facebook-sendapi-types";
 import fb from "facebook-send-api";
 import * as moment from "moment";
@@ -7,13 +6,15 @@ import * as rpErrors from "request-promise/errors";
 import * as logger from "winston";
 
 import {DATE_FORMAT} from "./config";
+import {Admin} from "./models/admin";
+import {Volunteer} from "./models/volunteer";
 
 export interface WebhookPayloadFields extends FBTypes.WebhookPayloadFields {
     sender: {
         id: string;
         profile?: FBTypes.FacebookUser;
-        admin?: any,
-        volunteer?: any
+        admin?: Admin,
+        volunteer?: Volunteer
     };
 }
 
