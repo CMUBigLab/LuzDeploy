@@ -73,6 +73,10 @@ const postbackHandlers = {
         handler: acceptTask,
         volRequired: true,
     },
+    "reject_task": {
+        handler: rejectTask,
+        volRequired: true,
+    }
 };
 
 const aliases = {
@@ -493,5 +497,18 @@ function acceptTask(payload, reply, args) {
         }
         let controller = taskControllers[task.get("type")];
         return controller.start(task);
+    });
+}
+
+
+function rejectTask(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
+    return getTaskForVolunteer(payload.sender.volunteer)
+    .then(task => {
+        if (!task) {
+            reply({text: "You don't have a task."});
+            return;
+        }
+        let controller = taskControllers[task.type];
+        return controller.reject(task);
     });
 }

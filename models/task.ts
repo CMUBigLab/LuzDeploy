@@ -28,9 +28,12 @@ export class Task extends bookshelf.Model<Task> {
   template() {
     return this.belongsTo(TaskTemplate, "template_type");
   }
-  //allowedToTake(vol) {
-  //  return this.related("differentVolunteerSet").where({volunteerFbid: vol.get("fbid")}).length === 0
-  //}
+
+  // columns
+  get type(): string {
+    return this.get("templateType");
+  }
+
   start() {
       return this.save({startTime: new Date()}, {patch: true});
       // TODO: extract following code into specific task controller
