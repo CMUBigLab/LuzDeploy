@@ -121,7 +121,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     let text = "Ok, I'll find you a new spot to put the beacon.";
                     bot.sendMessage(task.get("volunteerFbid"), {text: text});
                     task.context.toReturn.push(-1);
-                    task.context.slots.push(slots[0]);
+                    task.context.slots.push(slots[0].get("id"));
                     return slots[0].save({in_progress: true});
                 }).then(function(slot) {
                     self.transition(task, "go");
