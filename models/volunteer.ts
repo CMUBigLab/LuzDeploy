@@ -23,31 +23,14 @@ export class Volunteer extends bookshelf.Model<Volunteer> {
         super(params);
     }
 
-    assignTask(task) {
-        return Promise.all([
+    // columns
+    get fbid(): string { return this.get("fbid"); }
+
+    assignTask(task: Task) {
+        return Promise.join(
             this.save({currentTask: task.id}, {patch: true}),
-            task.save({volunteer_fbid: this.id}, {patch: true})
-        ]);
-                    // if (deployment.isCasual) {
-                    // 	let buttons = [{
-                    // 		type: "postback",
-                    // 		title: "Yes, accept task.",
-                    // 		payload: JSON.stringify({
-                    // 			type: "accept_task",
-                    // 			args: {}
-                    // 		})
-                    // 	},{
-                    // 		type: "postback",
-                    // 		title: "I can't do this now.",
-                    // 		payload: JSON.stringify({
-                    // 			type: "reject_task",
-                    // 			args: {}
-                    // 		})
-                    // 	}]
-                    // 	let text = `This task should take ${task.estimatedTimeMin} minutes. Do you have time to do it now?`
-                    // 	setTimeout(msgFn, (currWait+2)*1000, msgUtil.buttonMessage(text, buttons))
-                    // } else {
-                    // 	setTimeout(msgFn, (currWait+1)*1000, {text: `This task should take ${task.estimatedTimeMin} minutes. If you don't want to do the task, reply with 'reject'.`})
+            task.save({volunteer_fbid: this.id}, {patch: true}),
+            (vol, task) => { return vol; });
     }
     getNewTask() {
         return this.deployment().fetch()

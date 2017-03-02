@@ -99,7 +99,7 @@ function getTaskForVolunteer(vol: Volunteer): Promise<Task> {
     return (vol.related<Task>("currentTask") as Task) // cast as I know it won't be a collection
     .fetch()
     .tap((task) => {
-        if (task && taskControllers.hasOwnProperty(task.get("templateType"))) {
+        if (task && taskControllers.hasOwnProperty(task.type)) {
             task.loadState();
         }
     });
@@ -110,10 +110,11 @@ export function dispatchMessage(payload: WebhookPayloadFields, reply: ReplyFunc)
     .then((payload) => {
         if (payload.sender.volunteer) {
             const vol = payload.sender.volunteer;
-            if (vol.get("deploymentId") === null) {
+            const deployment = vol.related<Deployment>("deployment") as (Deployment | null);
+            if (deployment === null) {
                 sendDeploymentMessage(payload.sender.id);
                 return;
-            } else if (!payload.sender.admin && !vol.related("deployment").get("active")) {
+            } else if (!payload.sender.admin && !deployment.get("active")) {
                 return reply({text: "This deployment is paused! We will let you know when we start back up."});
             }
         } else {
@@ -358,7 +359,7 @@ function cancelMentor(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
                         vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`});
                         return vol.getNewTask()
                         .then(function(task: Task) {
-                            let controller = taskControllers[task.get("type")];
+                            let controller = taskControllers[task.type];
                             return controller.start(task);
                         });
                     });
@@ -495,7 +496,7 @@ function acceptTask(payload, reply, args) {
             reply({text: "You don't have a task."});
             return;
         }
-        let controller = taskControllers[task.get("type")];
+        let controller = taskControllers[task.type];
         return controller.start(task);
     });
 }

@@ -7,6 +7,8 @@ import {Volunteer} from "../models/volunteer";
 import {Task} from "../models/task";
 import { Deployment } from "../models/deployment";
 
+import { taskControllers } from "../controllers/task";
+
 const DEPLOYMENT_ID = 3; // TODO: should not hardcode this, should be set on table?
 
 // Remind volunteers that there are more tasks available.
@@ -17,21 +19,20 @@ export function remindVolunteersOfTasksAvailable(): Promise<any> {
     .where("last_messaged", "<", twelveHoursAgo.format(DATE_FORMAT))
     .where("last_response", "<", twelveHoursAgo.format(DATE_FORMAT))
     .fetchAll();
-
-    const getTaskCount = Task.where<Task>({
-        completed: false,
-        volunteer_fbid: null,
-        deployment_id: DEPLOYMENT_ID
-    }).count();
-
-    return Promise.join(getVolunteers, getTaskCount, (volunteers, taskCount) => {
-        if (taskCount > 0) {
-            return Promise.all(volunteers.map((volunteer) => {
-                const text = "Good morning! I have some tasks to do today. If you have time, please 'ask' me for one!";
-                const quickReply = bot.FBPlatform.createQuickReply("ask", "ask");
-                return bot.FBPlatform.sendQuickReplies(volunteer.get("fbid"), text, [quickReply]);
-            }));
-        }
+    
+    const getTaskPool = new Deployment({id: DEPLOYMENT_ID}).fetch()
+    .then((deployment) => deployment.getTaskPool());
+    
+    return Promise.join(getVolunteers, getTaskPool, (volunteers, tasks) => {
+        return Promise.mapSeries(volunteers.map<Volunteer>(), (volunteer) => {
+            if (tasks.length > 0) {
+                const task = tasks.pop();
+                const controller = taskControllers[task.type];
+                return controller.assign(task, volunteer)
+                .then(() => task.getProposalMessage(volunteer))
+                .then(message => message.send());
+            }
+        });
     });
 }
 

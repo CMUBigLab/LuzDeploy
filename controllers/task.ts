@@ -37,6 +37,7 @@ export const TaskFsm = new machina.BehavioralFsm({
         },
         assigned: {
             start: "started",
+            reject: rejectTask,
             "msg:reject": rejectTask
         },
         started: {
@@ -69,6 +70,9 @@ export const TaskFsm = new machina.BehavioralFsm({
     start: function(task) {
         return task.start()
         .then(() => this.handle(task, "start"));
+    },
+    reject: function(task) {
+        return this.handle(task, "reject");
     },
     userMessage: function(task, message) {
         let n = parseInt(message, 10);

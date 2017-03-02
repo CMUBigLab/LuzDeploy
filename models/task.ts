@@ -36,49 +36,15 @@ export class Task extends bookshelf.Model<Task> {
 
   start() {
       return this.save({startTime: new Date()}, {patch: true});
-      // TODO: extract following code into specific task controller
-/*      .tap(task => {
-        if (task.get('templateType') == 'mentor') {
-          bot.sendMessage(
-            task.get('instructionParams').mentee.fbid,
-            {text: `You asked for help, so ${task.assignedVolunteer().name} is coming to help you at your task location.`}
-          )
-        }
-      })*/
   }
   finish() {
     return this.save({completed: true, completedTime: new Date()}, {patch: true});
-// TODO: extract into task controller
-/*        const webhook = this.get('completedWebhook')
-        if (webhook) {
-          return request.post({url: webhook, data: task.serialize({shallow: true})})
-          .then((parsedBody) => {
-            return Promise.resolve(task.set('score', parsedBody.score))
-          }).catch((err) => {
-            console.error(err)
-          })
-        }*/
-  }
-  renderInstructions(otherParams) {
-    return this.load(["template"]).then((task) => {
-      let params = this.get("instructionParams");
-      params = _.assign(params, otherParams);
-      return (task.related("template") as TaskTemplate).renderInstructions(params);
-    });
   }
   hasOutstandingDependancies() {
       return this.dependencies()
       .query({"completed": false})
       .fetch()
       .then(d => (d.length > 0));
-  }
-  getPlaceTask() {
-    return new Task({
-      deploymentId: this.get("deploymentId"),
-      templateType: "place_beacon",
-    }).query((qb) => {
-      qb.where("instruction_params", "=", this.get("instructionParams"));
-    }).fetch();
   }
   saveState() {
     let taskState = this.__machina__;
@@ -98,27 +64,28 @@ export class Task extends bookshelf.Model<Task> {
     }
     this.__machina__ = state;
   }
-    estimatedTimeMin() {
+  estimatedTimeMin() {
       const int = _.defaults(this.get("estimatedTime"), {hours: 0, minutes: 0, seconds: 0});
       return int.hours * 60 + int.minutes + int.seconds / 60;
     }
-    estimatedTimeSec() {
+  estimatedTimeSec() {
       return this.estimatedTimeMin() * 60;
     }
-    timeTakenSec() {
+  timeTakenSec() {
       return (this.get("completedTime").getTime() - this.get("startTime").getTime()) / 1000;
     }
-    timeScore() {
+  timeScore() {
       return (this.estimatedTimeSec() - this.timeTakenSec()) / this.estimatedTimeSec();
     }
-}
-
-export class DifferentVolunteerTasks extends bookshelf.Model<DifferentVolunteerTasks> {
-  get tableName() { return "different_volunteer_tasks"; }
-  task1() {
-    return this.belongsTo(Task, "task1_id");
-  }
-  task2() {
-    return this.belongsTo(Task, "task2_id");
+  getProposalMessage(vol: Volunteer) {
+    return this.template().fetch()
+    .then((template: TaskTemplate) => {
+      return bot.FBPlatform.createButtonMessage(vol.get("fbid"))
+      .text(`Hi ${vol.get("firstName")}, could you help me with this today?
+Details: ${template.get("description")}
+Estimated Time: ${template.get("estimatedTime")}`)
+      .postbackButton("Accept Task", JSON.stringify({type: "accept_task", args: null}))
+      .postbackButton("Reject Task", JSON.stringify({type: "reject_task", args: null}));
+    });
   }
 }
