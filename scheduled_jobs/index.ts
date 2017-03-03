@@ -32,5 +32,6 @@ for (let job of jobSchedule) {
 
     logger.info(`running scheduled job: ${job.name}`);
     job.function()
-    .then(() => logger.info(`Finished job: ${job.name}`));
+    .then(() => logger.info(`Finished job: ${job.name}`))
+    .catch((err) => logger.error(err));
 }

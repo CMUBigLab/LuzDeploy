@@ -19,10 +19,10 @@ export function remindVolunteersOfTasksAvailable(): Promise<any> {
     .where("last_messaged", "<", twelveHoursAgo.format(DATE_FORMAT))
     .where("last_response", "<", twelveHoursAgo.format(DATE_FORMAT))
     .fetchAll();
-    
+
     const getTaskPool = new Deployment({id: DEPLOYMENT_ID}).fetch()
     .then((deployment) => deployment.getTaskPool());
-    
+
     return Promise.join(getVolunteers, getTaskPool, (volunteers, tasks) => {
         return Promise.mapSeries(volunteers.map<Volunteer>(), (volunteer) => {
             if (tasks.length > 0) {
