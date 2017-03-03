@@ -1,9 +1,19 @@
 import * as _ from "lodash";
 import * as Promise from "bluebird";
 import * as dust from "dustjs-linkedin";
+import * as pg from "pg";
 
 import bookshelf = require("../bookshelf");
 import {Deployment} from "./deployment";
+
+export interface PGInterval {
+  years?: number;
+  months?: number;
+  days?: number;
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+}
 
 export class TaskTemplate extends bookshelf.Model<TaskTemplate> {
   get tableName() { return "task_templates"; }
@@ -12,6 +22,15 @@ export class TaskTemplate extends bookshelf.Model<TaskTemplate> {
   deployment() {
     return this.belongsTo(Deployment);
   }
+
+  // columns
+  get description(): string { return this.get("description"); }
+  get estimatedTime(): PGInterval { return this.get("description"); }
+
+  get estimatedTimeMin(): number {
+      const int = _.defaults(this.estimatedTime, {hours: 0, minutes: 0, seconds: 0});
+      return int.hours * 60 + int.minutes + int.seconds / 60;
+    }
 
   renderInstructions(context) {
     const promises = this.get("instructions").map((i) => {

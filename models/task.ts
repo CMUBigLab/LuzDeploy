@@ -80,10 +80,10 @@ export class Task extends bookshelf.Model<Task> {
   getProposalMessage(vol: Volunteer) {
     return this.template().fetch()
     .then((template: TaskTemplate) => {
-      return bot.FBPlatform.createButtonMessage(vol.get("fbid"))
-      .text(`Hi ${vol.get("firstName")}, could you help me with this today?
-Details: ${template.get("description")}
-Estimated Time: ${template.get("estimatedTime")}`)
+      return bot.FBPlatform.createButtonMessage(vol.fbid)
+      .text(`Hi ${vol.firstName}, could you help me with this today?
+Details: ${template.description}
+Estimated Time: ${template.estimatedTimeMin} minutes`)
       .postbackButton("Accept Task", JSON.stringify({type: "accept_task", args: null}))
       .postbackButton("Reject Task", JSON.stringify({type: "reject_task", args: null}));
     });
