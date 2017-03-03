@@ -29,7 +29,7 @@ export function remindVolunteersOfTasksAvailable(): Promise<any> {
             return Promise.all(volunteers.map((volunteer) => {
                 const text = "Good morning! I have some tasks to do today. If you have time, please 'ask' me for one!";
                 const quickReply = bot.FBPlatform.createQuickReply("ask", "ask");
-                return bot.FBPlatform.sendQuickReplies(volunteer.get("fbid"), text, [quickReply]);
+                return bot.FBPlatform.sendQuickReplies(volunteer.get("fbid"), text, [quickReply])
             }));
         }
     });
