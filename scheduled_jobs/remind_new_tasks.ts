@@ -7,7 +7,7 @@ import {Volunteer} from "../models/volunteer";
 import {Task} from "../models/task";
 import { Deployment } from "../models/deployment";
 
-import { taskControllers } from "../controllers/task";
+import { TaskFsm } from "../controllers/task";
 
 const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on table?
 
@@ -27,8 +27,7 @@ export function remindVolunteersOfTasksAvailable(): Promise<any> {
         return Promise.mapSeries(volunteers.map<Volunteer>(), (volunteer) => {
             if (tasks.length > 0) {
                 const task = tasks.pop();
-                const controller = taskControllers[task.type];
-                return controller.assign(task, volunteer)
+                return TaskFsm.assign(task, volunteer)
                 .then(() => task.getProposalMessage(volunteer))
                 .then(message => message.send());
             }
