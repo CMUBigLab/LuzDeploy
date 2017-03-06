@@ -51,7 +51,7 @@ class Bot {
             logger.info(`ignoring message from ${payload.sender.id}`);
             return;
         }
-        this.getProfile(payload.message.is_echo ? payload.recipient.id : payload.sender.id)
+        this.getProfile((payload.message && payload.message.is_echo) ? payload.recipient.id : payload.sender.id)
         .then((profile): any => {
             (payload as WebhookPayloadFields).sender.profile = profile;
             if (payload.message && payload.message.is_echo) {
