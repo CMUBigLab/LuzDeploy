@@ -33,7 +33,7 @@ router.post("/consent", bodyParser.urlencoded({extended: true}), function(req, r
         vol.firstName = profile.first_name;
         vol.lastName = profile.last_name;
         return new Volunteer().save(vol).then(() => {
-            res.send("<h1>Thanks! Please press the cancel button to return to the bot chat.</h1>");
+            res.send("<h1>Thanks! If on mobile, you may press the cancel button to return to the bot chat. Otherwise, close this window.</h1>");
             handlers.sendDeploymentMessage(req.body.fbid);
         });
     }).catch(next);
