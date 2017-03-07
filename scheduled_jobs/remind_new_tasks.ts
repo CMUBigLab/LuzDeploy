@@ -15,7 +15,7 @@ const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on tab
 export function remindVolunteersOfTasksAvailable(): Promise<any> {
     const twelveHoursAgo = moment().subtract(12, "hours");
     const getVolunteers = Volunteer.collection().query((qb) => {
-        qb.whereNotNull("current_task")
+        qb.whereNull("current_task")
         .where("deployment_id", DEPLOYMENT_ID)
         .where((qb) => {
             qb.where("last_response", "<", twelveHoursAgo.format(DATE_FORMAT))
