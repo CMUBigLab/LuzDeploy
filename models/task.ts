@@ -82,7 +82,7 @@ export class Task extends bookshelf.Model<Task> {
     .then((template: TaskTemplate) => {
       return bot.FBPlatform.createButtonMessage(vol.fbid)
       .text(`Hi ${vol.firstName}, could you help me with this today?
-Title: ${template.title}
+Task: ${template.title}
 Details: ${template.description}
 Estimated Time: ${template.estimatedTimeMin} minutes`)
       .postbackButton("Accept Task", JSON.stringify({type: "accept_task", args: null}))

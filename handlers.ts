@@ -496,8 +496,7 @@ function acceptTask(payload, reply, args) {
             reply({text: "You don't have a task."});
             return;
         }
-        let controller = taskControllers[task.type];
-        return controller.start(task);
+        return TaskFsm.start(task);
     });
 }
 
@@ -509,7 +508,6 @@ function rejectTask(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
             reply({text: "You don't have a task."});
             return;
         }
-        let controller = taskControllers[task.type];
-        return controller.reject(task);
+        return TaskFsm.reject(task);
     });
 }
