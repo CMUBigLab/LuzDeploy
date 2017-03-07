@@ -13,8 +13,8 @@ const jobSchedule = [{
     name: "remind users of new tasks",
     function: remindVolunteersOfTasksAvailable,
     weekdays: [1, 2, 3, 4, 5],
-    startTime: "14:09",
-    endTime: "14:15",
+    startTime: "12:29",
+    endTime: "12:35",
 }];
 
 router.post("/remind", (req, res, next) => {
