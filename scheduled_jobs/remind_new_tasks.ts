@@ -14,11 +14,17 @@ const DEPLOYMENT_ID = 2; // TODO: should not hardcode this, should be set on tab
 // Remind volunteers that there are more tasks available.
 export function remindVolunteersOfTasksAvailable(): Promise<any> {
     const twelveHoursAgo = moment().subtract(12, "hours");
-    const getVolunteers = Volunteer.where<Volunteer>("current_task", null)
-    .where("deployment_id", DEPLOYMENT_ID)
-    .where("last_messaged", "<", twelveHoursAgo.format(DATE_FORMAT))
-    .where("last_response", "<", twelveHoursAgo.format(DATE_FORMAT))
-    .fetchAll();
+    const getVolunteers = Volunteer.collection().query((qb) => {
+        qb.whereNotNull("current_task")
+        .where("deployment_id", DEPLOYMENT_ID)
+        .where((qb) => {
+            qb.where("last_response", "<", twelveHoursAgo.format(DATE_FORMAT))
+            .orWhereNull("last_response");
+        }).where((qb) => {
+            qb.where("last_messaged", "<", twelveHoursAgo.format(DATE_FORMAT))
+            .orWhereNull("last_messaged");
+        })
+    }).fetch();
 
     const getTaskPool = new Deployment({id: DEPLOYMENT_ID}).fetch()
     .then((deployment) => deployment.getTaskPool());
