@@ -29,8 +29,9 @@ export class TaskTemplate extends bookshelf.Model<TaskTemplate> {
   get estimatedTime(): PGInterval { return this.get("estimated_time"); }
 
   get estimatedTimeMin(): number {
-      const int = _.defaults(this.estimatedTime, {hours: 0, minutes: 0, seconds: 0});
-      return int.hours * 60 + int.minutes + int.seconds / 60;
+    const int = _.defaults(this.estimatedTime, {hours: 0, minutes: 0, seconds: 0});
+    console.log(this.estimatedTime, int, int.hours * 60 + int.minutes + int.seconds / 60);
+    return int.hours * 60 + int.minutes + int.seconds / 60;
     }
 
   renderInstructions(context) {
