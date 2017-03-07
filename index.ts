@@ -14,6 +14,7 @@ import * as routes from "./routes";
 import * as handlers from "./handlers";
 import {Admin} from "./models/admin";
 import {Volunteer} from "./models/volunteer";
+import {router as jobRoutes} from "./scheduled_jobs";
 
 const app = express();
 
@@ -54,6 +55,7 @@ process.on("unhandledRejection", function (error: Error, promise: Promise<any>) 
 
 app.use(express.static(path.join(process.env.PWD, "public")));
 app.use(routes.router);
+app.use(jobRoutes);
 app.get("/fb-webhook", (req: express.Request, res: express.Response) => {
 
     if (req.query["hub.verify_token"] === process.env.VERIFY_TOKEN) {

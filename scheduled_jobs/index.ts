@@ -4,6 +4,9 @@ import * as logger from "winston";
 import { TIME_ZONE } from "../config";
 import {remindVolunteersOfTasksAvailable} from "./remind_new_tasks";
 
+import * as express from "express";
+export const router = express.Router();
+
 moment.locale("en");
 
 const jobSchedule = [{
@@ -13,6 +16,16 @@ const jobSchedule = [{
     startTime: "14:09",
     endTime: "14:15",
 }];
+
+router.post("remind", (req, res, next) => {
+    remindVolunteersOfTasksAvailable()
+    .then(() => logger.info(`Finished running reminder job`))
+    .then(() => res.send("OK"))
+    .catch((err) => {
+        logger.error(err);
+        res.sendStatus(500);
+    });
+});
 
 const now = moment().tz(TIME_ZONE);
 const timeFormat = "HH:mm";
