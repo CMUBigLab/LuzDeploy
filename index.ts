@@ -55,7 +55,7 @@ process.on("unhandledRejection", function (error: Error, promise: Promise<any>) 
 
 app.use(express.static(path.join(process.env.PWD, "public")));
 app.use(routes.router);
-app.use(jobRoutes);
+app.use("jobs", jobRoutes);
 app.get("/fb-webhook", (req: express.Request, res: express.Response) => {
 
     if (req.query["hub.verify_token"] === process.env.VERIFY_TOKEN) {
