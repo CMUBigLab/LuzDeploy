@@ -62,6 +62,8 @@ class Bot {
                     payload.sender.id,
                     {text: "Sorry, I can only handle text messages right now"}
                 );
+            } else if (payload.postback) {
+                return this.handlePostback(payload);
             } else {
                 return this.handleMessage(payload);
             }
