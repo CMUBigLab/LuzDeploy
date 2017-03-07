@@ -45,7 +45,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                         "messenger_extensions": true,
                     }
                 ] as Array<FBTypes.MessengerButton>;
-                 bot.FBPlatform.sendButtonMessage(task.get("volunteer_fbid"), text, buttons);
+                 bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons);
             },
             "msg:done": function(task) {
                 this.handle(task, "complete");
