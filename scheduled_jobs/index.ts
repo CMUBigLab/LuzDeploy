@@ -17,7 +17,7 @@ const jobSchedule = [{
     endTime: "14:15",
 }];
 
-router.post("remind", (req, res, next) => {
+router.post("/remind", (req, res, next) => {
     remindVolunteersOfTasksAvailable()
     .then(() => logger.info(`Finished running reminder job`))
     .then(() => res.send("OK"))
