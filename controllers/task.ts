@@ -88,6 +88,7 @@ export const TaskFsm = new machina.BehavioralFsm({
 });
 
 TaskFsm.on("transitioned", function(event) {
+    console.log("transitioned", event);
     event.client.saveState();
 });
 
