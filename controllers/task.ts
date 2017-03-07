@@ -33,9 +33,11 @@ export const TaskFsm = new machina.BehavioralFsm({
     initialState: "unassigned",
     states: {
         unassigned: {
+            _onEnter: () => {},
             assign: "assigned",
         },
         assigned: {
+            _onEnter: () => {},
             start: "started",
             reject: rejectTask,
             "msg:reject": rejectTask
@@ -87,12 +89,7 @@ export const TaskFsm = new machina.BehavioralFsm({
     }
 });
 
-TaskFsm.on("transition", function(event) {
-    console.log("transition", event);
-});
-
 TaskFsm.on("transitioned", function(event) {
-    console.log("transitioned", event);
     event.client.saveState();
 });
 
