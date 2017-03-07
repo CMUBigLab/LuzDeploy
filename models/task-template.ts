@@ -26,7 +26,7 @@ export class TaskTemplate extends bookshelf.Model<TaskTemplate> {
   // columns
   get description(): string { return this.get("description"); }
   get title(): string { return this.get("title"); }
-  get estimatedTime(): PGInterval { return this.get("estimated_time"); }
+  get estimatedTime(): PGInterval { return this.get("estimatedTime"); }
 
   get estimatedTimeMin(): number {
     const int = _.defaults(this.estimatedTime, {hours: 0, minutes: 0, seconds: 0});
