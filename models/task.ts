@@ -85,7 +85,7 @@ export class Task extends bookshelf.Model<Task> {
 Task: ${template.title}
 Details: ${template.description}
 Estimated Time: ${template.estimatedTimeMin} minutes`)
-      .postbackButton("Accept Task", JSON.stringify({type: "accept_task", args: null}))
+      .postbackButton("Start Task", JSON.stringify({type: "start_task", args: null}))
       .postbackButton("Reject Task", JSON.stringify({type: "reject_task", args: null}));
     });
   }

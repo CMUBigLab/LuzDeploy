@@ -69,8 +69,8 @@ const postbackHandlers = {
         handler: cancelMentor,
         volRequired: true,
     },
-    "accept_task": {
-        handler: acceptTask,
+    "start_task": {
+        handler: startTask,
         volRequired: true,
     },
     "reject_task": {
@@ -489,7 +489,7 @@ function askMessage(payload, reply) {
 }
 
 
-function acceptTask(payload, reply, args) {
+function startTask(payload, reply, args) {
     return getTaskForVolunteer(payload.sender.volunteer)
     .then(task => {
         if (!task) {
