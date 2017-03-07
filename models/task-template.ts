@@ -30,7 +30,7 @@ export class TaskTemplate extends bookshelf.Model<TaskTemplate> {
 
   get estimatedTimeMin(): number {
     const int = _.defaults(this.estimatedTime, {hours: 0, minutes: 0, seconds: 0});
-    console.log(this.estimatedTime, int, int.hours * 60 + int.minutes + int.seconds / 60);
+    console.log(this, this.estimatedTime, int, int.hours * 60 + int.minutes + int.seconds / 60);
     return int.hours * 60 + int.minutes + int.seconds / 60;
     }
 
