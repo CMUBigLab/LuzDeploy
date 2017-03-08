@@ -2,6 +2,7 @@ import * as express from "express";
 import * as _ from "lodash";
 import * as bodyParser from "body-parser";
 import * as Promise from "bluebird";
+import * as logger from "winston";
 
 import bookshelf = require("./bookshelf");
 import {bot} from "./bot";
@@ -208,4 +209,46 @@ router.post("/send-message", bodyParser.json(), function(req, res, next) {
         bot.sendMessage(fbid, message)
         .then(() => res.sendStatus(200));
     }
+});
+
+interface LeaderQueryResultRow {
+    volunteer_fbid: number;
+    completed_tasks: string;
+}
+
+interface LeaderboardRow extends LeaderQueryResultRow {
+    name: string;
+    profilePicURL: string;
+}
+
+router.get("/leaders", function(req, res, next) {
+    const limit = req.query.limit || 10;
+    const deployment = req.query.deployment || 3;
+
+    const qb = Task.collection().query();
+    qb.select("volunteer_fbid")
+    .count("* as completed_tasks")
+    .where("completed", true)
+    .where("deployment_id", deployment)
+    .whereNotNull("volunteer_fbid")
+    .groupBy("volunteer_fbid")
+    .orderBy("completed_tasks", "DESC")
+    .limit(limit);
+
+    qb.then((rows) => {
+        return Promise.map<LeaderQueryResultRow, LeaderboardRow>(rows, (row) => {
+            return bot.FBPlatform.getUserProfile(String(row.volunteer_fbid))
+            .then((profile) => {
+                const result = row as LeaderboardRow;
+                result.profilePicURL = profile.profile_pic;
+                result.name = `${profile.first_name} ${profile.last_name}`;
+                return result;
+            });
+        }).then((results) => {
+            res.send(results);
+        }).catch((err) => {
+            logger.error(err);
+            res.sendStatus(500);
+        });
+    });
 });
