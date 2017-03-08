@@ -213,7 +213,7 @@ router.post("/send-message", bodyParser.json(), function(req, res, next) {
 
 interface LeaderQueryResultRow {
     volunteer_fbid: number;
-    completed_tasks: string;
+    total_score: number;
 }
 
 interface LeaderboardRow extends LeaderQueryResultRow {
@@ -227,16 +227,17 @@ router.get("/leaders", function(req, res, next) {
 
     const qb = Task.collection().query();
     qb.select("volunteer_fbid")
-    .count("* as completed_tasks")
+    .sum("score as total_score")
     .where("completed", true)
     .where("deployment_id", deployment)
     .whereNotNull("volunteer_fbid")
     .groupBy("volunteer_fbid")
-    .orderBy("completed_tasks", "DESC")
+    .orderBy("total_score", "DESC")
     .limit(limit);
 
     qb.then((rows) => {
         return Promise.map<LeaderQueryResultRow, LeaderboardRow>(rows, (row) => {
+            row.total_score = row.total_score === null ? 0 : row.total_score;
             return bot.FBPlatform.getUserProfile(String(row.volunteer_fbid))
             .then((profile) => {
                 const result = row as LeaderboardRow;
