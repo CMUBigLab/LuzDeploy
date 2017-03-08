@@ -1,3 +1,4 @@
+import { BeaconSlot } from "./models/beacon-slot";
 import * as express from "express";
 import * as _ from "lodash";
 import * as bodyParser from "body-parser";
@@ -251,5 +252,21 @@ router.get("/leaders", function(req, res, next) {
             logger.error(err);
             res.sendStatus(500);
         });
+    });
+});
+
+router.get("/beacon-count", function(req, res, next) {
+    const deployment = req.query.deployment || 3;
+
+    const total = BeaconSlot.collection().count();
+    const completed = BeaconSlot.collection()
+    .query((qb) => {
+        qb.whereNotNull("beacon_id");
+    }).count();
+    Promise.join(total, completed, (total, completed) => {
+            res.send({total, completed});
+    }).catch((err) => {
+        logger.error(err);
+        res.sendStatus(500);
     });
 });
