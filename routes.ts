@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import * as bodyParser from "body-parser";
 import * as Promise from "bluebird";
 import * as logger from "winston";
+import * as moniker from "moniker";
 
 import bookshelf = require("./bookshelf");
 import {bot} from "./bot";
@@ -28,8 +29,10 @@ router.post("/consent", bodyParser.urlencoded({extended: true}), function(req, r
         fbid: req.body.fbid,
         consentDate: new Date(),
         firstName: null,
-        lastName: null
+        lastName: null,
+        username: moniker.choose()
     };
+    // TODO: handle taken username
     bot.getProfile(req.body.fbid)
     .then((profile) => {
         vol.firstName = profile.first_name;
