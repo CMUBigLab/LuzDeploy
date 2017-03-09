@@ -14,7 +14,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
         supply: {
             _onEnter: function(task) {
                 task.context = {};
-                let text = `One of our beacons needs to be replaced because it isn't working. Please go to the pickup location at NSH 4522. Tell me when you are 'there'.`;
+                let text = `One of our beacons needs to be replaced because it isn't working. Please go to the Supply Station (across from Gates Cafe register). Tell me when you are 'there'.`;
                 bot.sendMessage(
                     task.get("volunteer_fbid"),
                     msgUtil.quickReplyMessage(text, ["there"])
@@ -24,7 +24,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
         },
         pickup: {
             _onEnter: function(task) {
-                let text = "Great! Please take a replacement beacon. Let me know when you are 'ready'.";
+                let text = "Great! To open the lockbox, type the code 020217, then #, then turn the switch. Please take a replacement beacon. Please close and lock the box. Let me know when you are 'ready'.";
                 bot.sendMessage(
                     task.get("volunteerFbid"),
                     msgUtil.quickReplyMessage(text, ["ready"])
