@@ -53,7 +53,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     currentSlot: null,
                     currentBeacon: null,
                     toReturn: [],
-                    score: 30
+                    score: 30 + n * 10
                 };
                 let self = this;
                 BeaconSlot.getNSlots(n, task.get("deploymentId"))
@@ -197,7 +197,6 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 });
             },
             "msg:done": function(task) {
-                task.context.score += 10;
                 new BeaconSlot({id: task.context.currentSlot})
                 .save({beaconId: task.context.currentBeacon, in_progress: false}, {patch: true})
                 .then(function(slot) {
