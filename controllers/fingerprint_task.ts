@@ -1,3 +1,4 @@
+import { Task } from "../models/task";
 let machina = require("machina");
 import * as FBTypes from "facebook-sendapi-types";
 
@@ -5,6 +6,13 @@ import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 import {FingerprintPoint} from"../models/fingerprint-point";
+
+function done(task: Task) {
+    task.saveScore(15 + 5 * task.context.points.length)
+    .then(() => {
+        this.handle(task, "complete");
+    });
+}
 
 export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
     namespace: "fingerprint",
@@ -47,12 +55,8 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 ] as Array<FBTypes.MessengerButton>;
                  bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons);
             },
-            "msg:done": function(task) {
-                this.handle(task, "complete");
-            },
-            "webhook:done": function(task) {
-                this.handle(task, "complete");
-            }
+            "msg:done": done,
+            "webhook:done": done
         },
     }
 });

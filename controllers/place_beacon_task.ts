@@ -208,7 +208,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     task.context.currentSlot = null;
                     task.context.numBeacons--;
                     if (task.context.numBeacons === 0) {
-                        task.save({score: task.context.score}, {patch: true});
+                        task.saveScore(task.context.score);
                         if (task.context.toReturn.length > 0) {
                             this.transition(task, "return");
                         } else {

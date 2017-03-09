@@ -1,3 +1,4 @@
+import { Task } from "../models/task";
 let machina = require("machina");
 import * as FBTypes from "facebook-sendapi-types";
 
@@ -23,11 +24,11 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
                 }] as Array<FBTypes.MessengerButton>;
                 bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons);
             },
-            "msg:done": function(task) {
-                this.handle(task, "complete");
+            "msg:done": function(task: Task) {
+                task.saveScore(40).then(() => this.handle(task, "complete"));
             },
             "webhook:done": function(task) {
-                this.handle(task, "complete");
+                task.saveScore(40).then(() => this.handle(task, "complete"));
             }
         },
     }

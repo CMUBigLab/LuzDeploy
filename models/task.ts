@@ -77,6 +77,10 @@ export class Task extends bookshelf.Model<Task> {
   timeScore() {
       return (this.estimatedTimeSec() - this.timeTakenSec()) / this.estimatedTimeSec();
     }
+
+  saveScore(score: number) {
+    return this.save({score}, {patch: true});
+  }
   getProposalMessage(vol: Volunteer) {
     return this.template().fetch()
     .then((template: TaskTemplate) => {

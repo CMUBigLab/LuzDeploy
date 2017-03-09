@@ -1,5 +1,6 @@
 let machina = require("machina");
 import * as FBTypes from "facebook-sendapi-types";
+import * as Promise from "bluebird";
 
 import { Task, BeaconSlot } from "../models";
 import * as config from "../config";
@@ -87,7 +88,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
                 );
             },
             "msg:done": function(task) {
-                this.handle(task, "complete");
+                task.saveScore(40).then(() => this.handle(task, "complete"));
             },
         },
         replace: {
@@ -99,10 +100,13 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
                 );
                 // record beacon's status as MIA, look for it.
             },
-            "msg:done": function(task) {
-                new BeaconSlot({id: task.context.slot})
+            "msg:done": function(task: Task) {
+                const updateSlot = new BeaconSlot({id: task.context.slot})
                 .save({beaconId: task.context.currentBeacon}, {patch: true});
-                this.handle(task, "complete");
+                const updateScore = task.saveScore(40);
+                Promise.join(updateSlot, updateScore, () => {
+                    this.handle(task, "complete");
+                });
             },
         }
     }
