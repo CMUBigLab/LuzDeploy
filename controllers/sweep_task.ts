@@ -1,10 +1,10 @@
-import { Task } from "../models/task";
 let machina = require("machina");
 import * as FBTypes from "facebook-sendapi-types";
 
 import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
+import { Task } from "../models/task";
 
 export const SweepTaskFsm = machina.BehavioralFsm.extend({
     namespace: "sweep_edge",

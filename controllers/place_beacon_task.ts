@@ -6,8 +6,7 @@ import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 
-import {BeaconSlot} from "../models/beacon-slot";
-import {Beacon} from "../models/beacon";
+import {Beacon, BeaconSlot} from "../models";
 
 export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
     namespace: "place_beacons",

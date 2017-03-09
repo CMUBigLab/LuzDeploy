@@ -3,10 +3,7 @@ import * as moment from "moment";
 
 import {DATE_FORMAT} from "../config";
 import {bot} from "../bot";
-import {Volunteer} from "../models/volunteer";
-import {Task} from "../models/task";
-import { Deployment } from "../models/deployment";
-
+import {Deployment, Task, Volunteer} from "../models";
 import { TaskFsm } from "../controllers/task";
 
 const DEPLOYMENT_ID = 3; // TODO: should not hardcode this, should be set on table?
