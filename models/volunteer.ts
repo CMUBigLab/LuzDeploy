@@ -26,6 +26,7 @@ export class Volunteer extends bookshelf.Model<Volunteer> {
     // columns
     get fbid(): string { return this.get("fbid"); }
     get firstName(): string { return this.get("first_name"); }
+    get username(): string { return this.get("username"); }
 
     assignTask(task: Task) {
         return Promise.join(

@@ -239,11 +239,12 @@ router.get("/leaders", function(req, res, next) {
     qb.then((rows) => {
         return Promise.map<LeaderQueryResultRow, LeaderboardRow>(rows, (row) => {
             row.total_score = row.total_score === null ? 0 : row.total_score;
-            return bot.FBPlatform.getUserProfile(String(row.volunteer_fbid))
-            .then((profile) => {
+            const getProfile = bot.FBPlatform.getUserProfile(String(row.volunteer_fbid));
+            const getVolunteer = new Volunteer({fbid: row.volunteer_fbid}).fetch();
+            return Promise.join(getProfile, getVolunteer, (profile, vol) => {
                 const result = row as LeaderboardRow;
                 result.profilePicURL = profile.profile_pic;
-                result.name = `${profile.first_name} ${profile.last_name}`;
+                result.name = vol.username;
                 return result;
             });
         }).then((results) => {
