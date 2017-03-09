@@ -30,7 +30,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
     states: {
         supply: {
             _onEnter: function(task) {
-                let text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (across from Gates Cafe register). Tell me when you are 'there'.";
+                let text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (Gates 5th floor near the bridge exit). Tell me when you are 'there'.";
                 bot.sendMessage(
                     task.get("volunteer_fbid"),
                     msgUtil.quickReplyMessage(text, ["there"])
