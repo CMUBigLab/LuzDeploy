@@ -1,5 +1,6 @@
-import * as bookshelf from "Bookshelf";
-export class BaseModel<R extends bookshelf.Model<R>> extends bookshelf.Model<R> {
+import bookshelf = require("../bookshelf");
+
+export class BaseModel<R> extends bookshelf.Model<any> {
 
     get(attribute: string) {
         const result = super.get(attribute);
