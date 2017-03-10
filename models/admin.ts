@@ -1,3 +1,4 @@
+import { BaseModel } from "./base";
 import * as FBTypes from "facebook-sendapi-types";
 import * as logger from "winston";
 import * as knex from "knex";
@@ -9,7 +10,7 @@ import {Deployment} from "./deployment";
 const TABLE_NAME = "admins";
 const ID_ATTRIBUTE = "fbid";
 
-export class Admin extends bookshelf.Model<Admin> {
+export class Admin extends BaseModel {
     static createTable(db: knex) {
         return db.schema.createTable(TABLE_NAME, (table) => {
             table.string(ID_ATTRIBUTE).primary();

@@ -1,10 +1,11 @@
+import { BaseModel } from "./base";
 import * as Promise from "bluebird";
 import * as _ from "lodash";
 
 import bookshelf = require("../bookshelf");
 import {Beacon} from "./beacon";
 
-export class BeaconSlot extends bookshelf.Model<BeaconSlot> {
+export class BeaconSlot extends BaseModel {
     static getNSlots(n, deploymentId) {
         return this.collection()
         .query((qb) => {
