@@ -36,22 +36,6 @@ export class Deployment extends bookshelf.Model<Deployment> {
         });
     }
 
-    doesAnyoneNeedHelp(mentor) {
-        return this.tasks()
-        .query(function(qb) {
-            qb.where({
-                template_type: "mentor",
-                volunteer_fbid: null,
-                completed: false
-            })
-            .andWhereNot(
-                "instruction_params",
-                "@>",
-                JSON.stringify({mentee: {fbid: mentor.get("fbid")}})
-            );
-        }).fetchOne();
-    }
-
     checkThresholds() {
         return this.volunteers().fetch({withRelated: ["currentTask"]})
         .then(function(volunteers) {

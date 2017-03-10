@@ -81,14 +81,21 @@ export class Task extends bookshelf.Model<Task> {
   saveScore(score: number) {
     return this.save({score}, {patch: true});
   }
-  getProposalMessage(vol: Volunteer) {
+  getTaskDetailText() {
     return this.template().fetch()
     .then((template: TaskTemplate) => {
-      return bot.FBPlatform.createButtonMessage(vol.fbid)
-      .text(`Hi ${vol.firstName}, could you help me with this today?
-Task: ${template.title}
+      return `Task: ${template.title}
 Details: ${template.description}
-Estimated Time: ${template.estimatedTimeMin} minutes`)
+Estimated Time: ${template.estimatedTimeMin} minutes`;
+    });
+  }
+  getProposalMessage(vol: Volunteer, text = null) {
+    text = text || `Hi ${vol.firstName}, could you help me with this today?`;
+    return this.getTaskDetailText()
+    .then((details: string) => {
+      return bot.FBPlatform.createButtonMessage(vol.fbid)
+      .text(`${text}
+${details}`)
       .postbackButton("Start Task", JSON.stringify({type: "start_task", args: null}))
       .postbackButton("Reject Task", JSON.stringify({type: "reject_task", args: null}));
     });
