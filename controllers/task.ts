@@ -51,6 +51,7 @@ export const TaskFsm = new machina.BehavioralFsm({
                 return controller;
             },
             "msg:reject": rejectTask,
+            reject: rejectTask,
             complete: "complete"
         },
         complete: {
