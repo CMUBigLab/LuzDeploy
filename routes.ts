@@ -23,6 +23,9 @@ import {FingerprintSample} from "./models/fingerprint-sample";
 
 export const router = express.Router();
 
+const animals = moniker.read("./animals.txt");
+const names = moniker.generator([moniker.adjective, animals]);
+
 // Creates a new volunteer.
 router.post("/consent", bodyParser.urlencoded({extended: true}), function(req, res, next) {
     const vol = {
@@ -30,7 +33,7 @@ router.post("/consent", bodyParser.urlencoded({extended: true}), function(req, r
         consentDate: new Date(),
         firstName: null,
         lastName: null,
-        username: moniker.choose()
+        username: names.choose()
     };
     // TODO: handle taken username
     bot.getProfile(req.body.fbid)
