@@ -24,4 +24,16 @@ export class BeaconSlot extends BaseModel {
     beacon() {
         return this.hasOne(Beacon, "slot");
     }
+
+    static getProgress() {
+        const total = BeaconSlot.collection().count();
+        const completed = BeaconSlot.collection()
+        .query((qb) => {
+            qb.whereNotNull("beacon_id");
+            }).count();
+        return Promise.join(total, completed, (total, completed) => {
+            const percent = Math.floor((completed / total) * 100);
+            return {total, completed, percent};
+        });
+    }
 }

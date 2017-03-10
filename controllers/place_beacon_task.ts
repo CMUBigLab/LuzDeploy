@@ -6,7 +6,7 @@ import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 
-import {Beacon, BeaconSlot} from "../models";
+import {Beacon, BeaconSlot, Task} from "../models";
 
 export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
     namespace: "place_beacons",
@@ -230,8 +230,12 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     msgUtil.quickReplyMessage("Please return your extra beacon(s) to the Supply Station (across from Gates Cafe register). Let me know when you are 'done'.", ["done"])
                 );
             },
-            "msg:done": function(task) {
-                this.handle(task, "complete");
+            "msg:done": function(task: Task) {
+                BeaconSlot.getProgress()
+                .then(stats => bot.sendMessage(
+                    task.volunteerFbid,
+                    {text: `We are ${stats.percent}% done! Beacons placed: ${stats.completed}/${stats.total}`}
+                )).then(() => this.handle(task, "complete"));
             }
         }
     }

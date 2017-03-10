@@ -262,14 +262,9 @@ router.get("/leaders", function(req, res, next) {
 router.get("/beacon-count", function(req, res, next) {
     const deployment = req.query.deployment || 3;
 
-    const total = BeaconSlot.collection().count();
-    const completed = BeaconSlot.collection()
-    .query((qb) => {
-        qb.whereNotNull("beacon_id");
-    }).count();
-    Promise.join(total, completed, (total, completed) => {
-            res.send({total, completed});
-    }).catch((err) => {
+    BeaconSlot.getProgress()
+    .then(res.send)
+    .catch((err) => {
         logger.error(err);
         res.sendStatus(500);
     });
