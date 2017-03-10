@@ -1,3 +1,4 @@
+import { BaseModel } from "./base";
 import * as _ from "lodash";
 import * as Promise from "bluebird";
 import * as dust from "dustjs-linkedin";
@@ -15,7 +16,7 @@ export interface PGInterval {
   seconds?: number;
 }
 
-export class TaskTemplate extends bookshelf.Model<TaskTemplate> {
+export class TaskTemplate extends BaseModel {
   get tableName() { return "task_templates"; }
   get idAttribute() {return "type"; }
 

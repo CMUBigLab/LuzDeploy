@@ -1,3 +1,4 @@
+import { BaseModel } from "./base";
 import * as _ from "lodash";
 import * as Promise from "bluebird";
 
@@ -6,7 +7,7 @@ import bookshelf = require("../bookshelf");
 import {Volunteer} from "./volunteer";
 import {Task} from "./task";
 
-export class Deployment extends bookshelf.Model<Deployment> {
+export class Deployment extends BaseModel {
     get tableName() { return "deployments"; }
     volunteers() {
         return this.hasMany(Volunteer);

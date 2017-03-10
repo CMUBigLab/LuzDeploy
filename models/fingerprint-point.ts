@@ -1,10 +1,11 @@
+import { BaseModel } from "./base";
 import * as _ from "lodash";
 import * as Promise from "bluebird";
 
 import bookshelf = require("../bookshelf");
 import {FingerprintSample} from "./fingerprint-sample";
 
-export class FingerprintPoint extends bookshelf.Model<FingerprintPoint> {
+export class FingerprintPoint extends BaseModel {
     static getPointsForSampling(deploymentId: number, limit = 1) {
         return FingerprintPoint
         .collection()
