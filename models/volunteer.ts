@@ -36,31 +36,10 @@ export class Volunteer extends bookshelf.Model<Volunteer> {
     }
     getNewTask() {
         return this.deployment().fetch()
-        .then(deployment => {
-            return [deployment, deployment.doesAnyoneNeedHelp(this)];
-        })
-        // if someone needs help, add mentorship task
-        .spread((deployment: Deployment, task: Task) => {
-            if (task) {
-                return task;
-            } else {
-                // otherwise, get normal task, looking for pre-assigned things
-                return deployment.getTaskPool()
-                .then(pool => {
-                    // pool = _.filter(pool, t => t.allowedToTake(this))
-                    //const preAssigned = _.find(pool, (p: typeof bookshelf.Model) => {
-                    //    return p.get("volunteerFbid") === this.get("fbid");
-                    //});
-                    //if (preAssigned) {
-                    //    return preAssigned;
-                    //} else
-                    if (pool.length > 0) {
-                        return pool.pop();
-                    } else {
-                        return null;
-                    }
-                });
-            }
+        .then((deployment: Deployment) => {
+            return deployment.getTaskPool()
+        }).then(pool => {
+            return (pool.length > 0) ? pool.pop() : null;
         });
     }
     getAverageExpertise() {
