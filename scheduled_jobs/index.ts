@@ -12,6 +12,7 @@ moment.locale("en");
 const jobSchedule = [{
     name: "remind users of new tasks",
     function: remindVolunteersOfTasksAvailable,
+    enabled: false,
     weekdays: [1, 2, 3, 4, 5],
     startTime: "12:29",
     endTime: "12:35",
@@ -40,6 +41,10 @@ for (let job of jobSchedule) {
     }
     if (!correctTime) {
         logger.info(`not correct time (${now.format(timeFormat)}) to run job: ${job.name}`);
+        continue;
+    }
+    if (!job.enabled) {
+        logger.info(`Job is disabled: ${job.name}`);
         continue;
     }
 
