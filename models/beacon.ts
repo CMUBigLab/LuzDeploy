@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import bookshelf = require("../bookshelf");
 import {BeaconSlot} from "./beacon-slot";
 
-export class Beacon extends BaseModel {
+export class Beacon extends BaseModel<Beacon> {
     get tableName() { return "beacons"; } 
     slot() {
         return this.belongsTo(BeaconSlot);

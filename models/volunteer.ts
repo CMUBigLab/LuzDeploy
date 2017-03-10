@@ -10,7 +10,7 @@ import * as msgUtil from "../message-utils";
 import {Deployment} from "./deployment";
 import {Task} from "./task";
 
-export class Volunteer extends BaseModel {
+export class Volunteer extends BaseModel<Volunteer> {
     get tableName() { return "volunteers"; }
     get idAttribute() { return "fbid"; }
     currentTask() {

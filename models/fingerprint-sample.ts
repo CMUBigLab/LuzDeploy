@@ -4,6 +4,6 @@ import * as Promise from "bluebird";
 
 import bookshelf = require("../bookshelf");
 
-export class FingerprintSample extends BaseModel {
+export class FingerprintSample extends BaseModel<FingerprintSample> {
     get tableName() { return "sample"; }
 }

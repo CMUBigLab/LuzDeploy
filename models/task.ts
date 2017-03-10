@@ -9,7 +9,7 @@ import {Deployment} from "./deployment";
 import {Volunteer} from "./volunteer";
 import {TaskTemplate} from "./task-template";
 
-export class Task extends BaseModel {
+export class Task extends BaseModel<Task> {
   public context: any;
   public __machina__: any;
 

@@ -16,7 +16,7 @@ export interface PGInterval {
   seconds?: number;
 }
 
-export class TaskTemplate extends BaseModel {
+export class TaskTemplate extends BaseModel<TaskTemplate> {
   get tableName() { return "task_templates"; }
   get idAttribute() {return "type"; }
 

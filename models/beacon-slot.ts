@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import bookshelf = require("../bookshelf");
 import {Beacon} from "./beacon";
 
-export class BeaconSlot extends BaseModel {
+export class BeaconSlot extends BaseModel<BeaconSlot> {
     static getNSlots(n, deploymentId) {
         return this.collection()
         .query((qb) => {

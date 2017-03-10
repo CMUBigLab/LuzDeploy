@@ -10,7 +10,7 @@ import {Deployment} from "./deployment";
 const TABLE_NAME = "admins";
 const ID_ATTRIBUTE = "fbid";
 
-export class Admin extends BaseModel {
+export class Admin extends BaseModel<Admin> {
     static createTable(db: knex) {
         return db.schema.createTable(TABLE_NAME, (table) => {
             table.string(ID_ATTRIBUTE).primary();

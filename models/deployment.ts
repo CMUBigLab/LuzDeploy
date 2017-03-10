@@ -7,7 +7,7 @@ import bookshelf = require("../bookshelf");
 import {Volunteer} from "./volunteer";
 import {Task} from "./task";
 
-export class Deployment extends BaseModel {
+export class Deployment extends BaseModel<Deployment> {
     get tableName() { return "deployments"; }
     volunteers() {
         return this.hasMany(Volunteer);

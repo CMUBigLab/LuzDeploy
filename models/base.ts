@@ -1,5 +1,5 @@
 import * as bookshelf from "Bookshelf";
-export class BaseModel extends bookshelf.Model<any> {
+export class BaseModel<R extends bookshelf.Model<R>> extends bookshelf.Model<R> {
 
     get(attribute: string) {
         const result = super.get(attribute);

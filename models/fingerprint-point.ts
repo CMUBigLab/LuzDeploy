@@ -5,7 +5,7 @@ import * as Promise from "bluebird";
 import bookshelf = require("../bookshelf");
 import {FingerprintSample} from "./fingerprint-sample";
 
-export class FingerprintPoint extends BaseModel {
+export class FingerprintPoint extends BaseModel<FingerprintPoint> {
     static getPointsForSampling(deploymentId: number, limit = 1) {
         return FingerprintPoint
         .collection()
