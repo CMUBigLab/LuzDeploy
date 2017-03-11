@@ -266,7 +266,9 @@ router.get("/beacon-count", function(req, res, next) {
     const deployment = req.query.deployment || 3;
 
     BeaconSlot.getProgress()
-    .then(res.send)
+    .then(result => {
+        res.send(result);
+    })
     .catch((err) => {
         logger.error(err);
         res.sendStatus(500);
