@@ -31,7 +31,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
             _onEnter: function(task) {
                 let text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (Gates 5th floor near the bridge exit). Tell me when you are 'there'.";
                 bot.sendMessage(
-                    task.get("volunteer_fbid"),
+                    task.get("volunteerFbid"),
                     msgUtil.quickReplyMessage(text, ["there"])
                 );
             },
