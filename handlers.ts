@@ -468,7 +468,7 @@ function getAndAssignVolTask(vol) {
             return vol.sendMessage({text: "There are no tasks available right now."});
         } else {
             TaskFsm.assign(task, vol)
-            .then(function() {
+            .then(function(task) {
                 TaskFsm.start(task);
             });
         }

@@ -33,7 +33,7 @@ export class Volunteer extends BaseModel<Volunteer> {
         return Promise.join(
             this.save({currentTask: task.id}, {patch: true}),
             task.save({volunteer_fbid: this.id}, {patch: true}),
-            (vol, task) => { return vol; });
+            (vol, task) => { return task; });
     }
     getNewTask() {
         return this.deployment().fetch()

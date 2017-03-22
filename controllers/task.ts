@@ -68,7 +68,7 @@ export const TaskFsm = new machina.BehavioralFsm({
     },
     assign: function(task, vol) {
         return vol.assignTask(task)
-        .then(() => this.handle(task, "assign"));
+        .tap((task) => this.handle(task, "assign"));
     },
     start: function(task) {
         return task.start()
