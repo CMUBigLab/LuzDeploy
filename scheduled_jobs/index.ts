@@ -12,7 +12,7 @@ moment.locale("en");
 const jobSchedule = [{
     name: "remind users of new tasks",
     function: remindVolunteersOfTasksAvailable,
-    enabled: false,
+    enabled: true,
     weekdays: [1, 2, 3, 4, 5],
     startTime: "12:29",
     endTime: "12:35",
