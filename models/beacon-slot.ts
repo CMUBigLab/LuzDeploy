@@ -7,7 +7,7 @@ import {Beacon} from "./beacon";
 
 export class BeaconSlot extends BaseModel<BeaconSlot> {
     static getNSlots(n, deploymentId) {
-        return BeaconSlot.collection()
+        return this.collection()
         .query((qb) => {
             qb.where({
                 beacon_id: null,
