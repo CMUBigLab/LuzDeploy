@@ -54,7 +54,11 @@ class Bot {
         }
         this.getProfile((payload.message && payload.message.is_echo) ? payload.recipient.id : payload.sender.id)
         .then((profile): any => {
-            (payload as WebhookPayloadFields).sender.profile = profile;
+            if (profile) {
+                (payload as WebhookPayloadFields).sender.profile = profile;
+            } else {
+                (payload as WebhookPayloadFields).sender.profile = null;
+            }
             if (payload.message && payload.message.is_echo) {
                 return this.handleEcho(payload);
             } else if (payload.message && !payload.message.text) {
