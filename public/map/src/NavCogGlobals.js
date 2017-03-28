@@ -43,7 +43,8 @@ var TopoEditState = {
 };
 var BeaconEditState = {
 	Doing_Nothing : 7,
-	Adding_Beacon : 8
+	Adding_Beacon : 8,
+	Adding_FingerprintLocation : 9
 }
 var EdgeEditState = {
 	Doing_Nothing : "Doing Nothing",
@@ -80,6 +81,7 @@ $NC.infoWindow.on("closeall", function() {
 var _maxNodeID = 0;
 var _maxEdgeID = 0;
 var _maxBeaconID = 0;
+var _maxFingerprintID = 0;
 var _lastUUID = "";
 var _lastMajorID = "";
 var _lastMinorID = 0;
@@ -91,6 +93,7 @@ var _regionOverlays = {};
 var _nodeMarkers = {};
 var _edgePolylines = {};
 var _beaconMarkers = {};
+var _fingerprintLocationMarkers = {};
 var _poiMarkers = {};
 var _buildings = [];
 

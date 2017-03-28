@@ -264,7 +264,10 @@ function initMapEvent() {
 				_maxBeaconID++;
 				_lastMinorID++;
 				addNewBeacon(e.latLng, _maxBeaconID.toString(), _lastUUID, _lastMajorID, _lastMinorID.toString());
-			};
+			} else if (_currentBeaconEditState == BeaconEditState.Adding_FingerprintLocation) {
+				_maxFingerprintID++;
+				addNewFingerprintLocation(e.latLng, _maxFingerprintID.toString());
+			}
 		}
     });
 
@@ -483,6 +486,8 @@ function initKeyboardEvent() {
 			case EditMode.Beacon:
 				if (e.keyCode == 65) { // "A" pressed
 					_currentBeaconEditState = BeaconEditState.Adding_Beacon;
+				} else if (e.keyCode == 70) {
+					_currentBeaconEditState = BeaconEditState.Adding_FingerprintLocation;
 				}
 				break;
 			default:
@@ -540,6 +545,7 @@ function renderLayer(layer) {
 		loadNodesInLayer(layer, _silent);
 		loadEdgesInLayer(layer, _silent);
 		renderBeaconsInLayer(layer);
+		renderFingerprintsInLayer(layer);
 		_logFunction.renderLayer(layer);
 	}
 }

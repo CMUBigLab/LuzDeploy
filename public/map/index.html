@@ -46,6 +46,7 @@ SOFTWARE.
 <script src="./src/NavCogNodeFunction.js"></script>
 <script src="./src/NavCogEdgeFunction.js"></script>
 <script src="./src/NavCogBeaconFunction.js"></script>
+<script src="./src/NavCogFingerprintFunction.js"></script>
 <script src="./src/NavCogLocalization.js"></script>
 <script src="./src/NavCogPOIFunction.js"></script>
 <script src="./src/NavCogLogFunction.js"></script>
@@ -282,9 +283,21 @@ SOFTWARE.
 				</div>
 			</fieldset>
 
+			<fieldset class="center">
+				<legend>$(Export Fingerprint Locations)</legend>
+				<div>
+					<button type="button" onclick="saveFingerprintLocations()">$(Export Fingerprint Locations)</button>
+				</div>
+			</fieldset>
+
 			<fieldset>
 				<legend>$(Add Beacon)</legend>
 				<strong>$(Beacon)</strong>: $(Click on the map with holding "A" key)<br>
+			</fieldset>
+
+			<fieldset>
+				<legend>$(Add Fingerprint Location)</legend>
+				<strong>$(Fingerprint)</strong>: $(Click on the map with holding "F" key)<br>
 			</fieldset>
 
 			<fieldset class="center">

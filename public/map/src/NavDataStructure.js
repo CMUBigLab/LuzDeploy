@@ -78,6 +78,9 @@ function getNewLayer(opt) {
 		},
 		beacons: {
 
+		},
+		fingerprintLocations: {
+			
 		}
 	}, opt);
 }
@@ -163,6 +166,14 @@ function getNewBeacon(opt) {
 		prdid: "",
 		bePOI: false,
 		poiInfo: ""
+	}, opt);
+}
+
+function getNewFingerprintLocation(opt) {
+	return $.extend({
+		lat: 0,
+		lng: 0,
+		id: 0
 	}, opt);
 }
 
