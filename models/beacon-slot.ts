@@ -7,11 +7,12 @@ import {Beacon} from "./beacon";
 
 export class BeaconSlot extends BaseModel<BeaconSlot> {
     static getNSlots(n, deploymentId) {
-        return this.collection()
+        return BeaconSlot.collection()
         .query((qb) => {
             qb.where({
                 beacon_id: null,
                 in_progress: false,
+                status: null,
                 deployment_id: deploymentId
             }).orderBy("floor", "ASC")
             .orderBy("id", "ASC")
@@ -20,7 +21,7 @@ export class BeaconSlot extends BaseModel<BeaconSlot> {
     }
 
     get tableName() { return "beacon_slots"; }
-
+    get id() { return this.get("id"); }
     beacon() {
         return this.hasOne(Beacon, "slot");
     }

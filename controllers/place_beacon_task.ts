@@ -112,16 +112,18 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     return BeaconSlot.getNSlots(1, task.get("deploymentId"));
                 }).then(function(slots) {
                     if (slots.length === 0) {
-                        let text = `I couldn't find any other spots that need beacons. Please return any excess beacons later.`;
-                        bot.sendMessage(task.get("volunteerFbid"), {text: text});
                         task.context.numBeacons -= 1;
-                        return;
+                        let text = `I couldn't find any other spots that need beacons. Please return any excess beacons later.`;
+                        return bot.sendMessage(task.get("volunteerFbid"), {text: text});
+                    } else {
+                        let text = "Ok, I'll find you a new spot to put the beacon.";
+                        bot.sendMessage(task.get("volunteerFbid"), {text: text})
+                        .then(() => {
+                            task.context.toReturn.push(-1);
+                            task.context.slots.push(slots[0].get("id"));
+                            return slots[0].save({in_progress: true});
+                        });
                     }
-                    let text = "Ok, I'll find you a new spot to put the beacon.";
-                    bot.sendMessage(task.get("volunteerFbid"), {text: text});
-                    task.context.toReturn.push(-1);
-                    task.context.slots.push(slots[0].get("id"));
-                    return slots[0].save({in_progress: true});
                 }).then(function(slot) {
                     self.transition(task, "go");
                 });
