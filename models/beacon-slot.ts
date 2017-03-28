@@ -21,7 +21,7 @@ export class BeaconSlot extends BaseModel<BeaconSlot> {
     }
 
     get tableName() { return "beacon_slots"; }
-    get id() { return this.get("id"); }
+
     beacon() {
         return this.hasOne(Beacon, "slot");
     }
