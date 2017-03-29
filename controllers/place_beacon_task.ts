@@ -18,12 +18,12 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         task.context.slots.pop(1);
         if (task.context.numBeacons === 0) {
             this.transition(task, "return");
+            return;
         } else {
-            bot.sendMessage(
+            return bot.sendMessage(
                 task.volunteerFbid,
                 {text: "Later, please return that beacon to the supply station. For now we will plave another beacon."}
-            );
-            this.transition(task, "which");
+            ).then(() => this.transition(task, "which"));
         }
     },
     states: {
@@ -60,9 +60,9 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 .then(function(slots) {
                     if (slots.length !== n) {
                         // TODO: handle case when slots.length == 0
-                        let text = `I could only find ${slots.length} places needing beacons. Please return any excess beacons.`;
-                        bot.sendMessage(task.get("volunteerFbid"), {text: text});
                         task.context.numBeacons = slots.length;
+                        let text = `I could only find ${slots.length} places needing beacons. Please return any excess beacons.`;
+                        return bot.sendMessage(task.get("volunteerFbid"), {text: text});
                     }
                     task.context.slots = slots.map(s => s.get("id"));
                     return slots.invokeThen("save", {in_progress: true});
@@ -86,9 +86,9 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                         "messenger_extensions": true,
                     }
                 ] as Array<FBTypes.MessengerButton>;
-                bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons)
+                return bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons)
                 .then(() => {
-                    bot.sendMessage(
+                    return bot.sendMessage(
                         task.volunteerFbid,
                         msgUtil.quickReplyMessage("Tell me when you are 'there'!", ["there"])
                     );
@@ -99,7 +99,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         confirm_empty: {
             _onEnter: function(task) {
                 const text = "Is there already a beacon placed on the wall there?";
-                bot.sendMessage(
+                return bot.sendMessage(
                     task.volunteerFbid,
                     msgUtil.quickReplyMessage(text, ["no", "yes"])
                 );
@@ -117,11 +117,10 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                         return bot.sendMessage(task.volunteerFbid, {text});
                     } else {
                         let slot = slots.first();
-                        console.log(slots, slot);
                         task.context.toReturn.push(-1);
                         task.context.slots.push(slot.get("id"));
                         let text = "Ok, I'll find you a new spot to put the beacon.";
-                        bot.sendMessage(task.volunteerFbid, {text})
+                        return bot.sendMessage(task.volunteerFbid, {text})
                         .then(() => {
                             return slot.save({in_progress: true});
                         });
@@ -136,7 +135,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         },
         which: {
             _onEnter: function(task) {
-                bot.sendMessage(
+                return bot.sendMessage(
                     task.volunteerFbid,
                     {text: `What is the number on the back of one of the beacons you have?`}
                 );
@@ -149,7 +148,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         confirm_which: {
             _onEnter: function(task) {
                 let text = `The beacon number is ${task.context.currentBeaconNumber}, correct?`;
-                bot.sendMessage(
+                return bot.sendMessage(
                     task.get("volunteerFbid"),
                     msgUtil.quickReplyMessage(text, ["yes", "no"])
                 );
@@ -162,19 +161,21 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                         task.context.currentBeacon = beacon.get("id");
                         self.transition(task, "place");
                     } else {
-                        bot.sendMessage(
+                        return bot.sendMessage(
                             task.volunteerFbid,
                             {text: "Hm, that beacon number is already used elsewhere. We won't use that one."}
-                        );
-                        self.beaconToReturn(task);
+                        ).then(() => {
+                            return self.beaconToReturn(task);
+                        });
                     }
                 })
                 .catch(Beacon.NotFoundError, function() {
-                    bot.sendMessage(
+                    return bot.sendMessage(
                         task.volunteerFbid,
                         {text: "Hm, I can't find a record for that beacon. We won't use that one."}
-                    );
-                    self.beaconToReturn(task);
+                    ).then(() => {
+                        return self.beaconToReturn(task);
+                    });
                 });
             },
             "msg:no": function(task) {
@@ -192,9 +193,9 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     webview_height_ratio: "tall",
                     messenger_extensions: true,
                 }] as Array<FBTypes.MessengerButton>;
-                bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons)
+                return bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons)
                 .then(() => {
-                    bot.sendMessage(
+                    return bot.sendMessage(
                         task.volunteerFbid,
                         msgUtil.quickReplyMessage("Tell me when you are 'done'!", ["done"])
                     );
@@ -219,11 +220,10 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                             this.handle(task, "complete");
                         }
                     } else {
-                        bot.sendMessage(
+                        return bot.sendMessage(
                             task.volunteerFbid,
                             {text: "Thanks, let's place another!"}
-                        );
-                        this.transition(task, "go");
+                        ).then(() => this.transition(task, "go"));
                     }
                 });
             }
