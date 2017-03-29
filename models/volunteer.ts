@@ -28,6 +28,8 @@ export class Volunteer extends BaseModel<Volunteer> {
     get fbid(): string { return this.get("fbid"); }
     get firstName(): string { return this.get("first_name"); }
     get username(): string { return this.get("username"); }
+    get lastMessaged(): Date { return this.get("last_messaged"); }
+    get lastResponse(): Date { return this.get("last_response"); }
 
     assignTask(task: Task) {
         return Promise.join(
@@ -125,22 +127,3 @@ export class Volunteer extends BaseModel<Volunteer> {
         return `${this.get("firstName")} ${this.get("lastName")}`;
     }
 }
-// }, {
-//     recoverStaleTasks: () => {
-//         let cutoff = moment().subtract(6, "hours").format("YYYY-MM-DD HH:mm:ss");
-//         return this.collection().query((qb) => {
-//             qb.where(function() {
-//                 this.where("last_messaged", "<", cutoff)
-//                 .orWhere("last_response", "<", cutoff);
-//             }).whereNotNull("current_task");
-//         }).fetch()
-//         .then(function(vols) {
-//             return Promise.map(vols, function(vol) {
-//                 .unassignTask()
-//                 .then(function(vol) {
-//                     return vol.sendMessage({text: "You didn't finish your task, so I have freed it up for others to take."});
-//                 });
-//             });
-//         });
-//     }
-// });

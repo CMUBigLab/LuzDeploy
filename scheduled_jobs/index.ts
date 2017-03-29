@@ -3,6 +3,7 @@ import * as logger from "winston";
 
 import { TIME_ZONE } from "../config";
 import {remindVolunteersOfTasksAvailable} from "./remind_new_tasks";
+import {recoverUnstartedTasks} from "./recover_stale_tasks";
 
 import * as express from "express";
 export const router = express.Router();
@@ -16,11 +17,28 @@ const jobSchedule = [{
     weekdays: [1, 2, 3, 4, 5],
     startTime: "12:29",
     endTime: "12:35",
+}, {
+    name: "unassign unstarted tasks from users",
+    function: recoverUnstartedTasks,
+    enabled: true,
+    weekdays: [1, 2, 3, 4, 5],
+    startTime: "22:29",
+    endTime: "22:35",
 }];
 
 router.post("/remind", (req, res, next) => {
     remindVolunteersOfTasksAvailable()
     .then(() => logger.info(`Finished running reminder job`))
+    .then(() => res.send("OK"))
+    .catch((err) => {
+        logger.error(err);
+        res.sendStatus(500);
+    });
+});
+
+router.post("/recover", (req, res, next) => {
+    recoverUnstartedTasks()
+    .then(() => logger.info(`Finished running recover job`))
     .then(() => res.send("OK"))
     .catch((err) => {
         logger.error(err);

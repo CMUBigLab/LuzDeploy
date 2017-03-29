@@ -34,6 +34,7 @@ export class Task extends BaseModel<Task> {
   get type(): string { return this.get("templateType"); }
   get volunteerFbid(): number { return this.get("volunteerFbid"); }
   get instructionParams(): any { return this.get("instructionParams"); }
+  get startTime(): Date { return this.get("startTime"); }
 
   start() {
       return this.save({startTime: new Date()}, {patch: true});
