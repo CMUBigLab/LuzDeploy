@@ -32,6 +32,7 @@ export class Volunteer extends BaseModel<Volunteer> {
     get lastMessaged(): Date { return this.get("last_messaged"); }
     get lastResponse(): Date { return this.get("last_response"); }
     get deploymentId(): number { return this.get("deployment_id"); }
+    get ignoring(): boolean { return this.get("ignoring"); }
 
     assignTask(task: Task) {
         return Promise.join(
