@@ -81,7 +81,7 @@ export class Volunteer extends BaseModel<Volunteer> {
         .then((task) => {
             return Promise.all([
                 this.save({current_task: null}, {patch: true}),
-                task.save({volunteer_fbid: null, start_time: null, taskState: null}, {patch: true})
+                task.save({volunteer_fbid: null, start_time: null, task_state: null}, {patch: true})
             ]);
         });
     }
