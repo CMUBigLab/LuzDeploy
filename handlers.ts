@@ -62,6 +62,10 @@ const postbackHandlers = {
         handler: mentorMessage,
         volRequired: true,
     },
+    "contact_admin": {
+        handler: contactAdmin,
+        volRequired: true,
+    },
     "list_commands": {
         handler: listCommands,
     },
@@ -285,9 +289,9 @@ function helpMessage(payload, reply: ReplyFunc) {
     },
     {
         type: "postback",
-        title: "Send Mentor",
+        title: "Contact Admin",
         payload: JSON.stringify({
-            type: "send_mentor",
+            type: "contact_admin",
             args: {}
         })
     }] as Array<FBTypes.MessengerButton>;
@@ -339,6 +343,18 @@ function mentorMessage(payload, reply) {
             });
         }
     });
+}
+
+function contactAdmin(payload: WebhookPayloadFields, reply) {
+    const vol = payload.sender.volunteer;
+    Admin.fetchAll()
+    .then(admins => {
+        return Promise.all(admins.map((admin: Admin) => {
+            return admin.sendMessage(
+                {text: `${vol.name} needs help! Please get in contact with them.`}
+            );
+        }));
+    }).then(() => vol.sendMessage({text: "Ok! Someone should be in touch as soon as possible."}));
 }
 
 function cancelMentor(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
