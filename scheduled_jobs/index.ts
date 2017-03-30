@@ -15,8 +15,8 @@ const jobSchedule = [{
     function: remindVolunteersOfTasksAvailable,
     enabled: true,
     weekdays: [1, 2, 3, 4, 5],
-    startTime: "12:29",
-    endTime: "12:35",
+    startTime: "10:29",
+    endTime: "10:35",
 }, {
     name: "unassign unstarted tasks from users",
     function: recoverUnstartedTasks,
