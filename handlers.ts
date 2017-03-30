@@ -351,7 +351,7 @@ function contactAdmin(payload: WebhookPayloadFields, reply) {
     .then(admins => {
         return Promise.all(admins.map((admin: Admin) => {
             return admin.sendMessage(
-                {text: `${vol.name} needs help! Please get in contact with them.`}
+                {text: `${vol.name()} needs help! Please get in contact with them.`}
             );
         }));
     }).then(() => vol.sendMessage({text: "Ok! Someone should be in touch as soon as possible."}));
