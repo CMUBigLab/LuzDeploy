@@ -1,3 +1,4 @@
+import { Deployment } from "../models/deployment";
 let machina = require("machina");
 import * as FBTypes from "facebook-sendapi-types";
 import * as Promise from "bluebird";
@@ -14,11 +15,15 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
         supply: {
             _onEnter: function(task: Task) {
                 task.context = {slot: task.instructionParams.slot};
-                let text = `One of our beacons needs to be replaced because it isn't working. Please go to the Supply Station (Gates 5th floor near the bridge exit). Tell me when you are 'there'.`;
-                bot.sendMessage(
-                    task.volunteerFbid,
-                    msgUtil.quickReplyMessage(text, ["there"])
-                );
+                task.deployment().fetch()
+                .then((deployment: Deployment) => {
+                    let text = `One of our beacons needs to be replaced because it isn't working. Please go to the Supply Station (${deployment.supplyStation}). Tell me when you are 'there'.`;
+                    return bot.sendMessage(
+                        task.volunteerFbid,
+                        msgUtil.quickReplyMessage(text, ["there"])
+                    );
+                });
+
             },
             "msg:there": "pickup",
         },

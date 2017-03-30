@@ -20,6 +20,7 @@ export class Deployment extends BaseModel<Deployment> {
     get active(): boolean { return this.get("active"); }
     get name(): string { return this.get("name"); }
     get type(): string { return this.get("type"); }
+    get supplyStation(): string { return this.get("supply_station"); }
 
     distributeTasks() {
         return this.volunteers()

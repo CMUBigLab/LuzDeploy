@@ -6,7 +6,7 @@ import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 
-import {Beacon, BeaconSlot, Task} from "../models";
+import {Beacon, BeaconSlot, Task, Deployment} from "../models";
 
 export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
     namespace: "place_beacons",
@@ -28,13 +28,15 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
     },
     states: {
         supply: {
-            _onEnter: function(task) {
-                console.log(task);
-                let text = "In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (Gates 5th floor near the bridge exit). Tell me when you are 'there'.";
-                bot.sendMessage(
-                    task.volunteerFbid,
-                    msgUtil.quickReplyMessage(text, ["there"])
-                );
+            _onEnter: function(task: Task) {
+                return task.deployment().fetch()
+                .then((deployment: Deployment) => {
+                    let text = `In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (${deployment.supplyStation}). Tell me when you are 'there'.`;
+                    bot.sendMessage(
+                        task.volunteerFbid,
+                        msgUtil.quickReplyMessage(text, ["there"])
+                    );
+                });
             },
             "msg:there": "pickup",
         },
@@ -238,7 +240,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
             _onEnter: function(task) {
                 bot.sendMessage(
                     task.volunteerFbid,
-                    msgUtil.quickReplyMessage("Please return your extra beacon(s) to the Supply Station (across from Gates Cafe register). Let me know when you are 'done'.", ["done"])
+                    msgUtil.quickReplyMessage(`Please return your extra beacon(s) to the Supply Station. Let me know when you are 'done'.`, ["done"])
                 );
             },
             "msg:done": function(task: Task) {
