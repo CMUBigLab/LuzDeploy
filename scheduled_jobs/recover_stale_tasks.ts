@@ -5,7 +5,7 @@ import {DATE_FORMAT} from "../config";
 import {bot} from "../bot";
 import {Task, Volunteer} from "../models";
 
-const DEPLOYMENT_ID = 4; // TODO: should not hardcode this, should be set on table?
+const DEPLOYMENT_ID = 3; // TODO: should not hardcode this, should be set on table?
 
 export function recoverUnstartedTasks() {
     return Task.collection().query((qb) => {
