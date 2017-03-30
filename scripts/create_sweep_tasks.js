@@ -26,9 +26,9 @@ BeaconSlot.collection()
 	return Promise.map(Object.keys(edges), function(edge) {
 		var beaconSlots = edges[edge];
 		return Task.forge({
-			deploymentId: 3,
-			templateType: 'sweep_edge',
-			instructionParams: {
+			deployment_id: 3,
+			template_type: 'sweep_edge',
+			instruction_params: {
 				edge: edge,
 				start: beaconSlots[0].startNode,
 				end: beaconSlots[0].endNode,

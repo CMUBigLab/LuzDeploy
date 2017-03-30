@@ -12,19 +12,19 @@ var parser = parse({delimiter: ',', columns: true}, function(err, data){
 			long: b.lng,
 			edge: b.edge,
 			floor: b.floor,
-			startNode: b.start,
-			endNode: b.end,
-			deploymentId: 3,
+			start_node: b.start,
+			end_node: b.end,
+			deployment_id: 3,
 		}).save(null, {method: 'insert'})
 		.then(function(slot) {
 			return Beacon.forge({
 				id: b.bid,
-				minorId: b.minor,
+				minor_id: b.minor,
 				slot: slot.id,
-				deploymentId: 3,
+				deployment_id: 3,
 			}).save(null, {method: 'insert'})
 			.then(function(beacon) {
-				return slot.save({beaconId: beacon.id}, {method: 'update'});
+				return slot.save({beacon_id: beacon.id}, {method: 'update'});
 			})
 		}).then(() => process.exit())
 		.catch(err => { 

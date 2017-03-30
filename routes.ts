@@ -30,16 +30,16 @@ const names = moniker.generator([moniker.adjective, animals]);
 router.post("/consent", bodyParser.urlencoded({extended: true}), function(req, res, next) {
     const vol = {
         fbid: req.body.fbid,
-        consentDate: new Date(),
-        firstName: null,
-        lastName: null,
+        consent_date: new Date(),
+        first_name: null,
+        last_name: null,
         username: names.choose()
     };
     // TODO: handle taken username
     bot.getProfile(req.body.fbid)
     .then((profile) => {
-        vol.firstName = profile.first_name;
-        vol.lastName = profile.last_name;
+        vol.first_name = profile.first_name;
+        vol.last_name = profile.last_name;
         return new Volunteer().save(vol).then(() => {
             res.send("<h1>Thanks! If on mobile, you may press the cancel button to return to the bot chat. Otherwise, close this window.</h1>");
             handlers.sendDeploymentMessage(req.body.fbid);
@@ -82,11 +82,11 @@ router.post("/tasks", bodyParser.json(), function(req, res, next) {
                 ["template_type", "deployment_id", "dependencies"]
             );
             return new Task({
-                instructionParams: JSON.stringify(params),
-                estimatedTime: template.estimatedTime,
-                deploymentId: task.deployment_id,
-                completedWebhook: template.completedWebhook,
-                templateType: task.template_type,
+                instruction_params: JSON.stringify(params),
+                estimated_time: template.estimatedTime,
+                deployment_id: task.deployment_id,
+                completed_webhook: template.completedWebhook,
+                template_type: task.template_type,
             }).save();
         });
         return Promise.all(ps);
@@ -115,9 +115,9 @@ router.post("/sweep-data", bodyParser.urlencoded({extended: true}), function(req
     .then(function(slots) {
         return Promise.map(slots, function(slot) {
             return new Task({
-                deploymentId: 1,
-                templateType: "replace_beacon",
-                instructionParams: {
+                deployment_id: 1,
+                template_type: "replace_beacon",
+                instruction_params: {
                     slot: slot
                 }
             }).save(null, {method: "insert"});
@@ -174,7 +174,7 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
             }
         }).then(function(fingerprintPoint) {
             return new FingerprintSample({
-                fingerprintId: fingerprintPoint.id,
+                fingerprint_id: fingerprintPoint.id,
                 data: JSON.stringify(fingerprint.sample)
             }).save();
         });

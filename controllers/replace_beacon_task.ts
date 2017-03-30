@@ -101,7 +101,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
             },
             "msg:done": function(task: Task) {
                 const updateSlot = new BeaconSlot({id: task.context.slot})
-                .save({beaconId: task.context.currentBeacon}, {patch: true});
+                .save({beacon_id: task.context.currentBeacon}, {patch: true});
                 const updateScore = task.saveScore(40);
                 Promise.join(updateSlot, updateScore, () => {
                     this.handle(task, "complete");

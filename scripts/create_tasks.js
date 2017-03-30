@@ -37,10 +37,10 @@ readDir('./task_data/').then(files =>
 			console.log(`Saved template ${taskTemplate.id}`)
 			return Promise.map(this.taskData.list, params => {
 				return new Task({
-					instructionParams: JSON.stringify(params),
-					estimatedTime: this.template.estimated_time,
+					instruction_params: JSON.stringify(params),
+					estimated_time: this.template.estimated_time,
 					deployment_id: DEPLOYMENT,
-					completedWebhook: this.template.completed_webhook,
+					completed_webhook: this.template.completed_webhook,
 					template_type: taskTemplate.id,
 				}).save()
 				.then(task => {

@@ -204,7 +204,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
             },
             "msg:done": function(task) {
                 new BeaconSlot({id: task.context.currentSlot})
-                .save({beaconId: task.context.currentBeacon, in_progress: false}, {patch: true})
+                .save({beacon_id: task.context.currentBeacon, in_progress: false}, {patch: true})
                 .then(function(slot) {
                     return new Beacon({id: task.context.currentBeacon})
                     .save({slot: task.context.currentSlot}, {patch: true});

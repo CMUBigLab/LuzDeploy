@@ -223,7 +223,7 @@ function leaveMessage(payload, reply) {
         }
     })
     .then(() => {
-        return vol.save({deploymentId: null}, {patch: true});
+        return vol.save({deployment_id: null}, {patch: true});
     })
     .then(() => {
         reply({text: "Sorry to see you go! We are always happy to have you back."});
@@ -382,7 +382,7 @@ function onboardVolunteer(payload: WebhookPayloadFields, reply: ReplyFunc) {
 }
 
 export function sendDeploymentMessage(fbid) {
-  Deployment.where<Deployment>({"active": true}).fetchAll()
+  Deployment.where<Deployment>({active: true}).fetchAll()
   .then(function(deployments) {
     if (deployments.length === 0) {
         const message = {

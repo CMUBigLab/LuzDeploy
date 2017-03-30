@@ -8,23 +8,23 @@ let Deployment = require('../models/deployment')
 module.exports.createVolunteer = function(deployment, id, firstName, lastName) {
 	return new Volunteer().save({
 		fbid: id,
-		firstName: firstName,
-		lastName: lastName,
-		deploymentId: deployment.id,
-		consentDate: new Date()
+		first_name: firstName,
+		last_name: lastName,
+		deployment_id: deployment.id,
+		consent_date: new Date()
 	})
 };
 
 module.exports.createTask = function(deployment, options) {
 	options = options || {}
-	_.defaults(options, {deploymentId: deployment.id})
+	_.defaults(options, {deployment_id: deployment.id})
 	return new Task(options).save()
 };
 
 module.exports.createTaskTemplate = function(deployment, options) {
 	options = options || {}
 	_.defaults(options, {
-		deploymentId: deployment.id,
+		deployment_id: deployment.id,
 		instructions: {}
 	})
 	return new TaskTemplate().save(options, {method: 'insert'})

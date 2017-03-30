@@ -44,14 +44,14 @@ export class Task extends BaseModel<Task> {
   get estimatedTime(): PGInterval { return this.get("estimated_time"); }
 
   start() {
-      return this.save({startTime: new Date()}, {patch: true});
+      return this.save({start_time: new Date()}, {patch: true});
   }
   finish() {
-    return this.save({completed: true, completedTime: new Date()}, {patch: true});
+    return this.save({completed: true, completed_time: new Date()}, {patch: true});
   }
   hasOutstandingDependancies() {
       return this.dependencies()
-      .query({"completed": false})
+      .query({completed: false})
       .fetch()
       .then(d => (d.length > 0));
   }
@@ -60,7 +60,7 @@ export class Task extends BaseModel<Task> {
     if (this.context) {
       taskState.context = this.context;
     }
-    return this.save({taskState}, {patch: true});
+    return this.save({task_state: taskState}, {patch: true});
   }
   loadState() {
     let state = this.taskState;

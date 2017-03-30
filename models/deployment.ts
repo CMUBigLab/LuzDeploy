@@ -23,7 +23,7 @@ export class Deployment extends BaseModel<Deployment> {
 
     distributeTasks() {
         return this.volunteers()
-        .query({where: {currentTask: null}})
+        .query({where: {current_task: null}})
         .fetch()
         .then(volunteers => {
             volunteers.forEach((v) => (v as Volunteer).getNewTask());
@@ -61,7 +61,7 @@ export class Deployment extends BaseModel<Deployment> {
     }
 
     start() {
-        return this.save({startTime: new Date(), active: true});
+        return this.save({start_time: new Date(), active: true});
     }
 
     sendSurvey(vol: Volunteer) {
@@ -80,7 +80,7 @@ export class Deployment extends BaseModel<Deployment> {
             // 	v.sendMessage({text: "Thank you very much!\nYou just helped make CMU accessible."})
             // 	this.sendSurvey(v)
             // })
-            return this.save({doneTime: new Date()});
+            return this.save({done_time: new Date()});
         });
     }
 
