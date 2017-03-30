@@ -10,4 +10,6 @@ export class Beacon extends BaseModel<Beacon> {
     slot() {
         return this.belongsTo(BeaconSlot);
     }
+
+    get minorId(): number { return this.get("minor_id"); }
 }

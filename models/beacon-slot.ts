@@ -26,6 +26,9 @@ export class BeaconSlot extends BaseModel<BeaconSlot> {
         return this.hasOne(Beacon, "slot");
     }
 
+    get startNode(): number { return this.get("start_node"); }
+    get endNode(): number { return this.get("end_node"); }
+
     static getProgress() {
         const total = BeaconSlot.collection().count();
         const completed = BeaconSlot.collection()

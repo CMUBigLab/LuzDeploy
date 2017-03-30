@@ -58,8 +58,8 @@ describe('Task', function() {
 			createUniqueTaskSet(
 				deployment,
 				[
-					{templateType: task_template.get('type')},
-					{templateType: task_template.get('type')},
+					{templateType: task_template.type},
+					{templateType: task_template.type},
 				]
 			).then(function(models) {
 				let taskA = models[0], taskB = models[1];

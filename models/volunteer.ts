@@ -25,11 +25,13 @@ export class Volunteer extends BaseModel<Volunteer> {
     }
 
     // columns
-    get fbid(): string { return this.get("fbid"); }
-    get firstName(): string { return this.get("firstName"); }
+    get fbid(): string { return this.id; }
+    get firstName(): string { return this.get("first_name"); }
+    get lastName(): string { return this.get("last_name"); }
     get username(): string { return this.get("username"); }
-    get lastMessaged(): Date { return this.get("lastMessaged"); }
-    get lastResponse(): Date { return this.get("lastResponse"); }
+    get lastMessaged(): Date { return this.get("last_messaged"); }
+    get lastResponse(): Date { return this.get("last_response"); }
+    get deploymentId(): number { return this.get("deployment_id"); }
 
     assignTask(task: Task) {
         return Promise.join(
@@ -48,26 +50,26 @@ export class Volunteer extends BaseModel<Volunteer> {
     getAverageExpertise() {
         return Task.collection()
         .query({
-            volunteer_fbid: this.get("fbid"),
+            volunteer_fbid: this.id,
             completed: true
         })
         .query("where", "score", "is not", null)
         .fetch()
         .then(tasks => {
-            const total = _.sum(tasks.map(t => t.get("score")));
+            const total = _.sum(tasks.map((t: Task) => t.score));
             return tasks.length ? total / tasks.length : 0;
         });
     }
     getAverageTime() {
         return Task.collection()
         .query({
-            volunteer_fbid: this.get("fbid"),
+            volunteer_fbid: this.id,
             completed: true
         }).query("where", "completed_time", "is not", null)
         .query("where", "start_time", "is not", null)
         .fetch()
         .then(tasks => {
-            const total = _.sum(tasks.map(t => t.get("timeScore")));
+            const total = _.sum(tasks.map((t: Task) => t.timeScore));
             return tasks.length ? total / tasks.length : 0;
         });
     }
@@ -90,7 +92,7 @@ export class Volunteer extends BaseModel<Volunteer> {
             .andWhere(
                 "instruction_params",
                 "@>",
-                JSON.stringify({mentee: {fbid: this.get("fbid")}})
+                JSON.stringify({mentee: {fbid: this.id}})
             );
         })
         .fetch();
@@ -105,25 +107,25 @@ export class Volunteer extends BaseModel<Volunteer> {
                 beacon: undefined
             };
             params.mentee.name = this.name();
-            if (task.get("instructionParams").beacon) {
-                params.beacon = task.get("instructionParams").beacon;
+            if (task.instructionParams.beacon) {
+                params.beacon = task.instructionParams.beacon;
             } else {
                 throw new Error("This task does not support mentorship yet.");
             }
             return new Task({
                 templateType: "mentor",
                 instructionParams: params,
-                deploymentId: this.get("deploymentId"),
+                deploymentId: this.deploymentId,
                 estimatedTime: "15 min",
             })
             .save();
         });
     }
     sendMessage(message) {
-        console.log("bot", bot);
-        bot.sendMessage(this.get("fbid"), message);
+        bot.sendMessage(this.id, message);
     }
+
     name() {
-        return `${this.get("firstName")} ${this.get("lastName")}`;
+        return `${this.firstName} ${this.lastName}`;
     }
 }

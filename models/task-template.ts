@@ -27,7 +27,9 @@ export class TaskTemplate extends BaseModel<TaskTemplate> {
   // columns
   get description(): string { return this.get("description"); }
   get title(): string { return this.get("title"); }
-  get estimatedTime(): PGInterval { return this.get("estimatedTime"); }
+  get estimatedTime(): PGInterval { return this.get("estimated_time"); }
+  get instructions(): Array<any> { return this.get("instructions"); }
+  get completedWebhook(): string { return this.get("completed_webhook"); }
 
   get estimatedTimeMin(): number {
     const int = _.defaults(this.estimatedTime, {hours: 0, minutes: 0, seconds: 0});
@@ -35,7 +37,7 @@ export class TaskTemplate extends BaseModel<TaskTemplate> {
   }
 
   renderInstructions(context) {
-    const promises = this.get("instructions").map((i) => {
+    const promises = this.instructions.map((i) => {
         return new Promise((resolve, reject) => {
           dust.renderSource(JSON.stringify(i.message), context, (err, out) => {
             if (err) return reject(err);

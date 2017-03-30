@@ -30,10 +30,10 @@ BeaconSlot.collection()
 			templateType: 'sweep_edge',
 			instructionParams: {
 				edge: edge,
-				start: beaconSlots[0].get('startNode'),
-				end: beaconSlots[0].get('endNode'),
+				start: beaconSlots[0].startNode,
+				end: beaconSlots[0].endNode,
 				beacons: getRanges(
-					beaconSlots.map(s => s.related('beacon').get('minorId'))
+					beaconSlots.map(s => s.related('beacon').minorId)
 					.sort()
 				),
 			}

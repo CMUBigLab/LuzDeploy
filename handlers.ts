@@ -114,7 +114,7 @@ export function dispatchMessage(payload: WebhookPayloadFields, reply: ReplyFunc)
             if (deployment === null) {
                 sendDeploymentMessage(payload.sender.id);
                 return;
-            } else if (!payload.sender.admin && !deployment.get("active")) {
+            } else if (!payload.sender.admin && !deployment.active) {
                 return reply({text: "This deployment is paused! We will let you know when we start back up."});
             }
         } else {
@@ -139,7 +139,7 @@ export function dispatchMessage(payload: WebhookPayloadFields, reply: ReplyFunc)
             } else {
                 commandHandler.handler(payload, reply, values.slice(1));
             }
-        } else if (payload.sender.volunteer && payload.sender.volunteer.get("currentTask")) {
+        } else if (payload.sender.volunteer && payload.sender.volunteer.related("currentTask")) {
             getTaskForVolunteer(payload.sender.volunteer)
             .then(function(task) {
                 TaskFsm.userMessage(task, command);
@@ -184,7 +184,7 @@ function getAdminAndVolunteer(payload: WebhookPayloadFields): Promise<WebhookPay
     const query = {fbid: payload.sender.id};
     return Promise.join(
         new Admin().where(query).fetch(),
-        new Volunteer().where(query).fetch({withRelated: ["deployment"]}),
+        new Volunteer().where(query).fetch({withRelated: ["deployment", "currentTask"]}),
         (admin, vol) => {
             payload.sender.admin = admin;
             payload.sender.volunteer = vol;
@@ -233,7 +233,7 @@ function leaveMessage(payload, reply) {
 function startDeployment(payload, reply, args) {
     return new Deployment({id: args[0]}).fetch()
     .then(deployment => {
-        if (deployment.get("active")) {
+        if (deployment.active) {
             reply({text: "already started"});
         } else {
             return deployment.start().then(d => {
@@ -292,7 +292,7 @@ function helpMessage(payload, reply: ReplyFunc) {
         })
     }] as Array<FBTypes.MessengerButton>;
     const text = "Here is a list of commands you can say to me! Press 'Send Mentor' to have another volunteer come help you.";
-    return bot.FBPlatform.sendButtonMessage(vol.get("fbid"), text, buttons);
+    return bot.FBPlatform.sendButtonMessage(vol.fbid, text, buttons);
 }
 
 function listCommands(payload, reply) {
@@ -330,7 +330,7 @@ function mentorMessage(payload, reply) {
                             title: "Cancel Help Request",
                             payload: JSON.stringify({
                                 type: "cancel_mentor",
-                                args: {taskId: task.get("id")}
+                                args: {taskId: task.id}
                             })
                         }];
                         return reply(msgUtil.buttonMessage(text, buttons));
@@ -393,12 +393,12 @@ export function sendDeploymentMessage(fbid) {
         const text = "Which deployment would you like to join?";
         const buttons = deployments.map((d: Deployment) => ({
             type: "postback",
-            title: d.get("name"),
+            title: d.name,
             payload: JSON.stringify({
                 type: "join_deployment",
                 args: {
-                    id: d.get("id"),
-                    new_ask: d.get("type") === "eventBased"
+                    id: d.id,
+                    new_ask: d.type === "eventBased"
                 }
             }),
             })
@@ -422,7 +422,7 @@ function assignTask(payload, reply, args) {
                     reply({text: "Invalid task."});
                      return;
                 }
-                task.save({volunteer_fbid: vol.get("fbid")}, {patch: true}).then(() => {
+                task.save({volunteer_fbid: vol.fbid}, {patch: true}).then(() => {
                     new Admin({fbid: args.adminId}).fetch().then(admin => {
                         admin.sendMessage({text: `Assigned task ${task.id} to ${vol.name}.`});
                     });
@@ -449,9 +449,9 @@ function joinDeployment(payload, reply, args) {
                 promise = Promise.resolve();
             }
             promise.then(function() {
-                return vol.save({deployment_id: deployment.get("id")});
+                return vol.save({deployment_id: deployment.id});
             }).then(function() {
-                let text = `Great! Welcome to the ${deployment.get("name")} deployment!`;
+                let text = `Great! Welcome to the ${deployment.name} deployment!`;
                 if (!newTask) text += ` Say 'ask' for a new task.`;
                 reply(msgUtil.quickReplyMessage(text, ["ask"]));
             }).then(function() {

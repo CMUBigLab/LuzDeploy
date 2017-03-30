@@ -17,6 +17,10 @@ export class Deployment extends BaseModel<Deployment> {
         return this.hasMany(Task);
     }
 
+    get active(): boolean { return this.get("active"); }
+    get name(): string { return this.get("name"); }
+    get type(): string { return this.get("type"); }
+
     distributeTasks() {
         return this.volunteers()
         .query({where: {currentTask: null}})
@@ -31,8 +35,8 @@ export class Deployment extends BaseModel<Deployment> {
         .query({where: {completed: false, volunteer_fbid: null, disabled: false}})
         .fetch()
         .then(function(pool) {
-            return pool.sortBy(function(task) {
-                return [task.get("templateType"), Number(task.get("instructionParams").edge)];
+            return pool.sortBy(function(task: Task) {
+                return [task.templateType, Number(task.instructionParams.edge)];
             });
         });
     }
@@ -41,12 +45,13 @@ export class Deployment extends BaseModel<Deployment> {
         return this.volunteers().fetch({withRelated: ["currentTask"]})
         .then(function(volunteers) {
             volunteers.forEach((v: Volunteer) => {
-                if (v.get("currentTask") && v.get("startTime") && !v.get("completed")) {
+                let t = v.related<Task>("currentTask") as Task;
+                if (t && t.startTime && !t.completed) {
                     if (v.currentTask().timeScore() < 0 && v.currentTask().timeScore() > -1) {
                         let text = "You didn't finish your task in the estimated thim period. Do you need help?";
                         let buttons = [{type: "postback", title: "Yes, please send someone.", payload: "{\"type\":\"send_mentor\",\"args\":{}}"}];
                         v.sendMessage(msgUtil.buttonMessage(text, buttons));
-                    } else if (v.currentTask().timeScore() < -1) {
+                    } else if (t.timeScore() < -1) {
                         v.sendMessage({text: "You haven't finished your task in more that twice the estimated time it would take. We are going to send someone to help you."});
                         return v.createMentorshipTask();
                     }
@@ -59,10 +64,10 @@ export class Deployment extends BaseModel<Deployment> {
         return this.save({startTime: new Date(), active: true});
     }
 
-    sendSurvey(vol) {
+    sendSurvey(vol: Volunteer) {
         let buttons = [{
             type: "web_url",
-            url: `https://docs.google.com/forms/d/e/1FAIpQLSfkJZb1GOGR1HfC8zw2nipkl3yi_-7cDbUNvigl2PjqLxhbqw/viewform?entry.2036103825=${vol.get("fbid")}`,
+            url: `https://docs.google.com/forms/d/e/1FAIpQLSfkJZb1GOGR1HfC8zw2nipkl3yi_-7cDbUNvigl2PjqLxhbqw/viewform?entry.2036103825=${vol.fbid}`,
             title: "Open Survey"
         }];
         let text = "I am work-in-progress, so please help me become a better bot by answering this quick survey!";
@@ -86,7 +91,6 @@ export class Deployment extends BaseModel<Deployment> {
     }
 
     isCasual() {
-        const type = this.get("type");
-        return type === "casual" || type === "semiCasual";
+        return this.type === "casual" || this.type === "semiCasual";
     }
 }

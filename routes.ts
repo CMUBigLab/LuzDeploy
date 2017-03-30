@@ -67,8 +67,8 @@ router.post("/tasks", bodyParser.json(), function(req, res, next) {
     .query({whereIn: {type: templates}})
     .fetch()
     .then(function(models) {
-        return models.reduce((acc, t) => {
-            acc[t.get("type")] = t;
+        return models.reduce((acc, t: TaskTemplate) => {
+            acc[t.id] = t;
             return acc;
         }, {});
     })
@@ -77,15 +77,15 @@ router.post("/tasks", bodyParser.json(), function(req, res, next) {
             if (!(task.template_type in templates)) {
                 throw new errors.BadRequestError(`No template named ${task.template_type}`);
             }
-            let template = templates[task.template_type];
+            let template: TaskTemplate = templates[task.template_type];
             const params = _.omit(task,
                 ["template_type", "deployment_id", "dependencies"]
             );
             return new Task({
                 instructionParams: JSON.stringify(params),
-                estimatedTime: template.get("estimatedTime"),
+                estimatedTime: template.estimatedTime,
                 deploymentId: task.deployment_id,
-                completedWebhook: template.get("completedWebhook"),
+                completedWebhook: template.completedWebhook,
                 templateType: task.template_type,
             }).save();
         });
@@ -174,7 +174,7 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
             }
         }).then(function(fingerprintPoint) {
             return new FingerprintSample({
-                fingerprintId: fingerprintPoint.get("id"),
+                fingerprintId: fingerprintPoint.id,
                 data: JSON.stringify(fingerprint.sample)
             }).save();
         });

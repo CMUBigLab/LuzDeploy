@@ -50,7 +50,7 @@ describe('Deployment', function() {
 			});
 			testUtil.createTask(
 				deployment,
-				{templateType: task_template.get('type'), disabled: true}
+				{templateType: task_template.type, disabled: true}
 			)
 			.then(function(model) {
 				task = model;

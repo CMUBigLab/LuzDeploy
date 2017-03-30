@@ -34,8 +34,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
         },
         go: {
             _onEnter: function(task) {
-                let params = task.get("instructionParams");
-                const url = `${config.BASE_URL}/map/?advanced&hidden&beacon=${params.slot}`;
+                const url = `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.instructionParams.slot}`;
                 const text = "Please go to the location marked on the map below. Tell me when you are 'there'.";
                 const buttons = [{
                     type: "web_url",
@@ -44,7 +43,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
                     webview_height_ratio: "tall",
                     messenger_extensions: true,
                 }] as Array<FBTypes.MessengerButton>;
-                bot.FBPlatform.sendButtonMessage(task.get("volunteerFbid"), text, buttons);
+                bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons);
             },
             "msg:there": "old_beacon",
         },

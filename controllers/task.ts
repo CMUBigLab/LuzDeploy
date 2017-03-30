@@ -43,8 +43,8 @@ export const TaskFsm = new machina.BehavioralFsm({
             "msg:reject": rejectTask
         },
         started: {
-            _child: function(task) {
-                let controller = taskControllers[task.get("templateType")];
+            _child: function(task: Task) {
+                let controller = taskControllers[task.templateType];
                 if (!controller) {
                     throw new Error("no FSM defined for this task type");
                 }

@@ -7,7 +7,7 @@ import {bot} from "../bot";
 import bookshelf = require("../bookshelf");
 import {Deployment} from "./deployment";
 import {Volunteer} from "./volunteer";
-import {TaskTemplate} from "./task-template";
+import { PGInterval, TaskTemplate } from "./task-template";
 
 export class Task extends BaseModel<Task> {
   public context: any;
@@ -31,10 +31,17 @@ export class Task extends BaseModel<Task> {
   }
 
   // columns
-  get type(): string { return this.get("templateType"); }
-  get volunteerFbid(): number { return this.get("volunteerFbid"); }
-  get instructionParams(): any { return this.get("instructionParams"); }
-  get startTime(): Date { return this.get("startTime"); }
+  get type(): string { return this.get("template_type"); }
+  get volunteerFbid(): number { return this.get("volunteer_fbid"); }
+  get instructionParams(): any { return this.get("instruction_params"); }
+  get startTime(): Date { return this.get("start_time"); }
+  get completedTime(): Date { return this.get("completed_time"); }
+  get deploymentId(): number { return this.get("deployment_id"); }
+  get templateType(): string { return this.get("template_type"); }
+  get score(): number { return this.get("score"); }
+  get completed(): number { return this.get("completed"); }
+  get taskState(): any { return this.get("task_state"); }
+  get estimatedTime(): PGInterval { return this.get("estimated_time"); }
 
   start() {
       return this.save({startTime: new Date()}, {patch: true});
@@ -56,7 +63,7 @@ export class Task extends BaseModel<Task> {
     return this.save({taskState}, {patch: true});
   }
   loadState() {
-    let state = this.get("taskState");
+    let state = this.taskState;
     if (!state) {
       return;
     }
@@ -67,14 +74,14 @@ export class Task extends BaseModel<Task> {
     this.__machina__ = state;
   }
   estimatedTimeMin() {
-      const int = _.defaults(this.get("estimatedTime"), {hours: 0, minutes: 0, seconds: 0});
+      const int = _.defaults(this.estimatedTime, {hours: 0, minutes: 0, seconds: 0});
       return int.hours * 60 + int.minutes + int.seconds / 60;
     }
   estimatedTimeSec() {
       return this.estimatedTimeMin() * 60;
     }
   timeTakenSec() {
-      return (this.get("completedTime").getTime() - this.get("startTime").getTime()) / 1000;
+      return (this.completedTime.getTime() - this.startTime.getTime()) / 1000;
     }
   timeScore() {
       return (this.estimatedTimeSec() - this.timeTakenSec()) / this.estimatedTimeSec();

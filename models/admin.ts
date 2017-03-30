@@ -20,7 +20,7 @@ export class Admin extends BaseModel<Admin> {
     get idAttribute() { return ID_ATTRIBUTE; }
 
     // columns
-    get fbid(): string { return this.get("fbid"); }
+    get fbid(): string { return this.id; }
 
     deployments() {
         return this.belongsToMany(Deployment);

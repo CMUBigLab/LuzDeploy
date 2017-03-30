@@ -10,21 +10,21 @@ module.exports.createVolunteer = function(deployment, id, firstName, lastName) {
 		fbid: id,
 		firstName: firstName,
 		lastName: lastName,
-		deploymentId: deployment.get('id'),
+		deploymentId: deployment.id,
 		consentDate: new Date()
 	})
 };
 
 module.exports.createTask = function(deployment, options) {
 	options = options || {}
-	_.defaults(options, {deploymentId: deployment.get('id')})
+	_.defaults(options, {deploymentId: deployment.id})
 	return new Task(options).save()
 };
 
 module.exports.createTaskTemplate = function(deployment, options) {
 	options = options || {}
 	_.defaults(options, {
-		deploymentId: deployment.get('id'),
+		deploymentId: deployment.id,
 		instructions: {}
 	})
 	return new TaskTemplate().save(options, {method: 'insert'})
