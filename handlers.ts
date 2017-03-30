@@ -114,10 +114,11 @@ export function dispatchMessage(payload: WebhookPayloadFields, reply: ReplyFunc)
     .then((payload) => {
         if (payload.sender.volunteer) {
             const vol = payload.sender.volunteer;
+            const deployment = vol.related<Deployment>("deployment") as Deployment;
             if (vol.deploymentId === null) {
                 sendDeploymentMessage(payload.sender.id);
                 return;
-            } else if (!payload.sender.admin && !vol.deployment().active) {
+            } else if (!payload.sender.admin && !deployment.active) {
                 return reply({text: "This deployment is paused! We will let you know when we start back up."});
             }
         } else {
