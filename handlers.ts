@@ -295,7 +295,7 @@ function helpMessage(payload, reply: ReplyFunc) {
             args: {}
         })
     }] as Array<FBTypes.MessengerButton>;
-    const text = "Here is a list of commands you can say to me! Press 'Send Mentor' to have another volunteer come help you.";
+    const text = "Here is a list of commands you can say to me! Press 'Contact Admin' to have an admin contact you directly.";
     return bot.FBPlatform.sendButtonMessage(vol.fbid, text, buttons);
 }
 
