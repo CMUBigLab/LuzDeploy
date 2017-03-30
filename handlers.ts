@@ -525,7 +525,8 @@ function rejectTask(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
         }
         return TaskFsm.reject(task)
         .then(() => {
-            reply({text: "If you would like to opt-out of future task notifications, you can 'leave' the deployment effort."})
-        })
+            const text = "If you would like to opt-out of future task notifications, you can 'leave' the deployment effort.";
+            reply(msgUtil.quickReplyMessage(text, ["ask"]));
+        });
     });
 }
