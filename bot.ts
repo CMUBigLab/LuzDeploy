@@ -80,7 +80,7 @@ class Bot {
         // keep track of last time we sent anything to this user
         return new Volunteer({ fbid: payload.recipient.id })
         .save(
-            { "lastMessaged": moment().format(DATE_FORMAT) },
+            { last_messaged: moment().format(DATE_FORMAT) },
             { patch: true, require: false }
         ).then(() => {
             let msg = payload.message.text;
@@ -101,7 +101,7 @@ class Bot {
         // Keep track of last time we received anything from this user
         new Volunteer({ fbid: payload.sender.id })
         .save(
-            { "lastResponse": moment().format(DATE_FORMAT) },
+            { last_response: moment().format(DATE_FORMAT) },
             { patch: true, require: false }
         ).then(() => {
             const reply = this.sendMessage.bind(this, payload.sender.id);
