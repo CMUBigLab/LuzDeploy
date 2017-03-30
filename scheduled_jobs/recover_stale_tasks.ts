@@ -18,8 +18,9 @@ export function recoverUnstartedTasks() {
         return Promise.all(tasks.map((task: Task) => {
                 let vol: Volunteer = task.related<Volunteer>("assignedVolunteer") as Volunteer;
                 let cutoff = moment().subtract(6, "hours");
-                if (moment(vol.lastMessaged).isBefore(cutoff) &&
-                    moment(vol.lastResponse).isBefore(cutoff)) {
+                let messaged = vol.lastMessaged == null || moment(vol.lastMessaged).isBefore(cutoff);
+                let response = vol.lastResponse == null || moment(vol.lastResponse).isBefore(cutoff);
+                if (messaged && response) {
                     return vol.unassignTask();
                 } else return null;
             }));
