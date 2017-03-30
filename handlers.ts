@@ -508,6 +508,9 @@ function rejectTask(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
             reply({text: "You don't have a task."});
             return;
         }
-        return TaskFsm.reject(task);
+        return TaskFsm.reject(task)
+        .then(() => {
+            reply({text: "If you would like to opt-out of future task notifications, you can 'leave' the deployment effort."})
+        })
     });
 }

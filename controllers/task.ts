@@ -18,7 +18,7 @@ export const taskControllers = {
     fingerprint: new FingerprintTaskFsm(),
 };
 
-function rejectTask(task: Task) {
+function rejectTask(task: Task): Promise<any> {
     return task.assignedVolunteer().fetch()
     .then(function(vol) {
         return vol.unassignTask();
