@@ -1,11 +1,10 @@
-import { Task } from "../models/task";
 let machina = require("machina");
 import * as FBTypes from "facebook-sendapi-types";
 
 import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
-import {FingerprintPoint} from"../models/fingerprint-point";
+import {FingerprintPoint, Volunteer, Task} from"../models/";
 
 function done(task: Task) {
     task.saveScore(15 + 5 * task.context.points.length)
@@ -60,3 +59,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
         },
     }
 });
+
+export const getNewTask = function(vol: Volunteer) {
+    return null;
+};

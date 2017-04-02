@@ -3,7 +3,7 @@ let machina = require("machina");
 import * as FBTypes from "facebook-sendapi-types";
 import * as Promise from "bluebird";
 
-import { Task, BeaconSlot } from "../models";
+import { Task, BeaconSlot, Volunteer } from "../models";
 import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
@@ -115,3 +115,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
         }
     }
 });
+
+export const getNewTask = function(vol: Volunteer) {
+    return null;
+};

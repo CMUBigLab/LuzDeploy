@@ -4,7 +4,7 @@ import * as FBTypes from "facebook-sendapi-types";
 import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
-import { Task } from "../models/task";
+import { Task, Volunteer } from "../models";
 
 export const SweepTaskFsm = machina.BehavioralFsm.extend({
     namespace: "sweep_edge",
@@ -33,3 +33,7 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
         },
     }
 });
+
+export const getNewTask = function(vol: Volunteer) {
+    return null;
+};

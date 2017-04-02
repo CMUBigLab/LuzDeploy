@@ -6,7 +6,7 @@ import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 
-import {Beacon, BeaconSlot, Task, Deployment} from "../models";
+import { Beacon, BeaconSlot, Deployment, Task, Volunteer } from "../models";
 
 export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
     namespace: "place_beacons",
@@ -253,3 +253,24 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         }
     }
 });
+
+export const getNewTask = function(vol: Volunteer) {
+    let beaconSlots = BeaconSlot.getNSlots(1, vol.deploymentId);
+    let beacons = Beacon.collection<Beacon>()
+    .query({
+        slot: null,
+        deployment_id: vol.deploymentId,
+    })
+    .count();
+
+    return Promise.join(beaconSlots, beacons, (slots, beacons) => {
+        if (slots.length === 0 || beacons === 0) {
+            return null;
+        } else {
+            return new Task({
+                template_type: "place_beacons",
+                deployment_id: vol.deploymentId
+            });
+        }
+    });
+};
