@@ -21,6 +21,7 @@ export class Deployment extends BaseModel<Deployment> {
     get name(): string { return this.get("name"); }
     get type(): string { return this.get("type"); }
     get supplyStation(): string { return this.get("supply_station"); }
+    get supplyStationInstructions(): string { return this.get("supply_station_instructions"); }
     get mapFilename(): string { return this.get("map_filename"); }
 
     distributeTasks() {

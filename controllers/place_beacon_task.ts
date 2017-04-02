@@ -32,7 +32,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 return task.deployment().fetch()
                 .then((deployment: Deployment) => {
                     let text = `In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (${deployment.supplyStation}). Tell me when you are 'there'.`;
-                    bot.sendMessage(
+                    return bot.sendMessage(
                         task.volunteerFbid,
                         msgUtil.quickReplyMessage(text, ["there"])
                     );
@@ -42,11 +42,14 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         },
         pickup: {
             _onEnter: function(task) {
-                let text = "Great! To open the lockbox, type the code 020217, then #, then turn the switch. Now grab as many beacons as you are willing to place. Please close and lock the box. Tell me how many you took (you can press a button or type a number).";
-                bot.sendMessage(
-                    task.volunteerFbid,
-                    msgUtil.quickReplyMessage(text, ["1", "3", "5", "10"])
-                );
+                return task.deployment().fetch()
+                .then((deployment: Deployment) => {
+                    let text = `Great! ${deployment.supplyStationInstructions} Tell me how many you took (you can press a button or type a number).`;
+                    return bot.sendMessage(
+                        task.volunteerFbid,
+                        msgUtil.quickReplyMessage(text, ["1", "3", "5", "10"])
+                    );
+                });
             },
             number: function(task: Task, n) {
                 task.context = {
