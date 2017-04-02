@@ -26,8 +26,10 @@ $db.on("dbopen", function(e) {
 			_data = data;
 			$editor.trigger("dataLoaded");
 			$(window).trigger("hashchange");
-		} else
-			loadRemote();
+		} else {
+			var mapMatch = location.search.match(/map=([^&]*)/);
+			loadRemote(mapMatch ? mapMatch[1] : null);
+		}
 	});
 });
 
@@ -621,8 +623,9 @@ function prepareData() {
 	_data["uuid"] = $util.genUUID();
 }
 
-function loadRemote() {
-	$.getJSON('public_maps/NavCogMapData-CMU.json', function(data) {
+function loadRemote(mapName) {
+	mapName = mapName || 'NavCogMapData-CMU.json';
+	$.getJSON(`public_maps/${mapName}`, function(data) {
 		_data = data; //data is the JSON string
 		$editor.trigger("dataLoaded");
 		$(window).trigger("hashchange");
