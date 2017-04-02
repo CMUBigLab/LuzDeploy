@@ -94,7 +94,7 @@ TaskFsm.on("transitioned", function(event) {
     event.client.saveState();
 });
 
-TaskFsm.on("taskComplete", function(task, vol) {
+TaskFsm.on("taskComplete", function(task: Task, vol: Volunteer) {
     // TODO: This should really be handled in a hierarchy with a deployment FSM
     return task.deployment().fetch()
     .then((deployment: Deployment) => {
