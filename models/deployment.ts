@@ -93,7 +93,7 @@ export class Deployment extends BaseModel<Deployment> {
         .then(count => false); // (count == 0))
     }
 
-    isCasual() {
+    get isCasual() {
         return this.type === "casual" || this.type === "semiCasual";
     }
 }

@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 import {Task} from "../models/task";
-import {Volunteer} from "../models/volunteer";
+import {Volunteer, Deployment} from "../models";
 
 import {SweepTaskFsm} from "./sweep_task";
 import {PlaceBeaconsTaskFsm} from "./place_beacon_task";
@@ -97,7 +97,7 @@ TaskFsm.on("transitioned", function(event) {
 TaskFsm.on("taskComplete", function(task, vol) {
     // TODO: This should really be handled in a hierarchy with a deployment FSM
     return task.deployment().fetch()
-    .then((deployment) => {
+    .then((deployment: Deployment) => {
         return deployment.isComplete()
         .then(function(complete) {
             if (complete) {
