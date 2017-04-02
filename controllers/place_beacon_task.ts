@@ -169,7 +169,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 new Beacon({id: task.context.currentBeaconNumber, deployment_id: task.deploymentId})
                 .fetch({require: true, withRelated: ["slot"]})
                 .then(function(beacon: Beacon) {
-                    if (beacon.related("slot") == null) {
+                    if (beacon.get("slot") == null) {
                         task.context.currentBeacon = beacon.id;
                         self.transition(task, "place");
                     } else {
