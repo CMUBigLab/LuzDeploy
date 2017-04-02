@@ -270,6 +270,8 @@ $(document).ready(function() {
 			language = window.localStorage["LANGUAGE"];
 		}
 	}
+
+	language = "en-US";
 	$i18n.setUILanguage(language);
 	$util.setOptions("language-select", $i18n.getLanguages(), language);
 
