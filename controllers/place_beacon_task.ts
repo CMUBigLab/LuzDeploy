@@ -81,20 +81,21 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         go: {
             _onEnter: function(task) {
                 task.context.currentSlot = task.context.slots.pop(1);
-
-                const url = `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.context.currentSlot}`
-                const text = `You have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
-                const buttons = [
-                    {
-                        "type": "web_url",
-                        "title": "Open Map",
-                        "url": url,
-                        "webview_height_ratio": "tall",
-                        "messenger_extensions": true,
-                    }
-                ] as Array<FBTypes.MessengerButton>;
-                return bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons)
-                .then(() => {
+                return task.deployment().fetch()
+                .then((deployment: Deployment) => {
+                    const url = `${config.BASE_URL}/map/?advanced&hidden&map=${deployment.mapFilename}&beacon=${task.context.currentSlot}`
+                    const text = `You have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
+                    const buttons = [
+                        {
+                            "type": "web_url",
+                            "title": "Open Map",
+                            "url": url,
+                            "webview_height_ratio": "tall",
+                            "messenger_extensions": true,
+                        }
+                    ] as Array<FBTypes.MessengerButton>;
+                    return bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons)
+                }).then(() => {
                     return bot.sendMessage(
                         task.volunteerFbid,
                         msgUtil.quickReplyMessage("Tell me when you are 'there'!", ["there"])
@@ -192,17 +193,19 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         },
         place: {
             _onEnter: function(task) {
-                const url = `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.context.currentSlot}`;
-                const text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures.";
-                const buttons = [{
-                    type: "web_url",
-                    title: "Open Map",
-                    url: url,
-                    webview_height_ratio: "tall",
-                    messenger_extensions: true,
-                }] as Array<FBTypes.MessengerButton>;
-                return bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons)
-                .then(() => {
+                return task.deployment().fetch()
+                .then((deployment: Deployment) => {
+                    const url = `${config.BASE_URL}/map/?advanced&hidden&map=${deployment.mapFilename}&beacon=${task.context.currentSlot}`;
+                    const text = "Place the beacon high on the wall (you can double check using the map), and try to make it look neat. Don't put it on signs, door frames, or light fixtures.";
+                    const buttons = [{
+                        type: "web_url",
+                        title: "Open Map",
+                        url: url,
+                        webview_height_ratio: "tall",
+                        messenger_extensions: true,
+                    }] as Array<FBTypes.MessengerButton>;
+                    return bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons);
+                }).then(() => {
                     return bot.sendMessage(
                         task.volunteerFbid,
                         msgUtil.quickReplyMessage("Tell me when you are 'done'!", ["done"])
