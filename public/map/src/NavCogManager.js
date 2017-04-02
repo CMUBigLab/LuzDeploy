@@ -437,6 +437,7 @@ function initMapEvent() {
 			$editor.trigger("layerChange", _layers[layerforbeacon(beaconID)]);
 
 			beacon = _currentLayer.beacons[beaconID];
+			console.log("beacon data", beaconID, layerforbeacon(beaconID), beacon);
 			beacon.img = 1;
 			focus = new google.maps.LatLng(beacon.lat, beacon.lng);
 			_map.setCenter(focus);
