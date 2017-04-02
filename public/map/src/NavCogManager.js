@@ -21,16 +21,17 @@
  *******************************************************************************/
 
 $db.on("dbopen", function(e) {
-	$db.getData(function(data) {
-		if(JSON.stringify(data) != "{}") {
-			_data = data;
-			$editor.trigger("dataLoaded");
-			$(window).trigger("hashchange");
-		} else {
-			var mapMatch = location.search.match(/map=([^&]*)/);
-			loadRemote(mapMatch ? mapMatch[1] : null);
-		}
-	});
+	if (mapMatch = location.search.match(/map=([^&]*)/)) {
+		loadRemote(mapMatch[1]);
+	} else {
+		$db.getData(function(data) {
+			if(JSON.stringify(data) != "{}") {
+				_data = data;
+				$editor.trigger("dataLoaded");
+				$(window).trigger("hashchange");
+			} else loadRemote();
+		});
+	}
 });
 
 function loaded() {
