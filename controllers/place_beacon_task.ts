@@ -164,9 +164,9 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     msgUtil.quickReplyMessage(text, ["yes", "no"])
                 );
             },
-            "msg:yes": function(task) {
+            "msg:yes": function(task: Task) {
                 let self = this;
-                new Beacon({id: task.context.currentBeaconNumber})
+                new Beacon({id: task.context.currentBeaconNumber, deployment_id: task.deploymentId})
                 .fetch({require: true, withRelated: ["slot"]})
                 .then(function(beacon: Beacon) {
                     if (beacon.related("slot") == null) {
