@@ -31,7 +31,7 @@ export function prodStartTasks() {
     return Task.collection().query((qb) => {
         qb.whereNotNull("volunteer_fbid")
         .where("completed", false)
-        .where("deployment_id", 5)
+        .where("deployment_id", DEPLOYMENT_ID)
         .whereNotNull("start_time")
         .whereNull("completed_time");
     }).fetch({withRelated: ["assignedVolunteer"]})
