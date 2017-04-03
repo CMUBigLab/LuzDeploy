@@ -30,6 +30,7 @@ export class BeaconSlot extends BaseModel<BeaconSlot> {
     get endNode(): number { return this.get("end_node"); }
 
     static getProgress(deploymentId: number) {
+        console.log("getProgress", deploymentId);
         const total = BeaconSlot.collection<BeaconSlot>()
         .query({deployment_id: deploymentId})
         .count();
