@@ -55,6 +55,16 @@ router.post("/recover", (req, res, next) => {
     });
 });
 
+router.post("/stale", (req, res, next) => {
+    prodStartTasks()
+    .then(() => logger.info(`Finished running recover job`))
+    .then(() => res.send("OK"))
+    .catch((err) => {
+        logger.error(err);
+        res.sendStatus(500);
+    });
+});
+
 const now = moment().tz(TIME_ZONE);
 const timeFormat = "HH:mm";
 for (let job of jobSchedule) {
