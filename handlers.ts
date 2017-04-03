@@ -218,10 +218,10 @@ export function dispatchPostback(payload: WebhookPayloadFields, reply: ReplyFunc
 
 // very narrowly-scoped reset function just for W4A demo
 function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
-    const task1 = new Task({id: 2520}).fetch({require: true});
-    const task2 = new Task({id: 2521}).fetch({require: true});
+    const task1 = new Task({id: 2520, deployment_id: 5}).fetch({require: true});
+    const task2 = new Task({id: 2521, deployment_id: 5}).fetch({require: true});
 
-    return Promise.join(task1, task2, (placeTask, fingerprintTask) => {
+    return Promise.join(task1, task2, (placeTask: Task, fingerprintTask: Task) => {
         const resetAttrs = {
             completed: false,
             start_time: null,
