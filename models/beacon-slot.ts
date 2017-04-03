@@ -28,6 +28,7 @@ export class BeaconSlot extends BaseModel<BeaconSlot> {
 
     get startNode(): number { return this.get("start_node"); }
     get endNode(): number { return this.get("end_node"); }
+    get deploymentId(): number { return this.get("deployment_id"); }
 
     static getProgress(deploymentId: number) {
         console.log("getProgress", deploymentId);

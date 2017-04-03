@@ -1,3 +1,4 @@
+import { BeaconSlot } from "./models/beacon-slot";
 import * as _ from "lodash";
 import * as express from "express";
 import * as Promise from "bluebird";
@@ -11,7 +12,7 @@ import msgUtil = require("./message-utils");
 import {Deployment} from "./models/deployment";
 import {Volunteer} from "./models/volunteer";
 import {Admin} from "./models/admin";
-import {Task} from "./models/task";
+import {Task, Beacon} from "./models";
 import {TaskFsm, taskControllers} from "./controllers/task";
 
 const messageHandlers = {
@@ -220,8 +221,10 @@ export function dispatchPostback(payload: WebhookPayloadFields, reply: ReplyFunc
 function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
     const task1 = new Task({id: 2520, deployment_id: 5}).fetch({require: true});
     const task2 = new Task({id: 2521, deployment_id: 5}).fetch({require: true});
-
-    return Promise.join(task1, task2, (placeTask: Task, fingerprintTask: Task) => {
+    const slots = BeaconSlot.collection<BeaconSlot>().query({where: {deployment_id: 5}}).fetch();
+    const beacons = Beacon.collection<Beacon>().query({where: {deployment_id: 5}}).fetch();
+    return Promise.join(task1, task2, slots, beacons,
+    (placeTask: Task, fingerprintTask: Task, slots, beacons) => {
         const resetAttrs = {
             completed: false,
             start_time: null,
@@ -234,6 +237,14 @@ function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
             placeTask.set(resetAttrs).save(),
             fingerprintTask.set(resetAttrs).save()
         ];
+        slots.forEach(slot => {
+            if (slot.deploymentId !== 5) return;
+            promises.push(slot.save({beacon_id: null, in_progress: false}, {patch: true}));
+        });
+        beacons.forEach(beacon => {
+            if (beacon.deploymentId !== 5) return;
+            promises.push(beacon.save({slot: null}, {patch: true}));
+        })
         // make sure admin doesn't have a task.
         if (payload.sender.volunteer) {
             promises.push(
@@ -241,7 +252,9 @@ function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
             );
         }
         return Promise.all(promises);
-    }).then(() => reply({text: "Tasks reset, and your current task has been cleared."}));
+    }).then(() => reply(
+        {text: "Tasks, slots, and beacons reset, and your current task has been cleared."}
+    ));
 }
 
 function greetingMessage(payload, reply) {

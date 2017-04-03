@@ -12,4 +12,5 @@ export class Beacon extends BaseModel<Beacon> {
     }
 
     get minorId(): number { return this.get("minor_id"); }
+    get deploymentId(): number { return this.get("deployment_id"); }
 }
