@@ -29,12 +29,15 @@ export class BeaconSlot extends BaseModel<BeaconSlot> {
     get startNode(): number { return this.get("start_node"); }
     get endNode(): number { return this.get("end_node"); }
 
-    static getProgress() {
-        const total = BeaconSlot.collection().count();
+    static getProgress(deploymentId: number) {
+        const total = BeaconSlot.collection()
+        .query({deployment_id: deploymentId})
+        .count();
         const completed = BeaconSlot.collection()
         .query((qb) => {
-            qb.whereNotNull("beacon_id");
-            }).count();
+            qb.whereNotNull("beacon_id")
+            .where("deployment_id", deploymentId);
+        }).count();
         return Promise.join(total, completed, (total, completed) => {
             const percent = Math.floor((completed / total) * 100);
             return {total, completed, percent};

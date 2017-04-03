@@ -250,7 +250,7 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 );
             },
             "msg:done": function(task: Task) {
-                BeaconSlot.getProgress()
+                BeaconSlot.getProgress(task.deploymentId)
                 .then(stats => bot.sendMessage(
                     task.volunteerFbid,
                     {text: `We are ${stats.percent}% done! Beacons placed: ${stats.completed}/${stats.total}`}

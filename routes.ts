@@ -265,7 +265,7 @@ router.get("/leaders", function(req, res, next) {
 router.get("/beacon-count", function(req, res, next) {
     const deployment = req.query.deployment || 3;
 
-    BeaconSlot.getProgress()
+    BeaconSlot.getProgress(deployment)
     .then(result => {
         res.send(result);
     })
