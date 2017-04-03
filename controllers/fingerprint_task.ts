@@ -42,7 +42,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 const locations = task.context.points.map(
                     p => `${p.floor},${p.lat},${p.long}`
                 ).join(";");
-                const url = `https://hulop.qolt.cs.cmu.edu/?type=datasampler&major=65535&locations=${locations}&wid=${task.volunteerFbid}&next=${config.THREAD_URI}&base=${config.BASE_URL}`
+                const url = `${config.BASE_URL}/redirect.html?type=datasampler&major=65535&locations=${locations}&wid=${task.volunteerFbid}&next=${config.THREAD_URI}&base=${config.BASE_URL}`
                 const buttons = [
                     {
                         "type": "web_url",
