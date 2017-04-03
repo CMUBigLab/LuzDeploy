@@ -149,7 +149,7 @@ export function dispatchMessage(payload: WebhookPayloadFields, reply: ReplyFunc)
             } else {
                 commandHandler.handler(payload, reply, values.slice(1));
             }
-        } else if (payload.sender.volunteer && payload.sender.volunteer.related("currentTask")) {
+        } else if (payload.sender.volunteer && payload.sender.volunteer.get("current_task") !== null) {
             getTaskForVolunteer(payload.sender.volunteer)
             .then(function(task) {
                 TaskFsm.userMessage(task, command);
