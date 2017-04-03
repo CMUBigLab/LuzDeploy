@@ -3,7 +3,7 @@ import * as logger from "winston";
 
 import { TIME_ZONE } from "../config";
 import {remindVolunteersOfTasksAvailable} from "./remind_new_tasks";
-import {recoverUnstartedTasks} from "./recover_stale_tasks";
+import {recoverUnstartedTasks, prodStartTasks} from "./recover_stale_tasks";
 
 import * as express from "express";
 export const router = express.Router();
@@ -17,13 +17,22 @@ const jobSchedule = [{
     weekdays: [1, 2, 3, 4, 5],
     startTime: "10:29",
     endTime: "10:35",
-}, {
+},
+{
+    name: "remind users with tasks they can complete it",
+    function: prodStartTasks,
+    enabled: true,
+    weekdays: [1,2,3,4,5],
+    startTime: "11:29",
+    endTime: "11:35",
+},
+ {
     name: "unassign unstarted tasks from users",
     function: recoverUnstartedTasks,
     enabled: true,
     weekdays: [1, 2, 3, 4, 5],
-    startTime: "22:29",
-    endTime: "22:35",
+    startTime: "08:29",
+    endTime: "08:35",
 }];
 
 router.post("/remind", (req, res, next) => {
