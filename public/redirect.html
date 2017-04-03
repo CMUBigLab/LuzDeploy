@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<title>NavCog</title>
+			<meta property="al:ios:app_store_id" content="1042163426"/>
+			<meta property="al:ios:app_name" content="NavCog" />
+			<meta property="al:ios:url" content="navcog://" />
+			<meta property="al:web:url" content="https://itunes.apple.com/app/id1042163426?mt=8" />
+	</head>
+	<body onload="">
+		<div id="content" style="text-align: center; font-size: 70px; display: none;">
+			<a id="close" href="#">Click here to close this window and return to the chat.</a>
+		</div>
+		<script type="text/javascript">
+			(function(d, s, id){
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) {return;}
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'Messenger'));
+
+			function getParameterByName(name, url) {
+				if (!url) {
+					url = window.location.href;
+				}
+				name = name.replace(/[\[\]]/g, "\\$&");
+				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+				results = regex.exec(url);
+				if (!results) return null;
+				if (!results[2]) return '';
+				return decodeURIComponent(results[2].replace(/\+/g, " "));
+			}
+			var type = getParameterByName("type");
+			var a = document.createElement('a');
+			a.id = "click";
+			var edge = getParameterByName("edge");
+			var start = getParameterByName("start");
+			var end = getParameterByName("end");
+			var major = getParameterByName("major");
+			var minor = getParameterByName("minor");
+			var beacons = getParameterByName("beacons");
+			var beaconlist = getParameterByName("beaconlist");
+			var dir = getParameterByName("dir");
+			var length = getParameterByName("length");
+			var wid = getParameterByName("wid");
+			var next = getParameterByName("next");
+			var base = getParameterByName("base");
+			var y = getParameterByName("y");
+			var locations = getParameterByName("locations");
+			switch (type) {
+				case "datasampler":
+					a.href = "luzdeploy://datasampler?major="+major+"&locations="+locations+"&wid="+wid+"&next="+next+"&base="+base;
+					break;
+				case "beaconchecker":
+					a.href = "navcog://beaconchecker?major="+major+"&minor="+minor+"&wid="+wid;
+					break;
+				case "beaconsweeper":
+					a.href = "luzdeploy://beaconsweeper?major="+major+"&beacons="+beaconlist+"&wid="+wid+"&edge="+edge+"&start="+start+"&end="+end+"&next="+next+"&base="+base;
+					break;
+				case "datatester":
+					a.href = "navcog://datatester?major="+major+"&edge="+edge+"&beacons="+beacons+"&y="+y+"&wid="+wid;
+					break;
+			}
+			window.extAsyncInit = function() {
+				document.body.appendChild(a);
+				a.click();
+				document.getElementById("content").style.display = 'block';
+				if (MessengerExtensions.isInExtension()) {
+					document.getElementById("close").onclick = function() {
+							MessengerExtensions.requestCloseBrowser();
+					};
+				}
+			};
+
+		</script>
+	</body>
+</html>
