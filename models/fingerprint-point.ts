@@ -21,8 +21,8 @@ export class FingerprintPoint extends BaseModel<FingerprintPoint> {
     get tableName() { return "fingerprint_point"; }
 
     get floor(): number { return this.get("floor"); }
-    get latitude(): number { return this.get("latitude"); }
-    get longitude(): number { return this.get("longitude"); }
+    get latitude(): number { return this.get("lat"); }
+    get longitude(): number { return this.get("lon"); }
 
     samples() {
         return this.hasMany(FingerprintSample, "fingerprint_id");
