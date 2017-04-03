@@ -23,6 +23,11 @@ const messageHandlers = {
         handler: askMessage,
         description: "Ask for a new task."
     },
+    "reset": {
+        handler: resetMessage,
+        description: "reset tasks",
+        adminRequired: true
+    },
     "mentor": {
         handler: mentorMessage,
         description: "Ask for help from others."
@@ -210,6 +215,34 @@ export function dispatchPostback(payload: WebhookPayloadFields, reply: ReplyFunc
         }
     });
 };
+
+// very narrowly-scoped reset function just for W4A demo
+function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
+    const task1 = new Task({id: 2520}).fetch({require: true});
+    const task2 = new Task({id: 2521}).fetch({require: true});
+
+    return Promise.join(task1, task2, (placeTask, fingerprintTask) => {
+        const resetAttrs = {
+            completed: false,
+            start_time: null,
+            end_time: null,
+            volunteer_fbid: null,
+            score: null,
+            task_state: null
+        };
+        const promises = [
+            placeTask.set(resetAttrs).save(),
+            fingerprintTask.set(resetAttrs).save()
+        ];
+        // make sure admin doesn't have a task.
+        if (payload.sender.volunteer) {
+            promises.push(
+                payload.sender.volunteer.save({current_task: null}, {patch: true})
+            );
+        }
+        return Promise.all(promises);
+    }).then(() => reply({text: "Tasks reset, and your current task has been cleared."}));
+}
 
 function greetingMessage(payload, reply) {
     let text = "Hi! If you want a new task, use the command 'ask'.";
