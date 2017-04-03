@@ -228,7 +228,7 @@ function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
         const resetAttrs = {
             completed: false,
             start_time: null,
-            end_time: null,
+            completed_time: null,
             volunteer_fbid: null,
             score: null,
             task_state: null
