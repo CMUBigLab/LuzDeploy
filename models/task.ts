@@ -99,7 +99,7 @@ Estimated Time: ${template.estimatedTimeMin} minutes`;
     });
   }
   getProposalMessage(vol: Volunteer, text = null) {
-    text = text || `Hi ${vol.firstName}, could you help me with this today?`;
+    text = text || `Hi ${vol.firstName}, could you help me with this today in Gates?`;
     return this.getTaskDetailText()
     .then((details: string) => {
       return bot.FBPlatform.createButtonMessage(vol.fbid)
