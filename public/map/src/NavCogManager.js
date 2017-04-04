@@ -627,7 +627,7 @@ function prepareData() {
 
 function loadRemote(mapName) {
 	console.log("loadRemote", mapName);
-	mapName = mapName || 'NavCogMapData-PerthDemo.json';
+	mapName = mapName || 'NavCogMapData-CMU.json';
 	$.getJSON(`public_maps/${mapName}`, function(data) {
 		_data = data; //data is the JSON string
 		$editor.trigger("dataLoaded");
