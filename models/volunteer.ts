@@ -123,7 +123,7 @@ export class Volunteer extends BaseModel<Volunteer> {
         });
     }
     sendMessage(message) {
-        bot.sendMessage(this.id, message);
+        return bot.sendMessage(this.id, message);
     }
 
     name() {

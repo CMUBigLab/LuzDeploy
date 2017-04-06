@@ -24,7 +24,7 @@ function rejectTask(task: Task): Promise<any> {
         return vol.unassignTask();
     }).spread(function(vol: Volunteer, task: Task) {
         let text = "Task rejected. If you wish to continue, you can 'ask' for another.";
-        vol.sendMessage(msgUtil.quickReplyMessage(text, ["ask"]));
+        return vol.sendMessage(msgUtil.quickReplyMessage(text, ["ask"]));
     }).then(() => this.transition(task, "unassigned"));
 }
 

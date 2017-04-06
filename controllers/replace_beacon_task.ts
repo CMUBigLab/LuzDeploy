@@ -38,7 +38,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
             "msg:ready": "go",
         },
         go: {
-            _onEnter: function(task) {
+            _onEnter: function(task: Task) {
                 const url = `${config.BASE_URL}/map/?advanced&hidden&beacon=${task.instructionParams.slot}`;
                 const text = "Please go to the location marked on the map below. Tell me when you are 'there'.";
                 const buttons = [{
