@@ -53,7 +53,7 @@ process.on("unhandledRejection", function (error: Error, promise: Promise<any>) 
     sendAdminError(error);
 });
 
-app.use(express.static(path.join(process.env.PWD, "public")));
+app.use(express.static(path.join(process.env.PWD, "public"), {maxAge: "1d"}));
 app.use(routes.router);
 app.use("/jobs", jobRoutes);
 app.get("/fb-webhook", (req: express.Request, res: express.Response) => {
