@@ -154,7 +154,12 @@ interface Fingerprint {
 
 // Upload fingerprint data
 router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
-    const fingerprints = req.body as Fingerprint[];
+    let fingerprints: Fingerprint[];
+    if (req.body instanceof Array) {
+        fingerprints = req.body as Fingerprint[];
+    } else {
+        fingerprints = [(req.body as Fingerprint)];
+    }
     console.log("got fingerprint data", req.body);
     Promise.map(fingerprints, function(fingerprint) {
         if (fingerprint.sample.length <= 0) return;
