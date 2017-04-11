@@ -142,6 +142,7 @@ interface FingerprintSampleStruct {
 }
 
 interface Fingerprint {
+    collectedBy: Number;
     location: {
         lat: Number,
         long: Number,
@@ -159,14 +160,14 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
         let point = fingerprint.location;
         return new FingerprintPoint({
             floor: point.floor,
-            long: point.long,
+            lon: point.long,
             lat: point.lat
         }).fetch()
         .then(function(fingerprintPoint) {
             if (fingerprintPoint == null) {
                 return new FingerprintPoint({
                     floor: point.floor,
-                    long: point.long,
+                    lon: point.long,
                     lat: point.lat
                 }).save();
             } else {
@@ -175,6 +176,7 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
         }).then(function(fingerprintPoint) {
             return new FingerprintSample({
                 fingerprint_id: fingerprintPoint.id,
+                collected_by_fbid: fingerprint.collectedBy,
                 data: JSON.stringify(fingerprint.sample)
             }).save();
         });
