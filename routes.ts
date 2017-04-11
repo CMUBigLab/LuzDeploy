@@ -143,6 +143,7 @@ interface FingerprintSampleStruct {
 
 interface Fingerprint {
     collectedBy: Number;
+    deviceModelName: string;
     location: {
         lat: Number,
         long: Number,
@@ -177,6 +178,7 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
             return new FingerprintSample({
                 fingerprint_id: fingerprintPoint.id,
                 collected_by_fbid: fingerprint.collectedBy,
+                device_model: fingerprint.deviceModelName,
                 data: JSON.stringify(fingerprint.sample)
             }).save();
         });
