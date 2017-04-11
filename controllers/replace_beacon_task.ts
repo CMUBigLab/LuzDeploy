@@ -48,7 +48,7 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
                     webview_height_ratio: "tall",
                     messenger_extensions: true,
                 }] as Array<FBTypes.MessengerButton>;
-                bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons);
+                bot.FBPlatform.sendButtonMessage(task.volunteerFbid.toString(), text, buttons);
             },
             "msg:there": "old_beacon",
         },
