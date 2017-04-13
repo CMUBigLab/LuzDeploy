@@ -204,9 +204,11 @@ $NC.loc = (function() {
 					var edge = _layers[l].edges[e];
 					if (edge.localizationID) {
 						var loc = getById(edge.localizationID);
-						edge.dataFile = loc.dataFile;
-						edge.maxKnnDist = loc.maxKnnDist;
-						edge.minKnnDist = loc.minKnnDist;
+						if (loc) {
+							edge.dataFile = loc.dataFile;
+							edge.maxKnnDist = loc.maxKnnDist;
+							edge.minKnnDist = loc.minKnnDist;
+						}
 					}
 				}
 			}
