@@ -219,10 +219,10 @@ export function dispatchPostback(payload: WebhookPayloadFields, reply: ReplyFunc
 
 // very narrowly-scoped reset function just for W4A demo
 function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
-    const task1 = new Task({id: 2520, deployment_id: 5}).fetch({require: true});
-    const task2 = new Task({id: 2521, deployment_id: 5}).fetch({require: true});
-    const slots = BeaconSlot.collection<BeaconSlot>().query({where: {deployment_id: 5}}).fetch();
-    const beacons = Beacon.collection<Beacon>().query({where: {deployment_id: 5}}).fetch();
+    const task1 = new Task({id: 2520, deployment_id: 6}).fetch({require: true});
+    const task2 = new Task({id: 2521, deployment_id: 6}).fetch({require: true});
+    const slots = BeaconSlot.collection<BeaconSlot>().query({where: {deployment_id: 6}}).fetch();
+    const beacons = Beacon.collection<Beacon>().query({where: {deployment_id: 6}}).fetch();
     return Promise.join(task1, task2, slots, beacons,
     (placeTask: Task, fingerprintTask: Task, slots, beacons) => {
         const resetAttrs = {
@@ -238,11 +238,11 @@ function resetMessage(payload: WebhookPayloadFields, reply: ReplyFunc) {
             fingerprintTask.set(resetAttrs).save()
         ];
         slots.forEach(slot => {
-            if (slot.deploymentId !== 5) return;
+            if (slot.deploymentId !== 6) return;
             promises.push(slot.save({beacon_id: null, in_progress: false}, {patch: true}));
         });
         beacons.forEach(beacon => {
-            if (beacon.deploymentId !== 5) return;
+            if (beacon.deploymentId !== 6) return;
             promises.push(beacon.save({slot: null}, {patch: true}));
         })
         // make sure admin doesn't have a task.
