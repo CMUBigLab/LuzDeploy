@@ -22,7 +22,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 let self = this;
                 FingerprintPoint.getPointsForSampling(
                     task.deploymentId,
-                    10
+                    2
                 ).then(function(points) {
                     task.context = {
                         points: points.map((p: FingerprintPoint) => ({
