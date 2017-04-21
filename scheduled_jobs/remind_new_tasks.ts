@@ -30,7 +30,6 @@ export function remindVolunteersOfTasksAvailable(): Promise<any> {
         return Promise.mapSeries(volunteers.map<Volunteer>(), (volunteer) => {
             if (tasks.length > 0) {
                 const task = tasks.pop();
-                console.log(volunteer);
                 return TaskFsm.assign(task, volunteer)
                 .then(() => task.getProposalMessage(volunteer))
                 .then(message => message.send());
