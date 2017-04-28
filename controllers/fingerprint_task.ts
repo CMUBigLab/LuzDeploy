@@ -47,7 +47,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
             _onEnter: function(task: Task) {
                 return task.assignedVolunteer().fetch()
                 .then(vol => {
-                    if (vol.appState !== "installed") {
+                    if (vol.appState === "installed") {
                         return this.transition(task, "load_points");
                     }
                     const text = "You will need to download the app 'LuzDeploy Data Sampler'. Press the link below to open the App Store.";
