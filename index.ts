@@ -50,6 +50,7 @@ process.env.PWD = process.cwd();
 
 process.on("unhandledRejection", function (error: Error, promise: Promise<any>) {
     logger.error("UNHANDLED REJECTION", error.stack);
+    console.log(error);
     sendAdminError(error);
 });
 
