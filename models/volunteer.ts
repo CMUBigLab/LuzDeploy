@@ -41,7 +41,7 @@ export class Volunteer extends BaseModel<Volunteer> {
         return Promise.join(
             this.save({current_task: task.id}, {patch: true}),
             task.save({volunteer_fbid: this.id}, {patch: true}),
-            (vol, task) => { return task; });
+            (vol: Volunteer, task: Task) => { return task; });
     }
     getNewTask() {
         return getTaskPool(this)
@@ -78,9 +78,9 @@ export class Volunteer extends BaseModel<Volunteer> {
     completeTask() {
         return this.save({current_task: null}, {patch: true});
     }
-    unassignTask() {
+    unassignTask(): Promise<[Volunteer, Task]> {
         return this.currentTask().fetch()
-        .then((task) => {
+        .then((task: Task) => {
             return Promise.all([
                 this.save({current_task: null}, {patch: true}),
                 task.save({volunteer_fbid: null, start_time: null, task_state: null}, {patch: true})

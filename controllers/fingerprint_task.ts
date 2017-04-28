@@ -6,6 +6,7 @@ import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
 import {FingerprintPoint, Task} from"../models/";
 import {Volunteer} from "../models/volunteer";
+import {getAndAssignVolTask} from "../handlers";
 
 function done(task: Task) {
     task.saveScore(15 + 5 * task.context.points.length)
@@ -35,13 +36,12 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
             },
             "msg:no": function(task: Task) {
                 return new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": false}, {patch: true})
-                .then(() => {
+                .then((vol: Volunteer) => {
                     const text = "Unforuntately, we don't have the helper app available for other platforms yet. We will contact you when we do!";
-                    return task.assignedVolunteer().fetch()
-                    .tap(vol => vol.sendMessage({text}))
-                    .then(vol => vol.unassignTask());
-                });
-            }
+                    return vol.sendMessage({text})
+                    .then(() => vol.unassignTask());
+                }).then(([vol, oldTask]) => getAndAssignVolTask(vol));
+            },
         },
         download_app: {
             _onEnter: function(task: Task) {

@@ -521,7 +521,7 @@ function joinDeployment(payload, reply, args) {
     );
 }
 
-function getAndAssignVolTask(vol: Volunteer) {
+export function getAndAssignVolTask(vol: Volunteer) {
     return vol.getNewTask()
     .then(task => {
         if (!task) {
