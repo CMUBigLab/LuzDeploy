@@ -19,24 +19,24 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
     states: {
         ios_check: {
             _onEnter: function(task: Task) {
-                if (task.assignedVolunteer().hasIOS !== null) {
-                    return this.transition(task, "download_app");
-                }
-                const text = "Some of our tasks require the use of a helper app to collect Bluetooth data. Do you have an iOS device?";
-                return bot.sendMessage(
-                    task.volunteerFbid,
-                    msgUtil.quickReplyMessage(text, ["yes", "no"])
-                );
+                return task.assignedVolunteer().fetch()
+                .then(vol => {
+                    if (vol.hasIOS !== null) {
+                        return this.transition(task, "download_app");
+                    }
+                    const text = "Some of our tasks require the use of a helper app to collect Bluetooth data. Do you have an iOS device?";
+                    return vol.sendMessage(msgUtil.quickReplyMessage(text, ["yes", "no"]));
+                });
             },
             "msg:yes": function(task: Task) {
-                new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": true}, {patch: true})
+                return new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": true}, {patch: true})
                 .then(() => this.transition(task, "download_app"));
             },
             "msg:no": function(task: Task) {
-                new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": false}, {patch: true})
+                return new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": false}, {patch: true})
                 .then(() => {
                     const text = "Unforuntately, we don't have the helper app available for other platforms yet. We will contact you when we do!";
-                    task.assignedVolunteer().fetch()
+                    return task.assignedVolunteer().fetch()
                     .tap(vol => vol.sendMessage(text))
                     .then(vol => vol.unassignTask());
                 });
@@ -44,8 +44,8 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
         },
         download_app: {
             _onEnter: function(task: Task) {
-                if (task.assignedVolunteer().hasIOS !== null) {
-                    return this.transition(task, "download_app");
+                if (task.assignedVolunteer().appState !== "installed") {
+                    return this.transition(task, "load_points");
                 }
                 const text = "You will need to download the app 'LuzDeploy Data Sampler'. Press the link below to open the App Store.";
                 const url = "http://appstore.com/luzdeploydatasampler";
