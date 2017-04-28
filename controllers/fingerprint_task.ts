@@ -59,7 +59,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
         },
     },
     getNewTask: function(vol: Volunteer) {
-        if (!vol.hasIOS) {
+        if (vol.hasIOS === false) {
             return null;
         }
         return FingerprintPoint.getPointsForSampling(vol.deploymentId, 1)
