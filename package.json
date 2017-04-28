@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/csv-parse": "^1.1.8",
     "@types/node": "^7.0.8",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
