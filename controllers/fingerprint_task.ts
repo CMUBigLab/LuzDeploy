@@ -62,7 +62,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                         vol.fbid.toString(),
                         text,
                         buttons
-                    ).then(() => vol.sendMessage("Let me know when you are 'done'!"));
+                    ).then(() => vol.sendMessage("Then come back to this conversation and let me know when you are 'done'!"));
                 });
             },
             "msg:done": function(task: Task) {
