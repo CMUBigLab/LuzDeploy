@@ -411,7 +411,7 @@ function cancelMentor(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
             return reply({text: "Hmm, that task was not found."});
         } else {
             return task.assignedVolunteer().fetch()
-            .then(vol => {
+            .then((vol: Volunteer) => {
                 if (vol) {
                     return vol.save({current_task: null}, {patch: true})
                     .then(() => {
@@ -420,10 +420,8 @@ function cancelMentor(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
                     .then(() => {
                         vol.sendMessage({text: `${mentee.name} figured it out! I'm going to give you another task.`});
                         return vol.getNewTask()
-                        .then(function(task: Task) {
-                            let controller = taskControllers[task.type];
-                            return controller.start(task);
-                        });
+                        .then(task => task.save())
+                        .then((task: Task) => taskControllers[task.type].start(task));
                     });
                 } else {
                     return task.destroy();

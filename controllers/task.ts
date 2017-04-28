@@ -117,16 +117,15 @@ TaskFsm.on("taskComplete", function(task: Task, vol: Volunteer) {
                         if (!newTask) {
                             return vol.sendMessage({text: "Thanks! There are no tasks available right now."});
                         } else {
-                            TaskFsm.assign(newTask, vol)
-                            .then(function() {
-                                TaskFsm.start(newTask);
-                            });
+                            return newTask.save()
+                            .then(t => TaskFsm.assign(t, vol))
+                            .then(t => TaskFsm.start(newTask));
                         }
                     });
                 } else {
                     let text = "Thanks! There are more tasks available! Say 'ask' to get another.";
                     vol.sendMessage(
-                    msgUtil.quickReplyMessage(text, ["ask"])
+                        msgUtil.quickReplyMessage(text, ["ask"])
                     );
                 }
             } else {
@@ -135,17 +134,17 @@ TaskFsm.on("taskComplete", function(task: Task, vol: Volunteer) {
         });
     });
 });
-    
-    
-    TaskFsm.on("nohandler", function(event) {
-        event.client.assignedVolunteer().fetch()
-        .then(function(vol) {
-            if (event.inputType.startsWith("msg:")) {
-                vol.sendMessage({text: `Sorry, this task can't handle "${event.inputType.slice(4)}".`});
-            } else if (event.inputType === "number") {
-                vol.sendMessage({text: `Sorry, I don't know what to do with that number.`});
-            } else {
-                throw new Error(`no handler defined for ${event.inputType}`);
-            }
-        });
+
+
+TaskFsm.on("nohandler", function(event) {
+    event.client.assignedVolunteer().fetch()
+    .then(function(vol) {
+        if (event.inputType.startsWith("msg:")) {
+            vol.sendMessage({text: `Sorry, this task can't handle "${event.inputType.slice(4)}".`});
+        } else if (event.inputType === "number") {
+            vol.sendMessage({text: `Sorry, I don't know what to do with that number.`});
+        } else {
+            throw new Error(`no handler defined for ${event.inputType}`);
+        }
     });
+});
