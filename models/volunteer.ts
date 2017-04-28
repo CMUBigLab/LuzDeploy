@@ -79,7 +79,6 @@ export class Volunteer extends BaseModel<Volunteer> {
         return this.save({current_task: null}, {patch: true});
     }
     unassignTask(): Promise<[Volunteer, Task]> {
-        console.log(this);
         return this.currentTask().fetch()
         .then((task: Task) => {
             return Promise.all([

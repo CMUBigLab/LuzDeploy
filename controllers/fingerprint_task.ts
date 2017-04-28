@@ -31,11 +31,13 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 });
             },
             "msg:yes": function(task: Task) {
-                return new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": true}, {patch: true})
+                return task.assignedVolunteer().fetch()
+                .then((vol: Volunteer) => vol.save({"has_ios": true}))
                 .then(() => this.transition(task, "download_app"));
             },
             "msg:no": function(task: Task) {
-                return new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": false}, {patch: true})
+                return task.assignedVolunteer().fetch()
+                .then((vol: Volunteer) => vol.save({"has_ios": false}))
                 .then((vol: Volunteer) => {
                     const text = "Unforuntately, we don't have the helper app available for other platforms yet. We will contact you when we do!";
                     return vol.sendMessage({text})
@@ -66,7 +68,8 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 });
             },
             "msg:done": function(task: Task) {
-                new Volunteer({fbid: task.volunteerFbid}).save({app_state: "installed"}, {patch: true})
+                return task.assignedVolunteer().fetch()
+                .then((vol: Volunteer) => vol.save({app_state: "installed"}))
                 .then(() => this.transition(task, "load_points"));
             }
         },
