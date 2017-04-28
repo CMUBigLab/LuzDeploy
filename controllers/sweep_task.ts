@@ -31,9 +31,8 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
                 task.saveScore(40).then(() => this.handle(task, "complete"));
             }
         },
+    },
+    getNewTask: function(vol: Volunteer): Promise<Task> {
+        return null;
     }
 });
-
-export const getNewTask = function(vol: Volunteer) {
-    return null;
-};

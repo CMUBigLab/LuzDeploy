@@ -21,8 +21,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
             return;
         } else {
             return bot.sendMessage(
-                task.volunteerFbid,
-                {text: "Later, please return that beacon to the supply station. For now we will plave another beacon."}
+            task.volunteerFbid,
+            {text: "Later, please return that beacon to the supply station. For now we will plave another beacon."}
             ).then(() => this.transition(task, "which"));
         }
     },
@@ -33,8 +33,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 .then((deployment: Deployment) => {
                     let text = `In this task you will place beacons in the environment that will be used by people with visual impairments to navigate. Please go to the Supply Station (${deployment.supplyStation}). Tell me when you are 'there'.`;
                     return bot.sendMessage(
-                        task.volunteerFbid,
-                        msgUtil.quickReplyMessage(text, ["there"])
+                    task.volunteerFbid,
+                    msgUtil.quickReplyMessage(text, ["there"])
                     );
                 });
             },
@@ -46,8 +46,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 .then((deployment: Deployment) => {
                     let text = `Great! ${deployment.supplyStationInstructions} Tell me how many you took (you can press a button or type a number).`;
                     return bot.sendMessage(
-                        task.volunteerFbid,
-                        msgUtil.quickReplyMessage(text, ["1", "3", "5", "10"])
+                    task.volunteerFbid,
+                    msgUtil.quickReplyMessage(text, ["1", "3", "5", "10"])
                     );
                 });
             },
@@ -89,19 +89,19 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     const url = `${config.BASE_URL}/map/?advanced&hidden&map=${deployment.mapFilename}&beacon=${task.context.currentSlot}`
                     const text = `You have ${task.context.numBeacons} beacons to place. Please go to the location marked on the map below.`;
                     const buttons = [
-                        {
-                            "type": "web_url",
-                            "title": "Open Map",
-                            "url": url,
-                            "webview_height_ratio": "tall",
-                            "messenger_extensions": true,
-                        }
+                    {
+                        "type": "web_url",
+                        "title": "Open Map",
+                        "url": url,
+                        "webview_height_ratio": "tall",
+                        "messenger_extensions": true,
+                    }
                     ] as Array<FBTypes.MessengerButton>;
                     return bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons)
                 }).then(() => {
                     return bot.sendMessage(
-                        task.volunteerFbid,
-                        msgUtil.quickReplyMessage("Tell me when you are 'there'!", ["there"])
+                    task.volunteerFbid,
+                    msgUtil.quickReplyMessage("Tell me when you are 'there'!", ["there"])
                     );
                 });
             },
@@ -111,8 +111,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
             _onEnter: function(task) {
                 const text = "Is there already a beacon placed on the wall there?";
                 return bot.sendMessage(
-                    task.volunteerFbid,
-                    msgUtil.quickReplyMessage(text, ["no", "yes"])
+                task.volunteerFbid,
+                msgUtil.quickReplyMessage(text, ["no", "yes"])
                 );
             },
             "msg:yes": function(task: Task) {
@@ -147,8 +147,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         which: {
             _onEnter: function(task) {
                 return bot.sendMessage(
-                    task.volunteerFbid,
-                    {text: `What is the number on the back of one of the beacons you have?`}
+                task.volunteerFbid,
+                {text: `What is the number on the back of one of the beacons you have?`}
                 );
             },
             number: function(task, id) {
@@ -160,8 +160,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
             _onEnter: function(task) {
                 let text = `The beacon number is ${task.context.currentBeaconNumber}, correct?`;
                 return bot.sendMessage(
-                    task.volunteerFbid,
-                    msgUtil.quickReplyMessage(text, ["yes", "no"])
+                task.volunteerFbid,
+                msgUtil.quickReplyMessage(text, ["yes", "no"])
                 );
             },
             "msg:yes": function(task: Task) {
@@ -174,8 +174,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                         self.transition(task, "place");
                     } else {
                         return bot.sendMessage(
-                            task.volunteerFbid,
-                            {text: "Hm, that beacon number is already used elsewhere. We won't use that one."}
+                        task.volunteerFbid,
+                        {text: "Hm, that beacon number is already used elsewhere. We won't use that one."}
                         ).then(() => {
                             return self.beaconToReturn(task);
                         });
@@ -183,8 +183,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                 })
                 .catch(Beacon.NotFoundError, function() {
                     return bot.sendMessage(
-                        task.volunteerFbid,
-                        {text: "Hm, I can't find a record for that beacon. We won't use that one."}
+                    task.volunteerFbid,
+                    {text: "Hm, I can't find a record for that beacon. We won't use that one."}
                     ).then(() => {
                         return self.beaconToReturn(task);
                     });
@@ -210,8 +210,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                     return bot.FBPlatform.sendButtonMessage(task.volunteerFbid, text, buttons);
                 }).then(() => {
                     return bot.sendMessage(
-                        task.volunteerFbid,
-                        msgUtil.quickReplyMessage("Tell me when you are 'done'!", ["done"])
+                    task.volunteerFbid,
+                    msgUtil.quickReplyMessage("Tell me when you are 'done'!", ["done"])
                     );
                 });
             },
@@ -235,8 +235,8 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
                         }
                     } else {
                         return bot.sendMessage(
-                            task.volunteerFbid,
-                            {text: "Thanks, let's place another!"}
+                        task.volunteerFbid,
+                        {text: "Thanks, let's place another!"}
                         ).then(() => this.transition(task, "go"));
                     }
                 });
@@ -245,38 +245,37 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
         return: {
             _onEnter: function(task) {
                 bot.sendMessage(
-                    task.volunteerFbid,
-                    msgUtil.quickReplyMessage(`Please return your extra beacon(s) to the Supply Station. Let me know when you are 'done'.`, ["done"])
+                task.volunteerFbid,
+                msgUtil.quickReplyMessage(`Please return your extra beacon(s) to the Supply Station. Let me know when you are 'done'.`, ["done"])
                 );
             },
             "msg:done": function(task: Task) {
                 BeaconSlot.getProgress(task.deploymentId)
                 .then(stats => bot.sendMessage(
-                    task.volunteerFbid,
-                    {text: `We are ${stats.percent}% done! Beacons placed: ${stats.completed}/${stats.total}`}
+                task.volunteerFbid,
+                {text: `We are ${stats.percent}% done! Beacons placed: ${stats.completed}/${stats.total}`}
                 )).then(() => this.handle(task, "complete"));
             }
         }
+    },
+    getNewTask: function(vol: Volunteer) {
+        let beaconSlots = BeaconSlot.getNSlots(1, vol.deploymentId);
+        let beacons = Beacon.collection<Beacon>()
+        .query({
+            slot: null,
+            deployment_id: vol.deploymentId,
+        })
+        .count();
+        
+        return Promise.join(beaconSlots, beacons, (slots, beacons) => {
+            if (slots.length === 0 || beacons === 0) {
+                return null;
+            } else {
+                return new Task({
+                    template_type: "place_beacons",
+                    deployment_id: vol.deploymentId
+                });
+            }
+        });
     }
 });
-
-export const getNewTask = function(vol: Volunteer) {
-    let beaconSlots = BeaconSlot.getNSlots(1, vol.deploymentId);
-    let beacons = Beacon.collection<Beacon>()
-    .query({
-        slot: null,
-        deployment_id: vol.deploymentId,
-    })
-    .count();
-
-    return Promise.join(beaconSlots, beacons, (slots, beacons) => {
-        if (slots.length === 0 || beacons === 0) {
-            return null;
-        } else {
-            return new Task({
-                template_type: "place_beacons",
-                deployment_id: vol.deploymentId
-            });
-        }
-    });
-};

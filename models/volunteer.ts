@@ -1,3 +1,4 @@
+import { getTaskPool } from "../controllers/task";
 import { BaseModel } from "./base";
 import * as _ from "lodash";
 import * as Promise from "bluebird";
@@ -33,6 +34,7 @@ export class Volunteer extends BaseModel<Volunteer> {
     get lastResponse(): Date { return this.get("last_response"); }
     get deploymentId(): number { return this.get("deployment_id"); }
     get ignoring(): boolean { return this.get("ignoring"); }
+    get hasIOS(): boolean { return this.get("has_ios"); }
 
     assignTask(task: Task) {
         return Promise.join(
@@ -41,10 +43,7 @@ export class Volunteer extends BaseModel<Volunteer> {
             (vol, task) => { return task; });
     }
     getNewTask() {
-        return this.deployment().fetch()
-        .then((deployment: Deployment) => {
-            return deployment.getTaskPool()
-        }).then(pool => {
+        return getTaskPool(this).then(pool => {
             return (pool.length > 0) ? pool.pop() : null;
         });
     }

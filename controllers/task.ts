@@ -11,12 +11,22 @@ import {SweepTaskFsm} from "./sweep_task";
 import {PlaceBeaconsTaskFsm} from "./place_beacon_task";
 import {ReplaceBeaconTaskFsm} from "./replace_beacon_task";
 import {FingerprintTaskFsm} from "./fingerprint_task";
+
+export interface TaskController {
+    getNewTask: (Volunteer) => Promise<Task>;
+}
+
 export const taskControllers = {
-    sweep_edge: new SweepTaskFsm(),
-    place_beacons: new PlaceBeaconsTaskFsm(),
-    replace_beacon: new ReplaceBeaconTaskFsm(),
-    fingerprint: new FingerprintTaskFsm(),
+    sweep_edge: <TaskController> new SweepTaskFsm(),
+    place_beacons: <TaskController> new PlaceBeaconsTaskFsm(),
+    replace_beacon: <TaskController> new ReplaceBeaconTaskFsm(),
+    fingerprint: <TaskController> new FingerprintTaskFsm(),
 };
+
+export function getTaskPool(vol: Volunteer): Promise<Task[]> {
+    return Promise.map(Object.values(taskControllers), tc => tc.getNewTask(vol))
+    .then(pool => pool.filter(t => t != null));
+}
 
 function rejectTask(task: Task): Promise<any> {
     return task.assignedVolunteer().fetch()
@@ -98,50 +108,44 @@ TaskFsm.on("taskComplete", function(task: Task, vol: Volunteer) {
     // TODO: This should really be handled in a hierarchy with a deployment FSM
     return task.deployment().fetch()
     .then((deployment: Deployment) => {
-        return deployment.isComplete()
-        .then(function(complete) {
-            if (complete) {
-                return deployment.finish();
-            } else {
-                return deployment.getTaskPool()
-                .then((pool) => {
-                    if (pool.length > 0) {
-                        if (!deployment.isCasual) {
-                            return vol.getNewTask()
-                            .then(function(newTask) {
-                                if (!newTask) {
-                                    return vol.sendMessage({text: "Thanks! There are no tasks available right now."});
-                                } else {
-                                    TaskFsm.assign(newTask, vol)
-                                    .then(function() {
-                                        TaskFsm.start(newTask);
-                                    });
-                                }
-                            });
+        return getTaskPool(vol)
+        .then((pool) => {
+            if (pool.length > 0) {
+                if (!deployment.isCasual) {
+                    return vol.getNewTask()
+                    .then(function(newTask) {
+                        if (!newTask) {
+                            return vol.sendMessage({text: "Thanks! There are no tasks available right now."});
                         } else {
-                            let text = "Thanks! There are more tasks available! Say 'ask' to get another.";
-                            vol.sendMessage(
-                                msgUtil.quickReplyMessage(text, ["ask"])
-                            );
+                            TaskFsm.assign(newTask, vol)
+                            .then(function() {
+                                TaskFsm.start(newTask);
+                            });
                         }
-                    } else {
-                        vol.sendMessage({text: "Thanks! There are no more tasks available right now."});
-                    }
-                });
+                    });
+                } else {
+                    let text = "Thanks! There are more tasks available! Say 'ask' to get another.";
+                    vol.sendMessage(
+                    msgUtil.quickReplyMessage(text, ["ask"])
+                    );
+                }
+            } else {
+                vol.sendMessage({text: "Thanks! There are no more tasks available right now."});
             }
         });
     });
 });
-
-TaskFsm.on("nohandler", function(event) {
-    event.client.assignedVolunteer().fetch()
-    .then(function(vol) {
-        if (event.inputType.startsWith("msg:")) {
-            vol.sendMessage({text: `Sorry, this task can't handle "${event.inputType.slice(4)}".`});
-        } else if (event.inputType === "number") {
-            vol.sendMessage({text: `Sorry, I don't know what to do with that number.`});
-        } else {
-            throw new Error(`no handler defined for ${event.inputType}`);
-        }
+    
+    
+    TaskFsm.on("nohandler", function(event) {
+        event.client.assignedVolunteer().fetch()
+        .then(function(vol) {
+            if (event.inputType.startsWith("msg:")) {
+                vol.sendMessage({text: `Sorry, this task can't handle "${event.inputType.slice(4)}".`});
+            } else if (event.inputType === "number") {
+                vol.sendMessage({text: `Sorry, I don't know what to do with that number.`});
+            } else {
+                throw new Error(`no handler defined for ${event.inputType}`);
+            }
+        });
     });
-});

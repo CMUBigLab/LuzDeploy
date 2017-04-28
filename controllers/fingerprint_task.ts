@@ -57,9 +57,21 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
             "msg:done": done,
             "webhook:done": done
         },
+    },
+    getNewTask: function(vol: Volunteer) {
+        if (!vol.hasIOS) {
+            return null;
+        }
+        return FingerprintPoint.getPointsForSampling(vol.deploymentId, 1)
+        .then((points) => {
+            if (points.length === 0) {
+                return null;
+            } else {
+                return new Task({
+                    template_type: "fingerprint",
+                    deployment_id: vol.deploymentId
+                });
+            }
+        });
     }
 });
-
-export const getNewTask = function(vol: Volunteer) {
-    return null;
-};

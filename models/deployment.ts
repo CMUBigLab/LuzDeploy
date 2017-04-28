@@ -33,17 +33,6 @@ export class Deployment extends BaseModel<Deployment> {
         });
     }
 
-    getTaskPool() {
-        return this.tasks()
-        .query({where: {completed: false, volunteer_fbid: null, disabled: false}})
-        .fetch()
-        .then(function(pool) {
-            return pool.sortBy(function(task: Task) {
-                return [task.templateType, Number(task.instructionParams.edge)];
-            });
-        });
-    }
-
     checkThresholds() {
         return this.volunteers().fetch({withRelated: ["currentTask"]})
         .then(function(volunteers) {

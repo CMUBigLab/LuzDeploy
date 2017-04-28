@@ -113,9 +113,8 @@ export const ReplaceBeaconTaskFsm = machina.BehavioralFsm.extend({
                 });
             },
         }
+    },
+    getNewTask: function(vol: Volunteer): Task {
+        return null;
     }
 });
-
-export const getNewTask = function(vol: Volunteer) {
-    return null;
-};
