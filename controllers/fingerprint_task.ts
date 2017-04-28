@@ -45,25 +45,25 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
         },
         download_app: {
             _onEnter: function(task: Task) {
-                if (task.assignedVolunteer().appState !== "installed") {
-                    return this.transition(task, "load_points");
-                }
-                const text = "You will need to download the app 'LuzDeploy Data Sampler'. Press the link below to open the App Store.";
-                const url = "http://appstore.com/luzdeploydatasampler";
-                const buttons = [{
-                    "type": "web_url",
-                    "title": "Download App",
-                    "url": url,
-                    "webview_height_ratio": "compact",
-                }] as Array<FBTypes.MessengerButton>;
-                return bot.FBPlatform.sendButtonMessage(
-                    task.volunteerFbid.toString(),
-                    text,
-                    buttons
-                ).then(() => bot.sendMessage(
-                    task.volunteerFbid,
-                    "Let me know when you are 'done'!")
-                );
+                return task.assignedVolunteer().fetch()
+                .then(vol => {
+                    if (vol.appState !== "installed") {
+                        return this.transition(task, "load_points");
+                    }
+                    const text = "You will need to download the app 'LuzDeploy Data Sampler'. Press the link below to open the App Store.";
+                    const url = "http://appstore.com/luzdeploydatasampler";
+                    const buttons = [{
+                        "type": "web_url",
+                        "title": "Download App",
+                        "url": url,
+                        "webview_height_ratio": "compact",
+                    }] as Array<FBTypes.MessengerButton>;
+                    return bot.FBPlatform.sendButtonMessage(
+                        vol.fbid.toString(),
+                        text,
+                        buttons
+                    ).then(() => vol.sendMessage("Let me know when you are 'done'!"));
+                });
             },
             "msg:done": function(task: Task) {
                 new Volunteer({fbid: task.volunteerFbid}).save({app_state: "installed"}, {patch: true})
