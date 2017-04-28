@@ -31,10 +31,10 @@ class Bot {
         }
         logger.info("sending message", {fbid, message});
         return this.FBPlatform.sendMessageToFB(fbid, message)
-        .catch(rpErrors.StatusCodeError, (reason) => {
+        .catch((error) => {
             logger.error(
             "Error while trying to send Facebook message via Send API.",
-            reason.response.body
+            error.response.body.error
             );
         });
     }
