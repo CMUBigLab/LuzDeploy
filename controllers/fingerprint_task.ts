@@ -15,8 +15,60 @@ function done(task: Task) {
 
 export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
     namespace: "fingerprint",
-    initialState: "load_points",
+    initialState: "ios_check",
     states: {
+        ios_check: {
+            _onEnter: function(task: Task) {
+                if (task.assignedVolunteer().hasIOS !== null) {
+                    return this.transition(task, "download_app");
+                }
+                const text = "Some of our tasks require the use of a helper app to collect Bluetooth data. Do you have an iOS device?";
+                return bot.sendMessage(
+                    task.volunteerFbid,
+                    msgUtil.quickReplyMessage(text, ["yes", "no"])
+                );
+            },
+            "msg:yes": function(task: Task) {
+                new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": true}, {patch: true})
+                .then(() => this.transition(task, "download_app"));
+            },
+            "msg:no": function(task: Task) {
+                new Volunteer({fbid: task.volunteerFbid}).save({"has_ios": false}, {patch: true})
+                .then(() => {
+                    const text = "Unforuntately, we don't have the helper app available for other platforms yet. We will contact you when we do!";
+                    task.assignedVolunteer().fetch()
+                    .tap(vol => vol.sendMessage(text))
+                    .then(vol => vol.unassignTask());
+                });
+            }
+        },
+        download_app: {
+            _onEnter: function(task: Task) {
+                if (task.assignedVolunteer().hasIOS !== null) {
+                    return this.transition(task, "download_app");
+                }
+                const text = "You will need to download the app 'LuzDeploy Data Sampler'. Press the link below to open the App Store.";
+                const url = "http://appstore.com/luzdeploydatasampler";
+                const buttons = [{
+                    "type": "web_url",
+                    "title": "Download App",
+                    "url": url,
+                    "webview_height_ratio": "compact",
+                }] as Array<FBTypes.MessengerButton>;
+                return bot.FBPlatform.sendButtonMessage(
+                    task.volunteerFbid.toString(),
+                    text,
+                    buttons
+                ).then(() => bot.sendMessage(
+                    task.volunteerFbid,
+                    "Let me know when you are 'done'!")
+                );
+            },
+            "msg:done": function(task: Task) {
+                new Volunteer({fbid: task.volunteerFbid}).save({app_state: "installed"}, {patch: true})
+                .then(() => this.transition(task, "load_points"));
+            }
+        },
         load_points: {
             _onEnter: function(task: Task) {
                 let self = this;
