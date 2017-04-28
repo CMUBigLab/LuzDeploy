@@ -38,7 +38,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 .then(() => {
                     const text = "Unforuntately, we don't have the helper app available for other platforms yet. We will contact you when we do!";
                     return task.assignedVolunteer().fetch()
-                    .tap(vol => vol.sendMessage(text))
+                    .tap(vol => vol.sendMessage({text}))
                     .then(vol => vol.unassignTask());
                 });
             }
