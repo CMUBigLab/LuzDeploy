@@ -521,16 +521,15 @@ function joinDeployment(payload, reply, args) {
     );
 }
 
-function getAndAssignVolTask(vol) {
+function getAndAssignVolTask(vol: Volunteer) {
     return vol.getNewTask()
-    .then(function(task) {
+    .then(task => {
         if (!task) {
             return vol.sendMessage({text: "There are no tasks available right now."});
         } else {
-            TaskFsm.assign(task, vol)
-            .then(function(task) {
-                TaskFsm.start(task);
-            });
+            return task.save()
+            .then(t => TaskFsm.assign(t, vol))
+            .then(t => TaskFsm.start(task));
         }
     });
 }
