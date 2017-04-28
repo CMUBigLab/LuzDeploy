@@ -261,10 +261,10 @@ export const PlaceBeaconsTaskFsm = machina.BehavioralFsm.extend({
     getNewTask: function(vol: Volunteer) {
         let beaconSlots = BeaconSlot.getNSlots(1, vol.deploymentId);
         let beacons = Beacon.collection<Beacon>()
-        .query({
+        .query({where: {
             slot: null,
             deployment_id: vol.deploymentId,
-        })
+        }})
         .count();
         
         return Promise.join(beaconSlots, beacons, (slots, beacons) => {
