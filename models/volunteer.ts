@@ -35,7 +35,7 @@ export class Volunteer extends BaseModel<Volunteer> {
     get deploymentId(): number { return this.get("deployment_id"); }
     get ignoring(): boolean { return this.get("ignoring"); }
     get hasIOS(): boolean { return this.get("has_ios"); }
-    get appState(): boolean { return this.get("app_state"); }
+    get appState(): string { return this.get("app_state"); }
 
     assignTask(task: Task) {
         return Promise.join(
