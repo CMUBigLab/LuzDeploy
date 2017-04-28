@@ -4,7 +4,8 @@ import * as FBTypes from "facebook-sendapi-types";
 import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
-import {FingerprintPoint, Volunteer, Task} from"../models/";
+import {FingerprintPoint, Task} from"../models/";
+import {Volunteer} from "../models/volunteer";
 
 function done(task: Task) {
     task.saveScore(15 + 5 * task.context.points.length)
