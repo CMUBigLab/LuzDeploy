@@ -117,6 +117,7 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
                 console.log("slot debug", beacons[0], slot);
                 return new Task({
                     template_type: "sweep_edge",
+                    deployment_id: vol.deploymentId,
                     instruction_params: {
                         edge: edge,
                         start: slot.startNode,
