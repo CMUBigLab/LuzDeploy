@@ -53,6 +53,7 @@ process.on("unhandledRejection", function (error: Error, promise: Promise<any>) 
     sendAdminError(error);
 });
 
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(express.static(path.join(process.env.PWD, "public"), {maxAge: "1d"}));
 app.use(routes.router);
 app.use("/jobs", jobRoutes);
