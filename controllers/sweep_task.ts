@@ -112,8 +112,8 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
 
             const beacons = edges[edge];
             const lastSwept = _.min(beacons.map(b => b.lastSwept));
-            console.log(moment(lastSwept), moment().subtract(4, "weeks"));
-            if (moment(lastSwept) < moment().subtract(4, "weeks")) {
+            console.log(lastSwept);
+            if (lastSwept === null || moment(lastSwept).isBefore(moment().subtract(4, "weeks"))) {
                 return new Task({
                     type: "sweep_edge",
                     instruction_params: {
