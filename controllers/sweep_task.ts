@@ -102,8 +102,9 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
             qb.where({deployment_id: vol.deploymentId})
             .whereNotNull("slot");
         }).fetch({withRelated: "slot"})
-        .then(beacons => beacons.groupBy(b => b.related("slot").edge))
-        .then(edges => {
+        .then(beacons => beacons.groupBy(
+            (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).edge)
+        ).then(edges => {
             const minDate = (bs: Beacon[]) => _.min(bs.map(b => b.lastSwept)) || null;
             const edge = _.keys(edges).reduce(
                 (a, b, i) => minDate(edges[a]) < minDate(edges[b]) ? a : b
@@ -113,12 +114,13 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
             const lastSwept = minDate(beacons);
             console.log("lastSwept debug", beacons, lastSwept);
             if (lastSwept === null || moment(lastSwept).isBefore(moment().subtract(4, "weeks"))) {
+                const slot = beacons[0].related<BeaconSlot>("slot") as BeaconSlot;
                 return new Task({
                     type: "sweep_edge",
                     instruction_params: {
                         edge: edge,
-                        start: beacons[0].slot().startNode,
-                        end: beacons[0].slot().endNode,
+                        start: slot.startNode,
+                        end: slot.endNode,
                         beacons: beacons.map(b => b.minorId)
                     }
                 });
