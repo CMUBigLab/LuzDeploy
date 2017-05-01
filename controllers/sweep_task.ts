@@ -104,15 +104,14 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
         }).fetch({withRelated: "slot"})
         .then(beacons => beacons.groupBy(b => b.related("slot").edge))
         .then(edges => {
-            const edge = _.keys(edges).reduce((a, b, i) => {
-                const aMin = _.min(edges[a].map(b => b.lastSwept));
-                const bMin = _.min(edges[b].map(b => b.lastSwept));
-                return aMin < bMin ? a : b;
-            });
+            const minDate = (bs: Beacon[]) => _.min(bs.map(b => b.lastSwept)) || null;
+            const edge = _.keys(edges).reduce(
+                (a, b, i) => minDate(edges[a]) < minDate(edges[b]) ? a : b
+            );
 
             const beacons = edges[edge];
-            const lastSwept = _.min(beacons.map(b => b.lastSwept));
-            console.log("lastSwept debug", beacons, beacons.map(b => b.lastSwept), lastSwept);
+            const lastSwept = minDate(beacons);
+            console.log("lastSwept debug", beacons, lastSwept);
             if (lastSwept === null || moment(lastSwept).isBefore(moment().subtract(4, "weeks"))) {
                 return new Task({
                     type: "sweep_edge",
