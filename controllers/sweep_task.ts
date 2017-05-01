@@ -4,7 +4,10 @@ import * as FBTypes from "facebook-sendapi-types";
 import * as config from "../config";
 import {bot} from "../bot";
 import * as msgUtil from "../message-utils";
-import { Task, Volunteer } from "../models";
+import { Task, Volunteer, Beacon, BeaconSlot } from "../models";
+import * as Promise from "bluebird";
+import * as moment from "moment";
+import * as _ from "lodash";
 
 export const SweepTaskFsm = machina.BehavioralFsm.extend({
     namespace: "sweep_edge",
@@ -33,6 +36,32 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
         },
     },
     getNewTask: function(vol: Volunteer): Promise<Task> {
-        return null;
+        return Beacon.collection<Beacon>()
+        .query(qb => {
+            qb.where({deployment_id: vol.deploymentId})
+            .whereNotNull("slot");
+        }).fetch({withRelated: ["slot"]})
+        .then(beacons => beacons.groupBy("slot.edge"))
+        .then(edges => {
+            const edge = _.keys(edges).reduce((a, b, i) => {
+                const aMin = _.min(edges[a].map(b => b.lastSwept));
+                const bMin = _.min(edges[b].map(b => b.lastSwept));
+                return aMin < bMin ? a : b;
+            });
+
+            const beacons = edges[edge];
+            const lastSwept = _.min(beacons.map(b => b.lastSwept));
+            if (moment(lastSwept) < moment().subtract(4, "weeks")) {
+                return new Task({
+                    type: "sweep_edge",
+                    instruction_params: {
+                        edge: edge,
+                        start: beacons[0].slot().startNode,
+                        end: beacons[0].slot().endNode,
+                        beacons: beacons.map(b => b.minorId)
+                    }
+                });
+            }
+        });
     }
 });
