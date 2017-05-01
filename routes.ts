@@ -160,6 +160,7 @@ router.post("/fingerprint-data", bodyParser.json(), function(req, res, next) {
     } else {
         fingerprints = [(req.body as Fingerprint)];
     }
+    console.log(req.body);
     Promise.map(fingerprints, function(fingerprint) {
         if (fingerprint.sample.length <= 0) return;
         let point = fingerprint.location;
