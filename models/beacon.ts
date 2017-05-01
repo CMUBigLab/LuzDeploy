@@ -6,9 +6,9 @@ import bookshelf = require("../bookshelf");
 import {BeaconSlot} from "./beacon-slot";
 
 export class Beacon extends BaseModel<Beacon> {
-    get tableName() { return "beacons"; } 
+    get tableName() { return "beacons"; }
     slot() {
-        return this.belongsTo(BeaconSlot);
+        return this.belongsTo(BeaconSlot, "slot");
     }
 
     get minorId(): number { return this.get("minor_id"); }

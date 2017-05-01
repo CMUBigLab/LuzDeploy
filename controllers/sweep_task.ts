@@ -101,7 +101,7 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
         .query(qb => {
             qb.where({deployment_id: vol.deploymentId})
             .whereNotNull("slot");
-        }).fetch({withRelated: ["slot"]})
+        }).fetch({withRelated: "slot"})
         .then(beacons => beacons.groupBy("slot.edge"))
         .then(edges => {
             const edge = _.keys(edges).reduce((a, b, i) => {
