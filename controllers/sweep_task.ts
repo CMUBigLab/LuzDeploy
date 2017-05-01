@@ -75,7 +75,7 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
             _onEnter: function(task: Task) {
                 const text = "We need you to help us check which beacons are not working in the building. Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
                 const params = task.instructionParams;
-                const url = `https://hulop.qolt.cs.cmu.edu/?type=beaconsweeper&major=65535&edge=${params.edge}&beaconlist=${params.beacons}&wid=${task.volunteerFbid}&start=${params.start}&end=${params.end}&next=${config.THREAD_URI}&base=${config.BASE_URL}`;
+                const url = `${config.BASE_URL}/redirect.html?type=beaconsweeper&major=65535&edge=${params.edge}&beaconlist=${params.beacons}&wid=${task.volunteerFbid}&start=${params.start}&end=${params.end}&next=${config.THREAD_URI}&base=${config.BASE_URL}`;
                 const buttons = [{
                     type: "web_url",
                     title: "Open LuzDeploy",
