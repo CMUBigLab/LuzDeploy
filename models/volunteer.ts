@@ -46,6 +46,7 @@ export class Volunteer extends BaseModel<Volunteer> {
     getNewTask() {
         return getTaskPool(this)
         .then(pool => {
+            console.log(pool);
             return (pool.length > 0) ? _.sample(pool) : null;
         });
     }
