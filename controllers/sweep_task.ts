@@ -45,7 +45,7 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
                 return task.assignedVolunteer().fetch()
                 .then(vol => {
                     if (vol.appState === "installed") {
-                        return this.transition(task, "load_points");
+                        return this.transition(task, "goto");
                     }
                     const text = "You will need to download the app 'LuzDeploy Data Sampler'. Press the link below to open the App Store.";
                     const url = "http://appstore.com/luzdeploydatasampler";
