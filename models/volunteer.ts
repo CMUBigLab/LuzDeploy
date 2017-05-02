@@ -51,7 +51,8 @@ export class Volunteer extends BaseModel<Volunteer> {
             if (this.preferredTaskType) {
                 const task = _.find(pool, t => t.templateType === this.preferredTaskType);
                 if (task) return task;
-            } else _.sample(pool);
+            }
+            return _.sample(pool);
         });
     }
     getAverageExpertise() {
