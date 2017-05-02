@@ -586,7 +586,7 @@ function earnings(payload: WebhookPayloadFields, reply: ReplyFunc) {
     .fetch()
     .then(tasks => {
         const total = _.sum(tasks.map(t => t.compensation)) || 0;
-        console.log("total compensation", typeof tasks[0].compensation, total);
+        console.log("total compensation", typeof tasks.first().compensation, total);
         reply({text: `You have earned a total of $${total.toFixed(2)}. You can collect your earnings by contacting Cole Gleason (cgleason@cs.cmu.edu).`});
     })
 }
