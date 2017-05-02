@@ -36,6 +36,7 @@ export class Volunteer extends BaseModel<Volunteer> {
     get ignoring(): boolean { return this.get("ignoring"); }
     get hasIOS(): boolean { return this.get("has_ios"); }
     get appState(): string { return this.get("app_state"); }
+    get preferredTaskType(): string { return this.get("prefered_task_type"); }
 
     assignTask(task: Task) {
         return Promise.join(

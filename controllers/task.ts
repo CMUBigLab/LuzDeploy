@@ -24,6 +24,10 @@ export const taskControllers = {
 };
 
 export function getTaskPool(vol: Volunteer): Promise<Task[]> {
+    if (vol.preferredTaskType) {
+        const task = taskControllers[vol.preferredTaskType].getNewTask(vol);
+        if (task) return task;
+    }
     return Promise.map(Object.values(taskControllers), tc => tc.getNewTask(vol))
     .then(pool => pool.filter(t => t != null));
 }
