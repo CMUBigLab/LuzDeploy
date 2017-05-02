@@ -87,8 +87,12 @@ export class Task extends BaseModel<Task> {
       return (this.estimatedTimeSec() - this.timeTakenSec()) / this.estimatedTimeSec();
     }
 
-  saveScore(score: number) {
-    return this.save({score}, {patch: true});
+  saveScore(score: number, money?: number) {
+    const updates = {score};
+    if (money) {
+      updates["compensation"] = money;
+    }
+    return this.save(updates, {patch: true});
   }
   getTaskDetailText() {
     return this.template().fetch()

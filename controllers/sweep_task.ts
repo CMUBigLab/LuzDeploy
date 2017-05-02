@@ -86,10 +86,10 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
                 bot.FBPlatform.sendButtonMessage(task.volunteerFbid.toString(), text, buttons);
             },
             "msg:done": function(task: Task) {
-                task.saveScore(40).then(() => this.handle(task, "complete"));
+                task.saveScore(40, 0.4).then(() => this.handle(task, "complete"));
             },
             "webhook:done": function(task) {
-                task.saveScore(40).then(() => this.handle(task, "complete"));
+                task.saveScore(40, 0.4).then(() => this.handle(task, "complete"));
             }
         },
     },

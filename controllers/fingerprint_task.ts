@@ -9,7 +9,7 @@ import {Volunteer} from "../models/volunteer";
 import {getAndAssignVolTask} from "../handlers";
 
 function done(task: Task) {
-    task.saveScore(15 + 5 * task.context.points.length)
+    task.saveScore(15 + 5 * task.context.points.length, 0.1 * task.context.points.length)
     .then(() => {
         this.handle(task, "complete");
     });
