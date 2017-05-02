@@ -42,6 +42,7 @@ export class Task extends BaseModel<Task> {
   get completed(): number { return this.get("completed"); }
   get taskState(): any { return this.get("task_state"); }
   get estimatedTime(): PGInterval { return this.get("estimated_time"); }
+  get compensation(): number { return this.get("compensation"); }
 
   start() {
       return this.save({start_time: new Date()}, {patch: true});

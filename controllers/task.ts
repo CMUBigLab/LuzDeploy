@@ -124,6 +124,10 @@ TaskFsm.on("taskComplete", function(task: Task, vol: Volunteer) {
                     });
                 } else {
                     let text = "Thanks! There are more tasks available! Say 'ask' to get another.";
+                    if (task.compensation > 0) {
+                        console.log("compensation for task:", task.compensation);
+                        text = `Thanks, you earned ${task.compensation}. There are more tasks available! Say 'ask' to get another.`;
+                    }
                     vol.sendMessage(
                         msgUtil.quickReplyMessage(text, ["ask"])
                     );
