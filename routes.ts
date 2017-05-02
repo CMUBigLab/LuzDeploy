@@ -221,6 +221,7 @@ router.post("/send-message", bodyParser.json(), function(req, res, next) {
             res.sendStatus(500);
         });
     } else {
+        console.log(fbid, message);
         bot.sendMessage(fbid, message)
         .then(() => res.sendStatus(200));
     }
