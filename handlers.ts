@@ -52,6 +52,11 @@ const messageHandlers = {
         adminRequired: true,
         description: "send message to all"
     },
+    "earnings": {
+        handler: earnings,
+        volRequired: true,
+        description: "see how much you have earned"
+    }
 };
 
 const postbackHandlers = {
@@ -573,4 +578,14 @@ function rejectTask(payload: WebhookPayloadFields, reply: ReplyFunc, args) {
             return reply(msgUtil.quickReplyMessage(text, ["ask"]));
         });
     });
+}
+
+function earnings(payload: WebhookPayloadFields, reply: ReplyFunc) {
+    return Task.collection<Task>()
+    .query({where: {volunteer_fbid: payload.sender.volunteer.fbid}})
+    .fetch()
+    .then(tasks => {
+        const total = _.sum(tasks.map(t => t.compensation));
+        reply({text: `You have earned a total of $${total.toFixed(2)}. You can collect your earnings by contacting Cole Gleason (cgleason@cs.cmu.edu).`});
+    })
 }
