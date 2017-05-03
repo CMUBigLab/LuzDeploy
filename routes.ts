@@ -123,6 +123,7 @@ router.post("/sweep-data", bodyParser.urlencoded({extended: true}), function(req
             }).save(null, {method: "insert"});
         });
     });
+    // TODO(cgleason): this needs to be tied to a deployment id
     let b = Beacon.collection().query()
     .whereIn("minor_id", present)
     .update({last_seen: now, last_swept: now, exists: true});
@@ -221,7 +222,7 @@ router.post("/send-message", bodyParser.json(), function(req, res, next) {
             res.sendStatus(500);
         });
     } else {
-        console.log(fbid, message);
+        console.log(req.body);
         bot.sendMessage(fbid, message)
         .then(() => res.sendStatus(200));
     }
