@@ -110,12 +110,13 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
             (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).edge)
         ).then(edges => {
             const minDate = (bs: Beacon[]) => _.min(bs.map(b => b.lastSwept)) || null;
-            const edge = _(edges).keys().sortBy([
-                k => (edges[k][0].related<BeaconSlot>("slot")  as BeaconSlot).building,
-                k => (edges[k][0].related<BeaconSlot>("slot")  as BeaconSlot).startNode
-            ]).value().reduce(
+            const edge = _.keys(edges).reduce(
                 (a, b, i) => minDate(edges[a]) <= minDate(edges[b]) ? a : b
             );
+            //.keys().sortBy([
+            //    k => (edges[k][0].related<BeaconSlot>("slot")  as BeaconSlot).building,
+            //    k => (edges[k][0].related<BeaconSlot>("slot")  as BeaconSlot).startNode
+            //]).value()
 
             const beacons = edges[edge];
             const lastSwept = minDate(beacons);
