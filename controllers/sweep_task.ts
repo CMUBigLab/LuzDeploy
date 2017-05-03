@@ -104,7 +104,7 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
         }).fetch({withRelated: "slot"})
         // Temporary TODO(cgleason): remove this filter
         .then(beacons => beacons.filter(
-            (b:Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).floor === 3
+            (b:Beacon) => [3,4].includes((b.related<BeaconSlot>("slot") as BeaconSlot).floor)
         )).then(beacons => _.groupBy(beacons,
             (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).edge)
         ).then(edges => {
