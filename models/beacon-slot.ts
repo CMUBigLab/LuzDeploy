@@ -26,6 +26,7 @@ export class BeaconSlot extends BaseModel<BeaconSlot> {
         return this.hasOne(Beacon, "slot");
     }
 
+    get building(): string { return this.get("building"); }
     get startNode(): number { return this.get("start_node"); }
     get endNode(): number { return this.get("end_node"); }
     get edge(): number { return this.get("edge"); }

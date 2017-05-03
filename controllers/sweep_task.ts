@@ -103,13 +103,17 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
             .whereNotNull("slot");
         }).fetch({withRelated: "slot"})
         // Temporary TODO(cgleason): remove this filter
-        .then(beacons => beacons.filter(
-            (b:Beacon) => [3,4].includes((b.related<BeaconSlot>("slot") as BeaconSlot).floor)
-        )).then(beacons => _.groupBy(beacons,
+        .then(beacons => beacons.filter([
+            (b: Beacon) => [3, 4].includes((b.related<BeaconSlot>("slot") as BeaconSlot).floor),
+            (b: Beacon) => ["GHC"].includes((b.related<BeaconSlot>("slot") as BeaconSlot).building),
+        ])).then(beacons => _.groupBy(beacons,
             (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).edge)
         ).then(edges => {
             const minDate = (bs: Beacon[]) => _.min(bs.map(b => b.lastSwept)) || null;
-            const edge = _.keys(edges).reduce(
+            const edge = _(edges).keys().sortBy([
+                k => (edges[k][0].related<BeaconSlot>("slot")  as BeaconSlot).building,
+                k => (edges[k][0].related<BeaconSlot>("slot")  as BeaconSlot).startNode
+            ]).value().reduce(
                 (a, b, i) => minDate(edges[a]) <= minDate(edges[b]) ? a : b
             );
 
