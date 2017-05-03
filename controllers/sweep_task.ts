@@ -105,7 +105,7 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
         // Temporary TODO(cgleason): remove this filter
         .then(beacons => beacons.filter([
             (b: Beacon) => [3, 4].includes((b.related<BeaconSlot>("slot") as BeaconSlot).floor),
-            (b: Beacon) => ["GHC"].includes((b.related<BeaconSlot>("slot") as BeaconSlot).building),
+            (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).building === "GHC"
         ])).then(beacons => _.groupBy(beacons,
             (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).edge)
         ).then(edges => {
