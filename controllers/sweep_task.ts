@@ -103,10 +103,10 @@ export const SweepTaskFsm = machina.BehavioralFsm.extend({
             .whereNotNull("slot");
         }).fetch({withRelated: "slot"})
         // Temporary TODO(cgleason): remove this filter
-        .then(beacons => beacons.filter([
-            (b: Beacon) => [3, 4].includes((b.related<BeaconSlot>("slot") as BeaconSlot).floor),
-            (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).building === "GHC"
-        ])).then(beacons => _.groupBy(beacons,
+        .then(beacons => beacons.filter(
+            (b: Beacon) => [3, 4].includes((b.related<BeaconSlot>("slot") as BeaconSlot).floor)
+        //    (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).building === "GHC"
+        )).then(beacons => _.groupBy(beacons,
             (b: Beacon) => (b.related<BeaconSlot>("slot") as BeaconSlot).edge)
         ).then(edges => {
             const minDate = (bs: Beacon[]) => _.min(bs.map(b => b.lastSwept)) || null;
