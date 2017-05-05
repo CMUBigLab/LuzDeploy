@@ -78,7 +78,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
         },
         how_many: {
             _onEnter: function(task: Task) {
-                let text = "How many samples would you like to collect (one sample takes about 30 seconds on average)?";
+                let text = "We need you to help us sample beacon data in the building. How many samples would you like to collect (one sample takes about 30 seconds on average)?";
                 bot.sendMessage(task.volunteerFbid, msgUtil.quickReplyMessage(text, ['5', '10', '15']));
             },
             number: function(task: Task, n) {
@@ -105,7 +105,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
         },
         goto: {
             _onEnter: function(task: Task) {
-                const text = "We need you to help us sample beacon data in the building. Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
+                const text = "Please open the LuzDeploy app below and follow the instructions. Let me know when you are 'done'!";
                 const locations = task.context.points.map(
                     p => `${p.floor},${p.lat},${p.long}`
                 ).join(";");
