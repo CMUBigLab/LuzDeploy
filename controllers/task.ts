@@ -33,7 +33,7 @@ function rejectTask(task: Task): Promise<any> {
     .then(function(vol) {
         return vol.unassignTask();
     }).spread(function(vol: Volunteer, task: Task) {
-        let text = "Task rejected. If you wish to continue, you can 'ask' for another.";
+        let text = "Task rejected. If you wish to continue, you can 'ask' for another random task.";
         return vol.sendMessage(msgUtil.quickReplyMessage(text, ["ask"]));
     }).then(() => this.transition(task, "unassigned"));
 }
