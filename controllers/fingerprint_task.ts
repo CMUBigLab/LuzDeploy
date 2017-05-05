@@ -50,7 +50,7 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 return task.assignedVolunteer().fetch()
                 .then(vol => {
                     if (vol.appState === "installed") {
-                        return this.transition(task, "load_points");
+                        return this.transition(task, "how_many");
                     }
                     const text = "You will need to download the app 'LuzDeploy Data Sampler'. Press the link below to open the App Store.";
                     const url = "http://appstore.com/luzdeploydatasampler";
@@ -73,7 +73,17 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
             "msg:done": function(task: Task) {
                 return task.assignedVolunteer().fetch()
                 .then((vol: Volunteer) => vol.save({app_state: "installed"}))
-                .then(() => this.transition(task, "load_points"));
+                .then(() => this.transition(task, "how_many"));
+            }
+        },
+        how_many: {
+            _onEnter: function(task: Task) {
+                let text = "How many samples would you like to collect (one sample takes about 30 seconds on average)?";
+                bot.sendMessage(task.volunteerFbid, msgUtil.quickReplyMessage(text, ['5', '10', '15']));
+            },
+            number: function(task: Task, n) {
+                task.context = {numSamples: n};
+                this.transition(task, "load_points");
             }
         },
         load_points: {
@@ -81,15 +91,13 @@ export const FingerprintTaskFsm = machina.BehavioralFsm.extend({
                 let self = this;
                 FingerprintPoint.getPointsForSampling(
                     task.deploymentId,
-                    5
+                    task.context.numSamples
                 ).then(function(points) {
-                    task.context = {
-                        points: points.map((p: FingerprintPoint) => ({
+                    task.context.points = points.map((p: FingerprintPoint) => ({
                             floor: p.floor,
                             lat: p.latitude,
                             long: p.longitude
-                        }))
-                    };
+                    }));
                 }).then(function() {
                     self.transition(task, "goto");
                 });
