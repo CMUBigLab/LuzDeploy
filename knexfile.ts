@@ -35,7 +35,7 @@ export = {
     client: "postgresql",
     connection: process.env.DATABASE_URL,
     ssl: true,
-    debug: true,
+    debug: false,
     pool: {
       min: 2,
       max: 10
