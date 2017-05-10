@@ -21,7 +21,7 @@ const jobSchedule = [{
 {
     name: "remind users with tasks they can complete it",
     function: prodStartTasks,
-    enabled: true,
+    enabled: false,
     weekdays: [1,2,3,4,5],
     startTime: "12:29",
     endTime: "12:35",
@@ -29,7 +29,7 @@ const jobSchedule = [{
  {
     name: "unassign unstarted tasks from users",
     function: recoverUnstartedTasks,
-    enabled: true,
+    enabled: false,
     weekdays: [1, 2, 3, 4, 5],
     startTime: "11:29",
     endTime: "11:35",
