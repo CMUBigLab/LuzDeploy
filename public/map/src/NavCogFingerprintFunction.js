@@ -60,8 +60,6 @@ function renderFingerprintLocation(fingerprintLocation, silent) {
 }
 
 function loadFingerprintLocation(fingerprintLocation, silent) {
-	if (!_fingerprintLocationMarkers[fingerprintLocation.id]) {
-
 		position = new google.maps.LatLng(fingerprintLocation.lat, fingerprintLocation.lng);
 
 		var image = {
@@ -102,7 +100,6 @@ function loadFingerprintLocation(fingerprintLocation, silent) {
 				_currentLayer.fingerprintLocations[this.id].lng = e.latLng.lng();
 			});
 		}
-	}
 }
 
 function removeCurrentFingerprintLocation() {
