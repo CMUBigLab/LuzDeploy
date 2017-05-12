@@ -9,7 +9,10 @@ export class FingerprintPoint extends BaseModel<FingerprintPoint> {
     static getPointsForSampling(deploymentId: number, limit = 1) {
         return FingerprintPoint
         .collection()
-        .query({where: {deployment_id: deploymentId}})
+        .query(qb => {
+            qb.where("deployment_id", deploymentId)
+            .whereIn('id', [41, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 86, 87, 88, 89, 90 ,91, 92,93,94,95,96,97,98,99,101]);
+        })
         .fetch({withRelated: ["samples"]})
         .then(function(points) {
             return points.sortBy(function(p) {
